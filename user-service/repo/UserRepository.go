@@ -1,6 +1,7 @@
 package repo
 
 import (
+	"time"
 	"user-service/model"
 
 	"gorm.io/driver/postgres"
@@ -35,14 +36,21 @@ func (repo *UserRepository) Close() error {
 	return nil
 }
 
-func (repo *UserRepository) CreateUser(name string, email string, password string) int {
-
+func (repo *UserRepository) CreateUser(name string, email string, password string, username string, gender model.Gender, phonenumber string, dateofbirth time.Time, biography string) int {
 	user := model.User{
-		Name:     name,
-		Email:    email,
-		Password: password}
+		Name:        name,
+		Email:       email,
+		UserName:    username,
+		Password:    password,
+		Gender:      gender,
+		PhoneNumber: phonenumber,
+		DateOfBirth: dateofbirth,
+		Biography:   biography}
 
-	repo.db.Create(&user)
-
+	if gender == "male" || gender == "female" {
+		repo.db.Create(&user)
+	} else {
+		user.ID = 0
+	}
 	return int(user.ID)
 }

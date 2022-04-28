@@ -29,7 +29,11 @@ func (userHandler *UserHandler) CreateUser(w http.ResponseWriter, req *http.Requ
 		return
 	}
 
-	id := userHandler.userService.CreateUser(rt.Name, rt.Email, rt.Password)
+	id := userHandler.userService.CreateUser(rt.Name, rt.Email, rt.Password, rt.UserName, rt.Gender, rt.PhoneNumber, rt.DateOfBirth, rt.Biography)
+	if id == 0 {
+		http.Error(w, "Couldn't create user with given values", http.StatusBadRequest)
+		return
+	}
 	renderJSON(w, model.ResponseId{Id: id})
 }
 

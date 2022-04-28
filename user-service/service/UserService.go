@@ -1,6 +1,8 @@
 package service
 
 import (
+	"time"
+	"user-service/model"
 	"user-service/repo"
 	//"user-service/model"
 )
@@ -25,7 +27,7 @@ func (s *UserService) CloseDB() error {
 	return s.userRepo.Close()
 }
 
-func (s *UserService) CreateUser(name string, email string, password string) int {
+func (s *UserService) CreateUser(name string, email string, password string, username string, gender model.Gender, phonenumber string, dateofbirth time.Time, biography string) int {
 
-	return s.userRepo.CreateUser(name, email, password)
+	return s.userRepo.CreateUser(name, email, password, username, gender, phonenumber, dateofbirth, biography)
 }
