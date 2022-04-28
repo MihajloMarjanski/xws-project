@@ -22,7 +22,7 @@ func New() (*UserService, error) {
 	}, nil
 }
 
-func (s *UserService) SearchUsers(username string) []model.User {
+func (s *UserService) SearchUsers(username string) []model.UserDTO {
 	return s.userRepo.SearchUsers(username)
 }
 

@@ -36,10 +36,11 @@ func (repo *UserRepository) Close() error {
 	return nil
 }
 
-func (repo *UserRepository) SearchUsers(username string) []model.User {
+func (repo *UserRepository) SearchUsers(username string) []model.UserDTO {
 	var users []model.User
-	repo.db.Where("user_name LIKE ?", "%"+username+"%").Find(&users)
-	return users
+	var usersDTO []model.UserDTO
+	repo.db.Model(&users).Where("user_name LIKE ?", "%"+username+"%").Find(&usersDTO)
+	return usersDTO
 }
 
 func (repo *UserRepository) CreateUser(name string, email string, password string, username string, gender model.Gender, phonenumber string, dateofbirth time.Time, biography string) int {
