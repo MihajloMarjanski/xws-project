@@ -25,7 +25,7 @@ func main() {
 	defer userHandler.CloseDB()
 
 	router.HandleFunc("/user/", userHandler.CreateUser).Methods("POST")
-	router.HandleFunc("/user/search/{username:[a-z]+}/", userHandler.SearchUsers).Methods("GET")
+	router.HandleFunc("/user/search/{username:[a-zA-Z0-9_.-]+}/", userHandler.SearchUsers).Methods("GET")
 
 	// start server
 	srv := &http.Server{Addr: "0.0.0.0:8000", Handler: router}
