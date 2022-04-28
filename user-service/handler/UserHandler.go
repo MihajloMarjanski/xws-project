@@ -5,6 +5,8 @@ import (
 	"net/http"
 	"user-service/model"
 	"user-service/service"
+
+	"github.com/gorilla/mux"
 )
 
 type UserHandler struct {
@@ -31,10 +33,17 @@ func (userHandler *UserHandler) CreateUser(w http.ResponseWriter, req *http.Requ
 
 	id := userHandler.userService.CreateUser(rt.Name, rt.Email, rt.Password, rt.UserName, rt.Gender, rt.PhoneNumber, rt.DateOfBirth, rt.Biography)
 	if id == 0 {
-		http.Error(w, "Couldn't create user with given values", http.StatusBadRequest)
+		http.Error(w, "Couldn't create a user with given values", http.StatusBadRequest)
 		return
 	}
 	renderJSON(w, model.ResponseId{Id: id})
+}
+
+func (userHandler *UserHandler) SearchUsers(w http.ResponseWriter, req *http.Request) {
+
+	username, _ := mux.Vars(req)["username"]
+	users := userHandler.userService.SearchUsers(username)
+	renderJSON(w, users)
 }
 
 func New() (*UserHandler, error) {

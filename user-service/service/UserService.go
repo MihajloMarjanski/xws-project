@@ -4,7 +4,6 @@ import (
 	"time"
 	"user-service/model"
 	"user-service/repo"
-	//"user-service/model"
 )
 
 type UserService struct {
@@ -21,6 +20,10 @@ func New() (*UserService, error) {
 	return &UserService{
 		userRepo: userRepo,
 	}, nil
+}
+
+func (s *UserService) SearchUsers(username string) []model.User {
+	return s.userRepo.SearchUsers(username)
 }
 
 func (s *UserService) CloseDB() error {

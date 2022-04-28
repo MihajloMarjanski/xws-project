@@ -36,6 +36,12 @@ func (repo *UserRepository) Close() error {
 	return nil
 }
 
+func (repo *UserRepository) SearchUsers(username string) []model.User {
+	var users []model.User
+	repo.db.Where("user_name LIKE ?", "%"+username+"%").Find(&users)
+	return users
+}
+
 func (repo *UserRepository) CreateUser(name string, email string, password string, username string, gender model.Gender, phonenumber string, dateofbirth time.Time, biography string) int {
 	user := model.User{
 		Name:        name,
