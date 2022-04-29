@@ -87,6 +87,20 @@ func (userHandler *UserHandler) GetMe(w http.ResponseWriter, req *http.Request) 
 	renderJSON(w, user)
 }
 
+func (userHandler *UserHandler) RemoveExperience(w http.ResponseWriter, req *http.Request) {
+
+	id, _ := strconv.Atoi(mux.Vars(req)["id"])
+	removed := userHandler.userService.RemoveExperience(id)
+	renderJSON(w, removed)
+}
+
+func (userHandler *UserHandler) RemoveInterest(w http.ResponseWriter, req *http.Request) {
+
+	id, _ := strconv.Atoi(mux.Vars(req)["id"])
+	removed := userHandler.userService.RemoveInterest(id)
+	renderJSON(w, removed)
+}
+
 func (userHandler *UserHandler) AddInterest(w http.ResponseWriter, req *http.Request) {
 
 	contentType := req.Header.Get("Content-Type")

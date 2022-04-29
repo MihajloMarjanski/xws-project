@@ -34,6 +34,14 @@ func (s *UserService) GetMe(id int) model.User {
 	return s.userRepo.GetMe(id)
 }
 
+func (s *UserService) RemoveExperience(id int) int {
+	return s.userRepo.RemoveExperience(id)
+}
+
+func (s *UserService) RemoveInterest(id int) int {
+	return s.userRepo.RemoveInterest(id)
+}
+
 func (s *UserService) CloseDB() error {
 	return s.userRepo.Close()
 }

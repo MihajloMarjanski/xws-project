@@ -57,6 +57,16 @@ func (repo *UserRepository) GetMe(id int) model.User {
 	return user
 }
 
+func (repo *UserRepository) RemoveExperience(id int) int {
+	repo.db.Delete(&model.Experience{}, id)
+	return id
+}
+
+func (repo *UserRepository) RemoveInterest(id int) int {
+	repo.db.Delete(&model.Interest{}, id)
+	return id
+}
+
 func (repo *UserRepository) CreateUser(name string, email string, password string, username string, gender model.Gender, phonenumber string, dateofbirth time.Time, biography string) int {
 	user := model.User{
 		Name:        name,
