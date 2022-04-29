@@ -28,8 +28,8 @@ func main() {
 	router.HandleFunc("/user/search/{username:[a-zA-Z0-9_.-]+}/", userHandler.SearchUsers).Methods("GET")
 	router.HandleFunc("/user/{id:[0-9]+}/", userHandler.GetUser).Methods("GET")
 	router.HandleFunc("/user/me/{id:[0-9]+}/", userHandler.GetMe).Methods("GET")
-	/*router.HandleFunc("/user/", userHandler.UpdateUser).Methods("PUT")
-	router.HandleFunc("/user/experience/", userHandler.AddExperience).Methods("POST")
+	router.HandleFunc("/user/", userHandler.UpdateUser).Methods("PUT")
+	/*router.HandleFunc("/user/experience/", userHandler.AddExperience).Methods("POST")
 	router.HandleFunc("/user/interest/", userHandler.AddInterest).Methods("POST")*/
 
 	// start server

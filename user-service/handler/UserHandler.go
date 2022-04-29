@@ -40,6 +40,32 @@ func (userHandler *UserHandler) CreateUser(w http.ResponseWriter, req *http.Requ
 	renderJSON(w, model.ResponseId{Id: id})
 }
 
+func (userHandler *UserHandler) UpdateUser(w http.ResponseWriter, req *http.Request) {
+
+	contentType := req.Header.Get("Content-Type")
+	mediatype, _, err := mime.ParseMediaType(contentType)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+	if mediatype != "application/json" {
+		http.Error(w, "expect application/json Content-Type", http.StatusUnsupportedMediaType)
+		return
+	}
+	rt, err := decodeBody(req.Body)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	id := userHandler.userService.UpdateUser(rt.ID, rt.Name, rt.Email, rt.Password, rt.UserName, rt.Gender, rt.PhoneNumber, rt.DateOfBirth, rt.Biography)
+	if id == 0 {
+		http.Error(w, "Couldn't update user with given values", http.StatusBadRequest)
+		return
+	}
+	renderJSON(w, model.ResponseId{Id: id})
+}
+
 func (userHandler *UserHandler) SearchUsers(w http.ResponseWriter, req *http.Request) {
 
 	username, _ := mux.Vars(req)["username"]

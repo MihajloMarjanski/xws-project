@@ -1,6 +1,7 @@
 package repo
 
 import (
+	"strings"
 	"time"
 	"user-service/model"
 
@@ -39,7 +40,7 @@ func (repo *UserRepository) Close() error {
 func (repo *UserRepository) SearchUsers(username string) []model.UserDTO {
 	var users []model.User
 	var usersDTO []model.UserDTO
-	repo.db.Model(&users).Where("user_name LIKE ?", "%"+username+"%").Find(&usersDTO)
+	repo.db.Model(&users).Where("LOWER(user_name) LIKE ?", "%"+strings.ToLower(username)+"%").Find(&usersDTO)
 	return usersDTO
 }
 
@@ -69,6 +70,26 @@ func (repo *UserRepository) CreateUser(name string, email string, password strin
 
 	if gender == "male" || gender == "female" {
 		repo.db.Create(&user)
+	} else {
+		user.ID = 0
+	}
+	return int(user.ID)
+}
+
+func (repo *UserRepository) UpdateUser(id uint, name string, email string, password string, username string, gender model.Gender, phonenumber string, dateofbirth time.Time, biography string) int {
+	user := model.User{
+		ID:          uint(id),
+		Name:        name,
+		Email:       email,
+		UserName:    username,
+		Password:    password,
+		Gender:      gender,
+		PhoneNumber: phonenumber,
+		DateOfBirth: dateofbirth,
+		Biography:   biography}
+
+	if gender == "male" || gender == "female" {
+		repo.db.Save(&user)
 	} else {
 		user.ID = 0
 	}

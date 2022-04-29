@@ -42,3 +42,8 @@ func (s *UserService) CreateUser(name string, email string, password string, use
 
 	return s.userRepo.CreateUser(name, email, password, username, gender, phonenumber, dateofbirth, biography)
 }
+
+func (s *UserService) UpdateUser(id uint, name string, email string, password string, username string, gender model.Gender, phonenumber string, dateofbirth time.Time, biography string) int {
+
+	return s.userRepo.UpdateUser(id, name, email, password, username, gender, phonenumber, dateofbirth, biography)
+}
