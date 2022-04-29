@@ -26,7 +26,7 @@ func (userHandler *UserHandler) CreateUser(w http.ResponseWriter, req *http.Requ
 		http.Error(w, "expect application/json Content-Type", http.StatusUnsupportedMediaType)
 		return
 	}
-	rt, err := decodeBody(req.Body)
+	rt, err := decodeUserBody(req.Body)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
@@ -52,7 +52,7 @@ func (userHandler *UserHandler) UpdateUser(w http.ResponseWriter, req *http.Requ
 		http.Error(w, "expect application/json Content-Type", http.StatusUnsupportedMediaType)
 		return
 	}
-	rt, err := decodeBody(req.Body)
+	rt, err := decodeUserBody(req.Body)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
@@ -85,6 +85,58 @@ func (userHandler *UserHandler) GetMe(w http.ResponseWriter, req *http.Request) 
 	id, _ := strconv.Atoi(mux.Vars(req)["id"])
 	user := userHandler.userService.GetMe(id)
 	renderJSON(w, user)
+}
+
+func (userHandler *UserHandler) AddInterest(w http.ResponseWriter, req *http.Request) {
+
+	contentType := req.Header.Get("Content-Type")
+	mediatype, _, err := mime.ParseMediaType(contentType)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+	if mediatype != "application/json" {
+		http.Error(w, "expect application/json Content-Type", http.StatusUnsupportedMediaType)
+		return
+	}
+	rt, err := decodeInterestBody(req.Body)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	id := userHandler.userService.AddInterest(rt.Interest, rt.UserID)
+	if id == 0 {
+		http.Error(w, "Couldn't add interest with given values", http.StatusBadRequest)
+		return
+	}
+	renderJSON(w, model.ResponseId{Id: id})
+}
+
+func (userHandler *UserHandler) AddExperience(w http.ResponseWriter, req *http.Request) {
+
+	contentType := req.Header.Get("Content-Type")
+	mediatype, _, err := mime.ParseMediaType(contentType)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+	if mediatype != "application/json" {
+		http.Error(w, "expect application/json Content-Type", http.StatusUnsupportedMediaType)
+		return
+	}
+	rt, err := decodeExperienceBody(req.Body)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	id := userHandler.userService.AddExperience(rt.Company, rt.Position, rt.From, rt.Until, rt.UserID)
+	if id == 0 {
+		http.Error(w, "Couldn't add interest with given values", http.StatusBadRequest)
+		return
+	}
+	renderJSON(w, model.ResponseId{Id: id})
 }
 
 func New() (*UserHandler, error) {

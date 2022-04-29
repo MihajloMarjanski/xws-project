@@ -22,7 +22,7 @@ func New() (*UserRepository, error) {
 		return nil, err
 	}
 	repo.db = db
-	repo.db.AutoMigrate(&model.User{})
+	repo.db.AutoMigrate(&model.User{}, &model.Interest{}, model.Experience{})
 
 	return repo, nil
 }
@@ -40,20 +40,20 @@ func (repo *UserRepository) Close() error {
 func (repo *UserRepository) SearchUsers(username string) []model.UserDTO {
 	var users []model.User
 	var usersDTO []model.UserDTO
-	repo.db.Model(&users).Where("LOWER(user_name) LIKE ?", "%"+strings.ToLower(username)+"%").Find(&usersDTO)
+	repo.db.Preload("Interests").Preload("Experiences").Model(&users).Where("LOWER(user_name) LIKE ?", "%"+strings.ToLower(username)+"%").Find(&usersDTO)
 	return usersDTO
 }
 
 func (repo *UserRepository) GetByID(id int) model.UserDTO {
 	var user model.User
 	var userDTO model.UserDTO
-	repo.db.Model(&user).Find(&userDTO, id)
+	repo.db.Preload("Interests").Preload("Experiences").Model(&user).Find(&userDTO, id)
 	return userDTO
 }
 
 func (repo *UserRepository) GetMe(id int) model.User {
 	var user model.User
-	repo.db.Model(&user).Find(&user, id)
+	repo.db.Preload("Interests").Preload("Experiences").Model(&user).Find(&user, id)
 	return user
 }
 
@@ -94,4 +94,27 @@ func (repo *UserRepository) UpdateUser(id uint, name string, email string, passw
 		user.ID = 0
 	}
 	return int(user.ID)
+}
+
+func (repo *UserRepository) AddInterest(interest string, userId uint) int {
+	newInterest := model.Interest{
+		Interest: interest,
+		UserID:   userId}
+
+	repo.db.Create(&newInterest)
+
+	return int(newInterest.ID)
+}
+
+func (repo *UserRepository) AddExperience(company string, position string, from time.Time, until time.Time, userId uint) int {
+	experience := model.Experience{
+		Company:  company,
+		Position: position,
+		From:     from,
+		Until:    until,
+		UserID:   userId}
+
+	repo.db.Create(&experience)
+
+	return int(experience.ID)
 }
