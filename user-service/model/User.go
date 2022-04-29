@@ -14,6 +14,7 @@ type User struct {
 	Biography   string    `json:"biography"`
 }
 type UserDTO struct {
+	ID          uint      `json:"id"`
 	Name        string    `json:"name" gorm:"not null"`
 	UserName    string    `json:"username" gorm:"unique;not null"`
 	Email       string    `json:"email" gorm:"unique;not null"`

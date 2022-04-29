@@ -43,6 +43,19 @@ func (repo *UserRepository) SearchUsers(username string) []model.UserDTO {
 	return usersDTO
 }
 
+func (repo *UserRepository) GetByID(id int) model.UserDTO {
+	var user model.User
+	var userDTO model.UserDTO
+	repo.db.Model(&user).Find(&userDTO, id)
+	return userDTO
+}
+
+func (repo *UserRepository) GetMe(id int) model.User {
+	var user model.User
+	repo.db.Model(&user).Find(&user, id)
+	return user
+}
+
 func (repo *UserRepository) CreateUser(name string, email string, password string, username string, gender model.Gender, phonenumber string, dateofbirth time.Time, biography string) int {
 	user := model.User{
 		Name:        name,

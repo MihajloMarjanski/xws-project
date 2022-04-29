@@ -3,6 +3,7 @@ package handler
 import (
 	"mime"
 	"net/http"
+	"strconv"
 	"user-service/model"
 	"user-service/service"
 
@@ -44,6 +45,20 @@ func (userHandler *UserHandler) SearchUsers(w http.ResponseWriter, req *http.Req
 	username, _ := mux.Vars(req)["username"]
 	users := userHandler.userService.SearchUsers(username)
 	renderJSON(w, users)
+}
+
+func (userHandler *UserHandler) GetUser(w http.ResponseWriter, req *http.Request) {
+
+	id, _ := strconv.Atoi(mux.Vars(req)["id"])
+	user := userHandler.userService.GetByID(id)
+	renderJSON(w, user)
+}
+
+func (userHandler *UserHandler) GetMe(w http.ResponseWriter, req *http.Request) {
+
+	id, _ := strconv.Atoi(mux.Vars(req)["id"])
+	user := userHandler.userService.GetMe(id)
+	renderJSON(w, user)
 }
 
 func New() (*UserHandler, error) {

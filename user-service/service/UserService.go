@@ -26,6 +26,14 @@ func (s *UserService) SearchUsers(username string) []model.UserDTO {
 	return s.userRepo.SearchUsers(username)
 }
 
+func (s *UserService) GetByID(id int) model.UserDTO {
+	return s.userRepo.GetByID(id)
+}
+
+func (s *UserService) GetMe(id int) model.User {
+	return s.userRepo.GetMe(id)
+}
+
 func (s *UserService) CloseDB() error {
 	return s.userRepo.Close()
 }
