@@ -1,6 +1,7 @@
 package repo
 
 import (
+	"regexp"
 	"strings"
 	"time"
 	"user-service/model"
@@ -78,11 +79,22 @@ func (repo *UserRepository) CreateUser(name string, email string, password strin
 		DateOfBirth: dateofbirth,
 		Biography:   biography}
 
-	if gender == "male" || gender == "female" {
-		repo.db.Create(&user)
-	} else {
-		user.ID = 0
+	if gender != "male" && gender != "female" {
+		return -6 //invalid  gender
+	} else if m, _ := regexp.MatchString("^[a-zA-Z0-9+_.-]+@[a-zA-Z0-9.-]+$", email); !m {
+		return -1 //invalid email address
+	} else if name == "" {
+		return -2 //name cant be empty
+	} else if username == "" {
+		return -3 //username cant be empty
+	} else if len(repo.SearchUsers(username)) != 0 {
+		return -4 //username already exists
+	} else if password == "" {
+		return -5 //password cant be empty
 	}
+
+	repo.db.Create(&user)
+
 	return int(user.ID)
 }
 
@@ -98,11 +110,20 @@ func (repo *UserRepository) UpdateUser(id uint, name string, email string, passw
 		DateOfBirth: dateofbirth,
 		Biography:   biography}
 
-	if gender == "male" || gender == "female" {
-		repo.db.Save(&user)
-	} else {
-		user.ID = 0
+	if gender != "male" && gender != "female" {
+		return -6 //invalid  gender
+	} else if m, _ := regexp.MatchString("^[a-zA-Z0-9+_.-]+@[a-zA-Z0-9.-]+$", email); !m {
+		return -1 //invalid email address
+	} else if name == "" {
+		return -2 //name cant be empty
+	} else if username == "" {
+		return -3 //username cant be empty
+	} else if password == "" {
+		return -5 //password cant be empty
 	}
+
+	repo.db.Save(&user)
+
 	return int(user.ID)
 }
 
