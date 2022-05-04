@@ -30,6 +30,10 @@ func (s *UserService) GetByID(id int) model.UserDTO {
 	return s.userRepo.GetByID(id)
 }
 
+func (s *UserService) GetByUsername(username string) model.User {
+	return s.userRepo.GetByUsername(username)
+}
+
 func (s *UserService) GetMe(id int) model.User {
 	return s.userRepo.GetMe(id)
 }

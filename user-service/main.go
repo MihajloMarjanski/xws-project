@@ -33,6 +33,7 @@ func main() {
 	router.HandleFunc("/user/interest/", userHandler.AddInterest).Methods("POST")
 	router.HandleFunc("/user/experience/{id:[0-9]+}/", userHandler.RemoveExperience).Methods("DELETE")
 	router.HandleFunc("/user/interest/{id:[0-9]+}/", userHandler.RemoveInterest).Methods("DELETE")
+	router.HandleFunc("/user/login", userHandler.LoginUser).Methods("POST")
 
 	// start server
 	srv := &http.Server{Addr: "0.0.0.0:8000", Handler: router}

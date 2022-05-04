@@ -6,13 +6,28 @@ import (
 	"strconv"
 	"user-service/model"
 	"user-service/service"
-
+	"github.com/dgrijalva/jwt-go"
 	"github.com/gorilla/mux"
+	"encoding/json"
+	"time"
+	"golang.org/x/crypto/bcrypt"
 )
 
 type UserHandler struct {
 	userService *service.UserService
 }
+
+type Credentials struct {
+	Password string `json:"password"`
+	Username string `json:"username"`
+}
+
+type Claims struct{
+	Username string `json:"username"`
+	jwt.StandardClaims
+}
+
+var jwtKey = []byte("tajni_kljuc_za_jwt_hash")
 
 func (userHandler *UserHandler) CreateUser(w http.ResponseWriter, req *http.Request) {
 
@@ -32,12 +47,53 @@ func (userHandler *UserHandler) CreateUser(w http.ResponseWriter, req *http.Requ
 		return
 	}
 
-	id := userHandler.userService.CreateUser(rt.Name, rt.Email, rt.Password, rt.UserName, rt.Gender, rt.PhoneNumber, rt.DateOfBirth, rt.Biography)
+	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(rt.Password), 8)
+
+	id := userHandler.userService.CreateUser(rt.Name, rt.Email, string(hashedPassword), rt.UserName, rt.Gender, rt.PhoneNumber, rt.DateOfBirth, rt.Biography)
 	if id == 0 {
 		http.Error(w, "Couldn't create a user with given values", http.StatusBadRequest)
 		return
 	}
 	renderJSON(w, model.ResponseId{Id: id})
+}
+
+func (userHandler *UserHandler) LoginUser(w http.ResponseWriter, req * http.Request) {
+	var creds Credentials
+
+	err := json.NewDecoder(req.Body).Decode(&creds)
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	expectedPassword := userHandler.userService.GetByUsername(creds.Username).Password
+
+	if err = bcrypt.CompareHashAndPassword([]byte(expectedPassword),[]byte(creds.Password)); err != nil{
+		w.WriteHeader(http.StatusUnauthorized)
+	}
+
+	expirationTime := time.Now().Add(15 * time.Minute)
+
+	claims := &Claims{
+		Username: creds.Username,
+		StandardClaims: jwt.StandardClaims{
+			ExpiresAt: expirationTime.Unix(),
+		},
+	}
+
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
+
+	tokenString, err := token.SignedString(jwtKey)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
+	http.SetCookie(w, &http.Cookie {
+		Name: "token",
+		Value: tokenString,
+		Expires: expirationTime,
+	})
 }
 
 func (userHandler *UserHandler) UpdateUser(w http.ResponseWriter, req *http.Request) {
