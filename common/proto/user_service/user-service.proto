@@ -6,6 +6,7 @@ package user;
 
 import "google/api/annotations.proto";
 import "google/protobuf/timestamp.proto";
+import "time";
 
 service UserService{
         rpc GetUser(GetUserRequest) returns(GetUserResponse) {
@@ -73,6 +74,6 @@ message User {
         string email = 4;
         string gender = 5;
         string phone = 6;
-        google.protobuf.Timestamp date = 7;
+        time.Time date = 7;
         string biography = 8;
 }

@@ -1,4 +1,4 @@
-module api-gateway
+module common
 
 go 1.17
 
