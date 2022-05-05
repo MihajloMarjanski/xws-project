@@ -5,7 +5,7 @@ import (
 	pb "github.com/MihajloMarjanski/xws-project/common/proto/user_service"
 )
 
-func mapUser(user *model.User) *pb.User {
+func mapUserDtoToProto(user model.UserDTO) *pb.User {
 	userPb := &pb.User{
 		Id:           int64(user.ID),
 		Name:          user.Name,
@@ -13,7 +13,7 @@ func mapUser(user *model.User) *pb.User {
 		Email: user.Email,
 		Gender: string(user.Gender),
 		Phone: user.PhoneNumber,
-		Date: user.DateOfBirth,
+		Date: user.DateOfBirth.String(),
 		Biography: user.Biography,
 	}
 	// for _, interest := range user.Interests {

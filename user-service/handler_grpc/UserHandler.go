@@ -3,13 +3,7 @@ package handler_grpc
 import (
 	"context"
 	pb "github.com/MihajloMarjanski/xws-project/common/proto/user_service"
-	"mime"
-	"net/http"
-	"strconv"
-	"user-service/model"
 	"user-service/service"
-
-	"github.com/gorilla/mux"
 )
 
 type UserHandler struct {
@@ -31,7 +25,7 @@ func New() (*UserHandler, error) {
 func (handler *UserHandler) GetUser(ctx context.Context, request *pb.GetUserRequest) (*pb.GetUserResponse, error) {
 	id := request.Id
 	user := handler.userService.GetByID(int(id))
-	userPb := mapUser(user)
+	userPb := mapUserDtoToProto(user)
 	response := &pb.GetUserResponse{
 		User: userPb,
 	}
