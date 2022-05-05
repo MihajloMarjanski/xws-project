@@ -1,0 +1,35 @@
+//REGISTER
+
+{
+    "Name": "Petar Petrovic",
+    "Email": "petarpetrovic@gmail.com",
+    "Password": "petar", 
+    "UserName": "petar", 
+    "Gender":"male", 
+    "Phone": "0656506502",
+    "Date": "2012-04-23T18:25:43.511Z", 
+    "Biography": "Petar II Petrovic Njegos srpski knjaz pisac i prosvetitelj"
+}
+
+{
+    "Name": "Marko Nikolic",
+    "Email": "markonikolic@gmail.com",
+    "Password": "marko", 
+    "UserName": "marko", 
+    "Gender":"male", 
+    "Phone": "0656506502",
+    "Date": "2012-04-23T18:25:43.511Z", 
+    "Biography": "Marko I Nikolic dobar samo kad je pijan"
+}
+
+//LOGIN
+
+{
+    "password": "petar",
+    "username": "petar"
+}
+{
+    "password": "marko",
+    "username": "marko"
+}
+

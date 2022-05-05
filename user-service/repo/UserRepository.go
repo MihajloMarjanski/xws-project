@@ -51,6 +51,12 @@ func (repo *UserRepository) GetByID(id int) model.UserDTO {
 	return userDTO
 }
 
+func (repo *UserRepository) GetByUsername(username string) model.User {
+	var user model.User
+	repo.db.Preload("Interests").Preload("Experiences").Model(&user).Where("user_name  = ?", username).Find(&user)
+	return user
+}
+
 func (repo *UserRepository) GetMe(id int) model.User {
 	var user model.User
 	repo.db.Preload("Interests").Preload("Experiences").Model(&user).Find(&user, id)
