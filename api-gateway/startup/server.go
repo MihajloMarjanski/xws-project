@@ -4,12 +4,8 @@ import (
 	"context"
 	"fmt"
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
-	"github.com/tamararankovic/microservices_demo/api_gateway/infrastructure/api"
 	cfg "api-gateway/startup/config"
-	catalogueGw "github.com/tamararankovic/microservices_demo/common/proto/catalogue_service"
-	inventoryGw "github.com/tamararankovic/microservices_demo/common/proto/inventory_service"
-	orderingGw "github.com/tamararankovic/microservices_demo/common/proto/ordering_service"
-	shippingGw "github.com/tamararankovic/microservices_demo/common/proto/shipping_service"
+	userGw "github.com/MihajloMarjanski/xws-project/common/proto/user_service"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 	"log"
@@ -33,7 +29,7 @@ func NewServer(config *cfg.Config) *Server {
 func (server *Server) initHandlers() {
 	opts := []grpc.DialOption{grpc.WithTransportCredentials(insecure.NewCredentials())}
 	userEndpoint := fmt.Sprintf("%s:%s", server.config.UserHost, server.config.UserPort)
-	err := catalogueGw.RegisterUserServiceHandlerFromEndpoint(context.TODO(), server.mux, catalogueEmdpoint, opts)
+	err := userGw.RegisterUserServiceHandlerFromEndpoint(context.TODO(), server.mux, userEndpoint, opts)
 	if err != nil {
 		panic(err)
 	}

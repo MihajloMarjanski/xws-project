@@ -1,18 +1,19 @@
-syntax="proto3"
+syntax="proto3";
 
 option go_package = "api-gateway/common/user";
 
 package user;
 
 import "google/api/annotations.proto";
+import "google/protobuf/timestamp.proto";
 
 service UserService{
         rpc GetUser(GetUserRequest) returns(GetUserResponse) {
         	option (google.api.http) = {
-			get: "/user/{id:[0-9]+}/"
+			get: "/user/{id}"
 		};
         }
-        rpc GetMe(GetAllRequest) returns(GetMeResponse) {
+        /*rpc GetMe(GetAllRequest) returns(GetMeResponse) {
         	option (google.api.http) = {
 			get: "/user/me/{id:[0-9]+}/"
 		};
@@ -42,7 +43,7 @@ service UserService{
 			post: "/user/interest/"
 		};
         }
-        rpc RemoveExperience(RemoveExperienceRequest) returnsRemoveExperienceResponse) {
+        rpc RemoveExperience(RemoveExperienceRequest) returns(RemoveExperienceResponse) {
         	option (google.api.http) = {
 			delete: "/user/experience/{id:[0-9]+}/"
 		};
@@ -51,12 +52,12 @@ service UserService{
         	option (google.api.http) = {
 			delete: "/user/interest/{id:[0-9]+}/"
 		};
-        }
+        }*/
 }
 
 
 message GetUserRequest {
-        uint id = 1;
+        int64 id = 1;
 }
 
 message GetUserResponse {
@@ -66,12 +67,12 @@ message GetUserResponse {
 
 
 message User {
-        uint id = 1;
+        int64 id = 1;
         string name = 2;
         string username = 3;
         string email = 4;
-        Gender gender = 5;
+        string gender = 5;
         string phone = 6;
-        time.Time date = 7;
+        google.protobuf.Timestamp date = 7;
         string biography = 8;
 }

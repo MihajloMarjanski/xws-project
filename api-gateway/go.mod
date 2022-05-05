@@ -1,12 +1,9 @@
-module github.com/tamararankovic/microservices_demo/api_gateway
+module api-gateway
 
 go 1.17
 
-replace github.com/tamararankovic/microservices_demo/common => ../common
-
 require (
 	github.com/grpc-ecosystem/grpc-gateway/v2 v2.9.0
-	github.com/tamararankovic/microservices_demo/common v1.0.0
 	google.golang.org/grpc v1.45.0
 )
 
