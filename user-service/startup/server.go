@@ -6,7 +6,6 @@ import (
 	"google.golang.org/grpc"
 	"log"
 	"net"
-	"os"
 	"user-service/handler_grpc"
 	"user-service/startup/config"
 )
@@ -23,25 +22,10 @@ func NewServer(config *config.Config) *Server {
 }
 
 func (server *Server) Start() {
-	//mongoClient := server.initMongoClient()
-	//productStore := server.initProductStore(mongoClient)
-	//
-	//productService := server.initProductService(productStore)
-
 	userHandler, err := handler_grpc.New()
 	if err != nil {
 		log.Fatal(err.Error())
 	}
-
-	//defer userHandler.CloseDB()
-	//userHandler := server.initProductHandler(productService)
-
-	hostname, err := os.Hostname()
-	if err != nil {
-		fmt.Println(err)
-		os.Exit(1)
-	}
-	log.Printf("Hostname: %s", hostname)
 	server.startGrpcServer(userHandler)
 }
 

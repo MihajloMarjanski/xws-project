@@ -6,10 +6,12 @@ import "os"
 
 type Config struct {
 	Port string
+	Host string
 }
 
 func NewConfig() *Config {
 	os.Setenv("USER_SERVICE_PORT", "8000")
+	os.Setenv("USER_SERVICE_HOST", "user-service")
 	return &Config{
 		// err := godotenv.Load("dev.env")
 		// if err != nil {
@@ -17,5 +19,6 @@ func NewConfig() *Config {
 		// }
 
 		Port: os.Getenv("USER_SERVICE_PORT"),
+		Host: os.Getenv("USER_SERVICE_HOST"),
 	}
 }

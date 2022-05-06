@@ -2,8 +2,6 @@ package config
 
 import "os"
 
-//import "github.com/MihajloMarjanski/xws-project"
-
 type Config struct {
 	Port     string
 	UserHost string
