@@ -7,6 +7,7 @@ import (
 )
 
 type UserHandler struct {
+	pb.UnimplementedUserServiceServer
 	userService *service.UserService
 }
 
@@ -20,6 +21,11 @@ func New() (*UserHandler, error) {
 	return &UserHandler{
 		userService: userService,
 	}, nil
+}
+
+func (userHandler *UserHandler) CloseDB() error {
+
+	return userHandler.userService.CloseDB()
 }
 
 func (handler *UserHandler) GetUser(ctx context.Context, request *pb.GetUserRequest) (*pb.GetUserResponse, error) {

@@ -1,6 +1,6 @@
 syntax="proto3";
 
-option go_package = "api-gateway/common/user";
+option go_package = "common/user";
 
 package user;
 

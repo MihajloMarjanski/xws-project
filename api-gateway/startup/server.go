@@ -1,11 +1,11 @@
 package startup
 
 import (
+	cfg "api-gateway/startup/config"
 	"context"
 	"fmt"
-	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
-	cfg "api-gateway/startup/config"
 	userGw "github.com/MihajloMarjanski/xws-project/common/proto/user_service"
+	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 	"log"
@@ -33,9 +33,11 @@ func (server *Server) initHandlers() {
 	if err != nil {
 		panic(err)
 	}
+
 }
 
-
 func (server *Server) Start() {
+	log.Println("gateway started")
 	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%s", server.config.Port), server.mux))
+
 }
