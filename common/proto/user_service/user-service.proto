@@ -9,60 +9,77 @@ import "google/api/annotations.proto";
 service UserService{
         rpc GetUser(GetUserRequest) returns(GetUserResponse) {
         	option (google.api.http) = {
-			get: "/user/{id}"
-		};
-        }
-        /*rpc GetMe(GetAllRequest) returns(GetMeResponse) {
-        	option (google.api.http) = {
-			get: "/user/me/{id:[0-9]+}/"
-		};
+            get: "/user/{id}"
+          };
+            }
+        rpc GetMe(GetMeRequest) returns(GetMeResponse) {
+              option (google.api.http) = {
+          get: "/user/me/{id}"
+        };
         }
         rpc UpdateUser(UpdateUserRequest) returns(UpdateUserResponse) {
-        	option (google.api.http) = {
-			put: "/user/"
-		};
+          option (google.api.http) = {
+          put: "/user"
+            body: "user"
+        };
         }
         rpc SearchUsers(SearchUsersRequest) returns(SearchUsersResponse) {
-        	option (google.api.http) = {
-			get: "/user/search/{username:[a-zA-Z0-9_.-]+}/"
-		};
+          option (google.api.http) = {
+          get: "/user/search/{username}"
+        };
         }
-        rpc CreateUser(CreateUserRequest) returns(CreateUserResponse) {
-        	option (google.api.http) = {
-			post: "/user/"
-		};
-        }
-        rpc AddExperience(AddExperienceRequest) returns(AddExperienceResponse) {
-        	option (google.api.http) = {
-			post: "/user/experience/"
-		};
-        }
-        rpc AddInterest(AddInterestRequest) returns(AddInterestResponse) {
-        	option (google.api.http) = {
-			post: "/user/interest/"
-		};
-        }
-        rpc RemoveExperience(RemoveExperienceRequest) returns(RemoveExperienceResponse) {
-        	option (google.api.http) = {
-			delete: "/user/experience/{id:[0-9]+}/"
-		};
-        }
-        rpc RemoveInterest(RemoveInterestRequest) returns(RemoveInterestResponse) {
-        	option (google.api.http) = {
-			delete: "/user/interest/{id:[0-9]+}/"
-		};
-        }*/
+  /*  rpc CreateUser(CreateUserRequest) returns(CreateUserResponse) {
+      option (google.api.http) = {
+  post: "/user/"
+  };
+    }
+    rpc AddExperience(AddExperienceRequest) returns(AddExperienceResponse) {
+      option (google.api.http) = {
+  post: "/user/experience/"
+  };
+    }
+    rpc AddInterest(AddInterestRequest) returns(AddInterestResponse) {
+      option (google.api.http) = {
+  post: "/user/interest/"
+  };
+    }
+    rpc RemoveExperience(RemoveExperienceRequest) returns(RemoveExperienceResponse) {
+      option (google.api.http) = {
+  delete: "/user/experience/{id:[0-9]+}/"
+  };
+    }
+    rpc RemoveInterest(RemoveInterestRequest) returns(RemoveInterestResponse) {
+      option (google.api.http) = {
+  delete: "/user/interest/{id:[0-9]+}/"
+  };
+    }*/
 }
 
 
 message GetUserRequest {
         int64 id = 1;
 }
-
 message GetUserResponse {
         User user = 1;
 }
-
+message GetMeRequest {
+  int64 id = 1;
+}
+message GetMeResponse {
+  UserWithPass user = 1;
+}
+message UpdateUserRequest {
+  UserWithPass user = 1;
+}
+message UpdateUserResponse {
+  int64 id = 1;
+}
+message SearchUsersRequest {
+  string username = 1;
+}
+message SearchUsersResponse {
+  repeated User users = 1;
+}
 
 
 message User {
@@ -74,4 +91,16 @@ message User {
         string phone = 6;
         string date = 7;
         string biography = 8;
+}
+
+message UserWithPass {
+  int64 id = 1;
+  string name = 2;
+  string username = 3;
+  string email = 4;
+  string gender = 5;
+  string phone = 6;
+  string date = 7;
+  string biography = 8;
+  string password = 9;
 }
