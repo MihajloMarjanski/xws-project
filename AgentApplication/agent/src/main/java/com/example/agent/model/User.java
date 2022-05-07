@@ -23,7 +23,9 @@ public class User {
     protected Integer id;
     protected String firstName;
     protected String lastName;
+    @Column(unique=true)
     protected String email;
+    @Column(unique=true)
     protected String username;
     protected String password;
 

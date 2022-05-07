@@ -5,7 +5,7 @@ import com.example.agent.model.CompanyOwner;
 import com.example.agent.model.dto.UserCredentials;
 import com.example.agent.security.tokenUtils.JwtTokenUtils;
 import com.example.agent.service.AdminService;
-import com.example.agent.service.CompanyOwnerService;
+import com.example.agent.service.CompanyService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -25,15 +25,15 @@ public class AuthenticationController {
     private final JwtTokenUtils tokenUtils;
     private final AuthenticationManager authenticationManager;
     private final AdminService adminService;
-    private final CompanyOwnerService companyOwnerService;
+    private final CompanyService companyService;
 
     @Autowired
-    public AuthenticationController(AdminService adminService, CompanyOwnerService companyOwnerService,
+    public AuthenticationController(AdminService adminService, CompanyService companyService,
                                     AuthenticationManager authenticationManager, JwtTokenUtils tokenUtils) {
         this.tokenUtils = tokenUtils;
         this.authenticationManager = authenticationManager;
         this.adminService = adminService;
-        this.companyOwnerService = companyOwnerService;
+        this.companyService = companyService;
     }
 
     // Prvi endpoint koji pogadja korisnik kada se loguje.
