@@ -80,7 +80,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
                 // svim korisnicima dopusti da pristupe sledecim putanjama:
                 .authorizeRequests().antMatchers("/auth/**").permitAll()		// /auth/**
-                                    .antMatchers("/api/customers/create").permitAll()
+                                    .antMatchers("/company/createOwner").permitAll()
                                     .antMatchers("/api/boatowners/create").permitAll()
                                     .antMatchers("/api/weekendhouseowners/create").permitAll()
                                     .antMatchers("/api/instructors/create").permitAll()

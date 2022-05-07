@@ -1,2 +1,2 @@
-INSERT INTO CART(id, client_id) values (1, 1);
-INSERT INTO CART(id, client_id) values (2, 2);
+insert into role (name) values ('ROLE_ADMIN');
+insert into role (name) values ('ROLE_COMPANY_OWNER');

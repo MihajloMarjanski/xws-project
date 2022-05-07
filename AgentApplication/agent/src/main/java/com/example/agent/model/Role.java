@@ -19,7 +19,10 @@ public class Role implements GrantedAuthority {
     String name;
 
     @OneToMany(mappedBy = "role", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    private Set<User> users = new HashSet<>();
+    private Set<CompanyOwner> companyOwners = new HashSet<>();
+
+    @OneToMany(mappedBy = "role", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private Set<Admin> admins = new HashSet<>();
 
     @JsonIgnore
     @Override

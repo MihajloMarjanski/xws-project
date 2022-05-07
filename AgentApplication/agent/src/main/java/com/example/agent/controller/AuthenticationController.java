@@ -1,12 +1,11 @@
 package com.example.agent.controller;
 
-import com.springboot.app.model.BoatOwner;
-import com.springboot.app.model.Customer;
-import com.springboot.app.model.Instructor;
-import com.springboot.app.model.WeekendHouseOwner;
-import com.springboot.app.model.dto.UserCredentials;
-import com.springboot.app.security.tokenUtils.JwtTokenUtils;
-import com.springboot.app.service.*;
+import com.example.agent.model.Admin;
+import com.example.agent.model.CompanyOwner;
+import com.example.agent.model.dto.UserCredentials;
+import com.example.agent.security.tokenUtils.JwtTokenUtils;
+import com.example.agent.service.AdminService;
+import com.example.agent.service.CompanyOwnerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -16,9 +15,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
 
 
 //Kontroler zaduzen za autentifikaciju korisnika
@@ -28,20 +24,16 @@ public class AuthenticationController {
 
     private final JwtTokenUtils tokenUtils;
     private final AuthenticationManager authenticationManager;
-    private final CustomerService customerService;
-    private final WeekendHouseOwnerService weekendHouseOwnerService;
-    private final BoatOwnerService boatOwnerService;
-    private final InstructorService instructorService;
+    private final AdminService adminService;
+    private final CompanyOwnerService companyOwnerService;
 
     @Autowired
-    public AuthenticationController(CustomerService customerService, WeekendHouseOwnerService weekendHouseOwnerService, BoatOwnerService boatOwnerService,
-                                    AuthenticationManager authenticationManager, JwtTokenUtils tokenUtils, InstructorService instructorService) {
+    public AuthenticationController(AdminService adminService, CompanyOwnerService companyOwnerService,
+                                    AuthenticationManager authenticationManager, JwtTokenUtils tokenUtils) {
         this.tokenUtils = tokenUtils;
         this.authenticationManager = authenticationManager;
-        this.customerService = customerService;
-        this.weekendHouseOwnerService = weekendHouseOwnerService;
-        this.boatOwnerService = boatOwnerService;
-        this.instructorService = instructorService;
+        this.adminService = adminService;
+        this.companyOwnerService = companyOwnerService;
     }
 
     // Prvi endpoint koji pogadja korisnik kada se loguje.
@@ -59,41 +51,26 @@ public class AuthenticationController {
         // Kreiraj token za tog korisnika
         String jwt;
         try {
-            Customer customer = (Customer) authentication.getPrincipal();
-            if(customer.getPenalsResetingDate().getMonth() < (new Date().getMonth()) || customer.getPenalsResetingDate().getYear() <= (new Date().getYear())) {
-                customer.setPenalsResetingDate(new Date());
-                customer.setPenals(0);
-                customerService.saveCustomer(customer);
-            }
-            jwt = tokenUtils.generateToken(customer.getUsername(), customer.getRole());
+            CompanyOwner companyOwner = (CompanyOwner) authentication.getPrincipal();
+            jwt = tokenUtils.generateToken(companyOwner.getUsername(), companyOwner.getRole());
         } catch (Exception e) {
-            try {
-                BoatOwner boatOwner = (BoatOwner) authentication.getPrincipal();
-                jwt = tokenUtils.generateToken(boatOwner.getUsername(), boatOwner.getRole());
-            } catch (Exception e1) {
-                try {
-                    Instructor instructor = (Instructor) authentication.getPrincipal();
-                    jwt = tokenUtils.generateToken(instructor.getUsername(), instructor.getRole());
-                } catch (Exception e2) {
-                    WeekendHouseOwner weekendHouseOwner = (WeekendHouseOwner) authentication.getPrincipal();
-                    jwt = tokenUtils.generateToken(weekendHouseOwner.getUsername(), weekendHouseOwner.getRole());
-                }
-            }
+            Admin admin = (Admin) authentication.getPrincipal();
+            jwt = tokenUtils.generateToken(admin.getUsername(), admin.getRole());
         }
 
         // Vrati token kao odgovor na uspesnu autentifikaciju
         return jwt;
     }
 
-    @GetMapping(path = "/getAllUsernames")
-    public Set<String> getAllUsername() {
-        Set<String> usernameList = new HashSet<String>();
-        usernameList.addAll(customerService.findAllUsernames());
-        usernameList.addAll(weekendHouseOwnerService.findAllUsernames());
-        usernameList.addAll(boatOwnerService.findAllUsernames());
-        usernameList.addAll(instructorService.findAllUsernames());
-
-        return usernameList;
-    }
+//    @GetMapping(path = "/getAllUsernames")
+//    public Set<String> getAllUsername() {
+//        Set<String> usernameList = new HashSet<String>();
+//        usernameList.addAll(customerService.findAllUsernames());
+//        usernameList.addAll(weekendHouseOwnerService.findAllUsernames());
+//        usernameList.addAll(boatOwnerService.findAllUsernames());
+//        usernameList.addAll(instructorService.findAllUsernames());
+//
+//        return usernameList;
+//    }
 
 }
