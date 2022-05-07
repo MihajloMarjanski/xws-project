@@ -2,8 +2,9 @@ package handler_grpc
 
 import (
 	"context"
-	pb "github.com/MihajloMarjanski/xws-project/common/proto/user_service"
 	"user-service/service"
+
+	pb "github.com/MihajloMarjanski/xws-project/common/proto/user_service"
 )
 
 type UserHandler struct {
