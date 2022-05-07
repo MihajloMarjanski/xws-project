@@ -1,8 +1,8 @@
 package main
 
 import (
-	"user-service/startup"
-	cfg "user-service/startup/config"
+	"post-service/startup"
+	cfg "post-service/startup/config"
 )
 
 func main() {

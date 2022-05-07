@@ -1,12 +1,12 @@
 package main
 
 import (
-	"user-service/startup"
-	cfg "user-service/startup/config"
+	"api-gateway/startup"
+	"api-gateway/startup/config"
 )
 
 func main() {
-	config := cfg.NewConfig()
+	config := config.NewConfig()
 	server := startup.NewServer(config)
 	server.Start()
 }

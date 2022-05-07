@@ -1,0 +1,31 @@
+syntax="proto3";
+
+option go_package = "common/user";
+
+package post;
+
+import "google/api/annotations.proto";
+
+service PostService{
+        rpc CreatePost(CreatePostRequest) returns(CreatePostResponse) {
+          option (google.api.http) = {
+          post: "/post"
+            body: "post"
+        };
+        }
+}
+
+message CreatePostRequest {
+  Post post = 1;
+}
+message CreatePostResponse {
+  int64 id = 1;
+}
+
+message Post {
+  string user = 1;
+  string title = 2;
+  string text = 3;
+  string img = 4;
+  string link = 5;
+}
