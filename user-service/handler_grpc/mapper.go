@@ -67,3 +67,26 @@ func mapProtoToUser(user *pb.UserWithPass) model.User {
 	}
 	return userPb
 }
+
+func mapProtoToExperience(experience *pb.Experience) model.Experience {
+	dateFrom, _ := time.Parse(time.RFC3339, experience.From)
+	dateUntil, _ := time.Parse(time.RFC3339, experience.Until)
+	expPb := model.Experience{
+		ID:       uint(experience.Id),
+		Company:  experience.Company,
+		Position: experience.Position,
+		From:     dateFrom,
+		Until:    dateUntil,
+		UserID:   uint(experience.UserId),
+	}
+	return expPb
+}
+
+func mapProtoToInterest(interest *pb.Interest) model.Interest {
+	intPb := model.Interest{
+		ID:       uint(interest.Id),
+		Interest: interest.Interest,
+		UserID:   uint(interest.UserId),
+	}
+	return intPb
+}

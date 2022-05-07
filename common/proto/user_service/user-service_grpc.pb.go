@@ -26,6 +26,11 @@ type UserServiceClient interface {
 	GetMe(ctx context.Context, in *GetMeRequest, opts ...grpc.CallOption) (*GetMeResponse, error)
 	UpdateUser(ctx context.Context, in *UpdateUserRequest, opts ...grpc.CallOption) (*UpdateUserResponse, error)
 	SearchUsers(ctx context.Context, in *SearchUsersRequest, opts ...grpc.CallOption) (*SearchUsersResponse, error)
+	CreateUser(ctx context.Context, in *CreateUserRequest, opts ...grpc.CallOption) (*CreateUserResponse, error)
+	AddExperience(ctx context.Context, in *AddExperienceRequest, opts ...grpc.CallOption) (*AddExperienceResponse, error)
+	AddInterest(ctx context.Context, in *AddInterestRequest, opts ...grpc.CallOption) (*AddInterestResponse, error)
+	RemoveExperience(ctx context.Context, in *RemoveExperienceRequest, opts ...grpc.CallOption) (*RemoveExperienceResponse, error)
+	RemoveInterest(ctx context.Context, in *RemoveInterestRequest, opts ...grpc.CallOption) (*RemoveInterestResponse, error)
 }
 
 type userServiceClient struct {
@@ -72,6 +77,51 @@ func (c *userServiceClient) SearchUsers(ctx context.Context, in *SearchUsersRequ
 	return out, nil
 }
 
+func (c *userServiceClient) CreateUser(ctx context.Context, in *CreateUserRequest, opts ...grpc.CallOption) (*CreateUserResponse, error) {
+	out := new(CreateUserResponse)
+	err := c.cc.Invoke(ctx, "/user.UserService/CreateUser", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *userServiceClient) AddExperience(ctx context.Context, in *AddExperienceRequest, opts ...grpc.CallOption) (*AddExperienceResponse, error) {
+	out := new(AddExperienceResponse)
+	err := c.cc.Invoke(ctx, "/user.UserService/AddExperience", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *userServiceClient) AddInterest(ctx context.Context, in *AddInterestRequest, opts ...grpc.CallOption) (*AddInterestResponse, error) {
+	out := new(AddInterestResponse)
+	err := c.cc.Invoke(ctx, "/user.UserService/AddInterest", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *userServiceClient) RemoveExperience(ctx context.Context, in *RemoveExperienceRequest, opts ...grpc.CallOption) (*RemoveExperienceResponse, error) {
+	out := new(RemoveExperienceResponse)
+	err := c.cc.Invoke(ctx, "/user.UserService/RemoveExperience", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *userServiceClient) RemoveInterest(ctx context.Context, in *RemoveInterestRequest, opts ...grpc.CallOption) (*RemoveInterestResponse, error) {
+	out := new(RemoveInterestResponse)
+	err := c.cc.Invoke(ctx, "/user.UserService/RemoveInterest", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // UserServiceServer is the server API for UserService service.
 // All implementations must embed UnimplementedUserServiceServer
 // for forward compatibility
@@ -80,6 +130,11 @@ type UserServiceServer interface {
 	GetMe(context.Context, *GetMeRequest) (*GetMeResponse, error)
 	UpdateUser(context.Context, *UpdateUserRequest) (*UpdateUserResponse, error)
 	SearchUsers(context.Context, *SearchUsersRequest) (*SearchUsersResponse, error)
+	CreateUser(context.Context, *CreateUserRequest) (*CreateUserResponse, error)
+	AddExperience(context.Context, *AddExperienceRequest) (*AddExperienceResponse, error)
+	AddInterest(context.Context, *AddInterestRequest) (*AddInterestResponse, error)
+	RemoveExperience(context.Context, *RemoveExperienceRequest) (*RemoveExperienceResponse, error)
+	RemoveInterest(context.Context, *RemoveInterestRequest) (*RemoveInterestResponse, error)
 	mustEmbedUnimplementedUserServiceServer()
 }
 
@@ -98,6 +153,21 @@ func (UnimplementedUserServiceServer) UpdateUser(context.Context, *UpdateUserReq
 }
 func (UnimplementedUserServiceServer) SearchUsers(context.Context, *SearchUsersRequest) (*SearchUsersResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method SearchUsers not implemented")
+}
+func (UnimplementedUserServiceServer) CreateUser(context.Context, *CreateUserRequest) (*CreateUserResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CreateUser not implemented")
+}
+func (UnimplementedUserServiceServer) AddExperience(context.Context, *AddExperienceRequest) (*AddExperienceResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method AddExperience not implemented")
+}
+func (UnimplementedUserServiceServer) AddInterest(context.Context, *AddInterestRequest) (*AddInterestResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method AddInterest not implemented")
+}
+func (UnimplementedUserServiceServer) RemoveExperience(context.Context, *RemoveExperienceRequest) (*RemoveExperienceResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method RemoveExperience not implemented")
+}
+func (UnimplementedUserServiceServer) RemoveInterest(context.Context, *RemoveInterestRequest) (*RemoveInterestResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method RemoveInterest not implemented")
 }
 func (UnimplementedUserServiceServer) mustEmbedUnimplementedUserServiceServer() {}
 
@@ -184,6 +254,96 @@ func _UserService_SearchUsers_Handler(srv interface{}, ctx context.Context, dec 
 	return interceptor(ctx, in, info, handler)
 }
 
+func _UserService_CreateUser_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CreateUserRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserServiceServer).CreateUser(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/user.UserService/CreateUser",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserServiceServer).CreateUser(ctx, req.(*CreateUserRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _UserService_AddExperience_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(AddExperienceRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserServiceServer).AddExperience(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/user.UserService/AddExperience",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserServiceServer).AddExperience(ctx, req.(*AddExperienceRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _UserService_AddInterest_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(AddInterestRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserServiceServer).AddInterest(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/user.UserService/AddInterest",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserServiceServer).AddInterest(ctx, req.(*AddInterestRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _UserService_RemoveExperience_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(RemoveExperienceRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserServiceServer).RemoveExperience(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/user.UserService/RemoveExperience",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserServiceServer).RemoveExperience(ctx, req.(*RemoveExperienceRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _UserService_RemoveInterest_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(RemoveInterestRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserServiceServer).RemoveInterest(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/user.UserService/RemoveInterest",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserServiceServer).RemoveInterest(ctx, req.(*RemoveInterestRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // UserService_ServiceDesc is the grpc.ServiceDesc for UserService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -206,6 +366,26 @@ var UserService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "SearchUsers",
 			Handler:    _UserService_SearchUsers_Handler,
+		},
+		{
+			MethodName: "CreateUser",
+			Handler:    _UserService_CreateUser_Handler,
+		},
+		{
+			MethodName: "AddExperience",
+			Handler:    _UserService_AddExperience_Handler,
+		},
+		{
+			MethodName: "AddInterest",
+			Handler:    _UserService_AddInterest_Handler,
+		},
+		{
+			MethodName: "RemoveExperience",
+			Handler:    _UserService_RemoveExperience_Handler,
+		},
+		{
+			MethodName: "RemoveInterest",
+			Handler:    _UserService_RemoveInterest_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

@@ -68,3 +68,44 @@ func (handler *UserHandler) SearchUsers(ctx context.Context, request *pb.SearchU
 	}
 	return response, nil
 }
+
+func (handler *UserHandler) CreateUser(ctx context.Context, request *pb.CreateUserRequest) (*pb.CreateUserResponse, error) {
+	user := mapProtoToUser(request.User)
+	id := handler.userService.CreateUser(user.Name, user.Email, user.Password, user.UserName, user.Gender, user.PhoneNumber, user.DateOfBirth, user.Biography)
+	response := &pb.CreateUserResponse{
+		Id: int64(id),
+	}
+	return response, nil
+}
+
+func (handler *UserHandler) AddExperience(ctx context.Context, request *pb.AddExperienceRequest) (*pb.AddExperienceResponse, error) {
+	experience := mapProtoToExperience(request.Experience)
+	id := handler.userService.AddExperience(experience.Company, experience.Position, experience.From, experience.Until, experience.UserID)
+	response := &pb.AddExperienceResponse{
+		Id: int64(id),
+	}
+	return response, nil
+}
+
+func (handler *UserHandler) AddInterest(ctx context.Context, request *pb.AddInterestRequest) (*pb.AddInterestResponse, error) {
+	interest := mapProtoToInterest(request.Interest)
+	id := handler.userService.AddInterest(interest.Interest, interest.UserID)
+	response := &pb.AddInterestResponse{
+		Id: int64(id),
+	}
+	return response, nil
+}
+
+func (handler *UserHandler) RemoveExperience(ctx context.Context, request *pb.RemoveExperienceRequest) (*pb.RemoveExperienceResponse, error) {
+	id := request.Id
+	handler.userService.RemoveExperience(int(id))
+	response := &pb.RemoveExperienceResponse{}
+	return response, nil
+}
+
+func (handler *UserHandler) RemoveInterest(ctx context.Context, request *pb.RemoveInterestRequest) (*pb.RemoveInterestResponse, error) {
+	id := request.Id
+	handler.userService.RemoveInterest(int(id))
+	response := &pb.RemoveInterestResponse{}
+	return response, nil
+}

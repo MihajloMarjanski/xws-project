@@ -9,9 +9,9 @@ type Config struct {
 }
 
 func NewConfig() *Config {
-	os.Setenv("GATEWAY_PORT", "8100")
+	os.Setenv("GATEWAY_PORT", "8000")
 	os.Setenv("USER_SERVICE_HOST", "DESKTOP-NJH4ABT")
-	os.Setenv("USER_SERVICE_PORT", "8000")
+	os.Setenv("USER_SERVICE_PORT", "8100")
 	return &Config{
 		// err := godotenv.Load("dev.env")
 		// if err != nil {
