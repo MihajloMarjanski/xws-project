@@ -28,7 +28,16 @@ func (handler *PostHandler) CreatePost(ctx context.Context, request *pb.CreatePo
 	post := mapProtoToPost(request.Post)
 	createdPost := handler.postService.CreatePost(post.Title, post.Text, post.Img, post.Link, post.UserID)
 	response := &pb.CreatePostResponse{
-		Id: int64(createdPost.ID),
+		Id: createdPost.ID.Hex(),
+	}
+	return response, nil
+}
+
+func (handler *PostHandler) AddComment(ctx context.Context, request *pb.AddCommentRequest) (*pb.AddCommnetResponse, error) {
+	comment := mapProtoToCommentDTO(request.Comment)
+	handler.postService.AddComment(&comment)
+	response := &pb.AddCommnetResponse{
+		Id: comment.Text,
 	}
 	return response, nil
 }

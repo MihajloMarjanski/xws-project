@@ -5,6 +5,7 @@ import (
 	"strconv"
 
 	pb "github.com/MihajloMarjanski/xws-project/common/proto/post_service"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 func mapProtoToPost(post *pb.Post) model.Post {
@@ -17,4 +18,15 @@ func mapProtoToPost(post *pb.Post) model.Post {
 		UserID: uint(userId),
 	}
 	return postPb
+}
+
+func mapProtoToCommentDTO(comment *pb.Comment) model.CommentDTO {
+	userId, _ := strconv.ParseUint(comment.User, 0, 32)
+	postId, _ := primitive.ObjectIDFromHex(comment.Post)
+	commentPb := model.CommentDTO{
+		PostID: postId,
+		Text:   comment.Text,
+		UserID: uint(userId),
+	}
+	return commentPb
 }
