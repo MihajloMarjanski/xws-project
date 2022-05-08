@@ -1,0 +1,58 @@
+syntax="proto3";
+
+option go_package = "common/request";
+
+package requests;
+
+import "google/api/annotations.proto";
+
+service RequestsService{
+    rpc GetAllByRecieverId(GetAllByRecieverIdRequest) returns (GetAllByRecieverIdResponse){
+        option (google.api.http) = {
+            get: "/getAll"
+        };
+    }
+    rpc AcceptRequest(AcceptRequestRequest) returns (AcceptRequestResponse){
+        option (google.api.http) = {
+            put: "/acceptRequest/{id1}/{id2}"
+            body: "" 
+        };
+    }
+    rpc DeclineRequest(DeclineRequestRequest) returns (DeclineRequestResponse){
+        option (google.api.http) = {
+            put: "/declineRequest/{id1}/{id2}"
+            body: ""
+        };
+    }
+}
+
+message GetAllByRecieverIdRequest{
+    int64 recieverId = 1;
+}
+
+message GetAllByRecieverIdResponse{
+    repeated Request requests = 1;
+}
+
+message Request {
+    string SenderID = 1;
+	string ReceiverID = 2; 	
+}
+
+message AcceptRequestRequest{
+    string SenderID = 1;
+	string ReceiverID = 2; 	
+}
+
+message AcceptRequestResponse{
+
+}
+
+message DeclineRequestRequest{
+    string SenderID = 1;
+	string ReceiverID = 2; 	
+}
+
+message DeclineRequestResponse{
+
+}
