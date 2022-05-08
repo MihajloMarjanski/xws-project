@@ -37,18 +37,16 @@ func (repo *UserRepository) Close() error {
 	return nil
 }
 
-func (repo *UserRepository) SearchUsers(username string) []model.UserDTO {
+func (repo *UserRepository) SearchUsers(username string) []model.User {
 	var users []model.User
-	var usersDTO []model.UserDTO
-	repo.db.Preload("Interests").Preload("Experiences").Model(&users).Where("LOWER(user_name) LIKE ?", "%"+strings.ToLower(username)+"%").Find(&usersDTO)
-	return usersDTO
+	repo.db.Preload("Interests").Preload("Experiences").Model(&users).Where("LOWER(user_name) LIKE ?", "%"+strings.ToLower(username)+"%").Find(&users)
+	return users
 }
 
-func (repo *UserRepository) GetByID(id int) model.UserDTO {
+func (repo *UserRepository) GetByID(id int) model.User {
 	var user model.User
-	var userDTO model.UserDTO
-	repo.db.Preload("Interests").Preload("Experiences").Model(&user).Find(&userDTO, id)
-	return userDTO
+	repo.db.Preload("Interests").Preload("Experiences").Model(&user).Find(&user, id)
+	return user
 }
 
 func (repo *UserRepository) GetByUsername(username string) model.User {

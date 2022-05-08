@@ -46,6 +46,20 @@ func (handler *UserHandler) GetMe(ctx context.Context, request *pb.GetMeRequest)
 	response := &pb.GetMeResponse{
 		User: userPb,
 	}
+
+	//response1, err := http.Get("http://localhost:8600/company/owner/1")
+	//if err != nil {
+	//	fmt.Print(err.Error())
+	//	os.Exit(1)
+	//}
+	//
+	//responseData, err := ioutil.ReadAll(response1.Body)
+	//if err != nil {
+	//	log.Fatal(err)
+	//}
+	//log.Println("dobio: ", string(responseData))
+	//log.Println("dobio pre: ", response1)
+
 	return response, nil
 }
 
@@ -108,5 +122,13 @@ func (handler *UserHandler) RemoveInterest(ctx context.Context, request *pb.Remo
 	id := request.Id
 	handler.userService.RemoveInterest(int(id))
 	response := &pb.RemoveInterestResponse{}
+	return response, nil
+}
+func (handler *UserHandler) Login(ctx context.Context, request *pb.LoginRequest) (*pb.LoginResponse, error) {
+	creds := request.Credentials
+	token := handler.userService.Login(creds.Username, creds.Password)
+	response := &pb.LoginResponse{
+		Token: token,
+	}
 	return response, nil
 }

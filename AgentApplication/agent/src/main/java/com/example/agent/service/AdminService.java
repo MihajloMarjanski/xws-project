@@ -11,6 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
@@ -40,5 +41,9 @@ public class AdminService {
         company.get().setApproved(true);
         companyRepository.save(company.get());
         return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    public Collection<String> findAllUsernames() {
+        return adminRepository.findAllUsernames();
     }
 }

@@ -15,6 +15,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
+import java.util.HashSet;
+import java.util.Set;
 
 
 //Kontroler zaduzen za autentifikaciju korisnika
@@ -62,15 +64,13 @@ public class AuthenticationController {
         return jwt;
     }
 
-//    @GetMapping(path = "/getAllUsernames")
-//    public Set<String> getAllUsername() {
-//        Set<String> usernameList = new HashSet<String>();
-//        usernameList.addAll(customerService.findAllUsernames());
-//        usernameList.addAll(weekendHouseOwnerService.findAllUsernames());
-//        usernameList.addAll(boatOwnerService.findAllUsernames());
-//        usernameList.addAll(instructorService.findAllUsernames());
-//
-//        return usernameList;
-//    }
+    @GetMapping(path = "/getAllUsernames")
+    public Set<String> getAllUsername() {
+        Set<String> usernameList = new HashSet<>();
+        usernameList.addAll(adminService.findAllUsernames());
+        usernameList.addAll(companyService.findAllUsernames());
+
+        return usernameList;
+    }
 
 }

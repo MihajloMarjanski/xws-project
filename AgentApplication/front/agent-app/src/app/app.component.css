@@ -1,0 +1,4 @@
+.body-wrapper {
+    /* margin-top: 6%; */
+    min-height: calc(100vh - 60px - 220px)
+}

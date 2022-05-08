@@ -1,10 +1,24 @@
 package service
 
 import (
+	"github.com/dgrijalva/jwt-go"
+	"golang.org/x/crypto/bcrypt"
 	"time"
 	"user-service/model"
 	"user-service/repo"
 )
+
+type Credentials struct {
+	Password string `json:"password"`
+	Username string `json:"username"`
+}
+
+type Claims struct {
+	Username string `json:"username"`
+	jwt.StandardClaims
+}
+
+var jwtKey = []byte("tajni_kljuc_za_jwt_hash")
 
 type UserService struct {
 	userRepo *repo.UserRepository
@@ -22,11 +36,11 @@ func New() (*UserService, error) {
 	}, nil
 }
 
-func (s *UserService) SearchUsers(username string) []model.UserDTO {
+func (s *UserService) SearchUsers(username string) []model.User {
 	return s.userRepo.SearchUsers(username)
 }
 
-func (s *UserService) GetByID(id int) model.UserDTO {
+func (s *UserService) GetByID(id int) model.User {
 	return s.userRepo.GetByID(id)
 }
 
@@ -51,8 +65,8 @@ func (s *UserService) CloseDB() error {
 }
 
 func (s *UserService) CreateUser(name string, email string, password string, username string, gender model.Gender, phonenumber string, dateofbirth time.Time, biography string) int {
-
-	return s.userRepo.CreateUser(name, email, password, username, gender, phonenumber, dateofbirth, biography)
+	hashedPassword, _ := bcrypt.GenerateFromPassword([]byte(password), 8)
+	return s.userRepo.CreateUser(name, email, string(hashedPassword), username, gender, phonenumber, dateofbirth, biography)
 }
 
 func (s *UserService) AddInterest(interest string, userId uint) int {
@@ -68,4 +82,28 @@ func (s *UserService) AddExperience(company string, position string, from time.T
 func (s *UserService) UpdateUser(id uint, name string, email string, password string, username string, gender model.Gender, phonenumber string, dateofbirth time.Time, biography string) int {
 
 	return s.userRepo.UpdateUser(id, name, email, password, username, gender, phonenumber, dateofbirth, biography)
+}
+
+func (s *UserService) Login(username string, password string) string {
+	expectedPassword := s.GetByUsername(username).Password
+	err := bcrypt.CompareHashAndPassword([]byte(expectedPassword), []byte(password))
+	if err != nil {
+		return ""
+	}
+	expirationTime := time.Now().Add(15 * time.Minute)
+
+	claims := &Claims{
+		Username: username,
+		StandardClaims: jwt.StandardClaims{
+			ExpiresAt: expirationTime.Unix(),
+		},
+	}
+
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
+
+	tokenString, err := token.SignedString(jwtKey)
+	if err != nil {
+		return ""
+	}
+	return tokenString
 }

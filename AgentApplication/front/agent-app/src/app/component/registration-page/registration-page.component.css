@@ -1,0 +1,43 @@
+.stepper {
+    margin: 4%;
+    margin-left: 20%;
+    margin-right: 20%;
+  }
+  
+  form {
+    width: auto;
+  }
+  
+  mat-form-field {
+    width: 400px;
+    padding-top: 10px;
+  }
+  
+  
+  mat-radio-button {
+    margin-left: 16px;
+    display: inline-block;
+  }
+  
+  ul {
+    column-count:2;
+    -moz-column-count:2; /* Firefox */
+    -webkit-column-count:2; /* Safari and Chrome */
+  }
+  
+  ul li {
+    display: block;
+  }
+  
+  .mat-stepper-vertical {
+    margin-top: 8px;
+  }
+  
+  .mat-form-field {
+    margin-top: 16px;
+  }
+  
+  .errorText {
+    color: red;
+    font-size: small;
+  }
