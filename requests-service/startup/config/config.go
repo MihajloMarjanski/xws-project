@@ -8,7 +8,7 @@ type Config struct {
 }
 
 func NewConfig() *Config {
-	os.Setenv("REQUSET_SERVICE_PORT", "8200")
+	os.Setenv("REQUEST_SERVICE_PORT", "8200")
 	os.Setenv("REQUEST_SERVICE_HOST", "requests-service")
 	return &Config{
 		Port: os.Getenv("REQUEST_SERVICE_PORT"),

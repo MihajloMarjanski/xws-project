@@ -39,7 +39,7 @@ func (repo *RequestsRepository) Close() error {
 func (repo *RequestsRepository) GetAllByRecieverId(rid uint) []model.Request {
 	var request model.Request
 	var requests []model.Request
-	repo.db.Model(&request).Where("receiver_id  = ?", rid).Find(&request)
+	repo.db.Model(&request).Where("receiver_id  = ?", rid).Find(&requests)
 	return requests
 }
 
