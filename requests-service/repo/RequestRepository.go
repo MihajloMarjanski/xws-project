@@ -21,6 +21,7 @@ func New() (*RequestsRepository, error) {
 		return nil, err
 	}
 	repo.db = db
+	repo.db.AutoMigrate(&model.Request{}, &model.Connection{})
 
 	return repo, nil
 }
