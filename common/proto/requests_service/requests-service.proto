@@ -9,25 +9,31 @@ import "google/api/annotations.proto";
 service RequestsService{
     rpc GetAllByRecieverId(GetAllByRecieverIdRequest) returns (GetAllByRecieverIdResponse){
         option (google.api.http) = {
-            get: "/getAll"
+            get: "/getAll/{RecieverID}"
         };
     }
     rpc AcceptRequest(AcceptRequestRequest) returns (AcceptRequestResponse){
         option (google.api.http) = {
-            put: "/acceptRequest/{id1}/{id2}"
+            put: "/acceptRequest/{SenderID}/{RecieverID}"
             body: "" 
         };
     }
     rpc DeclineRequest(DeclineRequestRequest) returns (DeclineRequestResponse){
         option (google.api.http) = {
-            put: "/declineRequest/{id1}/{id2}"
+            put: "/declineRequest/{SenderID}/{RecieverID}"
+            body: ""
+        };
+    }
+    rpc SendRequest(SendRequestRequest) returns (SendRequestResponse){
+        option (google.api.http) = {
+            put: "/sendRequest/{SenderID}/{RecieverID}"
             body: ""
         };
     }
 }
 
 message GetAllByRecieverIdRequest{
-    int64 recieverId = 1;
+    int64 RecieverID = 1;
 }
 
 message GetAllByRecieverIdResponse{
@@ -35,13 +41,13 @@ message GetAllByRecieverIdResponse{
 }
 
 message Request {
-    string SenderID = 1;
-	string ReceiverID = 2; 	
+    int64 SenderID = 1;
+	int64 RecieverID = 2; 	
 }
 
 message AcceptRequestRequest{
-    string SenderID = 1;
-	string ReceiverID = 2; 	
+    int64 SenderID = 1;
+	int64 RecieverID = 2; 	
 }
 
 message AcceptRequestResponse{
@@ -49,10 +55,19 @@ message AcceptRequestResponse{
 }
 
 message DeclineRequestRequest{
-    string SenderID = 1;
-	string ReceiverID = 2; 	
+    int64 SenderID = 1;
+	int64 RecieverID = 2; 	
 }
 
 message DeclineRequestResponse{
+
+}
+
+message SendRequestRequest{
+    int64 SenderID = 1;
+	int64 RecieverID = 2; 	
+}
+
+message SendRequestResponse{
 
 }

@@ -44,8 +44,8 @@ func (repo *RequestsRepository) GetAllByRecieverId(rid uint) []model.Request {
 
 func (repo *RequestsRepository) AcceptRequest(sid, rid uint) {
 	request := model.Request{
-		Sender_id:   sid,
-		Receiver_id: rid,
+		SenderID:   sid,
+		ReceiverID: rid,
 	}
 	repo.db.Delete(&request)
 
@@ -59,26 +59,26 @@ func (repo *RequestsRepository) AcceptRequest(sid, rid uint) {
 
 func (repo *RequestsRepository) DeclineRequest(sid, rid uint) {
 	request := model.Request{
-		Sender_id:   sid,
-		Receiver_id: rid,
+		SenderID:   sid,
+		ReceiverID: rid,
 	}
 	repo.db.Delete(&request)
 }
 
-func (repo *RequestsRepository) SendRequest(sid, rid uint, security string) {
-	if security == "private" {
-		request := model.Request{
-			Sender_id:   sid,
-			Receiver_id: rid,
-		}
+func (repo *RequestsRepository) SendRequest(sid, rid uint) {
+	// if security == "private" {
+	// 	request := model.Request{
+	// 		Sender_id:   sid,
+	// 		Receiver_id: rid,
+	// 	}
 
-		repo.db.Create(&request)
-	} else if security == "public" {
-		connection := model.Connection{
-			UserOne: sid,
-			UserTwo: rid,
-		}
-
-		repo.db.Create(&connection)
+	// 	repo.db.Create(&request)
+	// } else if security == "public" {
+	connection := model.Connection{
+		UserOne: sid,
+		UserTwo: rid,
 	}
+
+	repo.db.Create(&connection)
+	//}
 }

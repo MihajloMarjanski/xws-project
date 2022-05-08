@@ -5,29 +5,37 @@ import (
 	"requests-service/repo"
 )
 
-type RequestService struct {
-	reqRepo *repo.RequestRepository
+type RequestsService struct {
+	reqRepo *repo.RequestsRepository
 }
 
-func New() (*RequestService, error) {
+func New() (*RequestsService, error) {
 	reqRepo, err := repo.New()
 	if err != nil {
 		return nil, err
 	}
 
-	return &RequestService{
+	return &RequestsService{
 		reqRepo: reqRepo,
 	}, nil
 }
 
-func (s *RequestService) GetAllByRecieverId(rid uint) []model.Request {
+func (s *RequestsService) CloseDB() error {
+	return s.reqRepo.Close()
+}
+
+func (s *RequestsService) GetAllByRecieverId(rid uint) []model.Request {
 	return s.reqRepo.GetAllByRecieverId(rid)
 }
 
-func (s *RequestService) AcceptRequest(sid, rid uint) {
+func (s *RequestsService) AcceptRequest(sid, rid uint) {
 	s.reqRepo.AcceptRequest(sid, rid)
 }
 
-func (s *RequestService) DeclineRequest(sid, rid uint) {
+func (s *RequestsService) DeclineRequest(sid, rid uint) {
 	s.reqRepo.DeclineRequest(sid, rid)
+}
+
+func (s *RequestsService) SendRequest(sid, rid uint) {
+	s.reqRepo.SendRequest(sid, rid)
 }

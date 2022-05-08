@@ -7,14 +7,14 @@ import (
 	"requests-service/handler_grpc"
 	config "requests-service/startup/config"
 
-	requestProto "github.com/MihajloMarjanski/xws-project/common/proto/request_service"
+	requestProto "github.com/MihajloMarjanski/xws-project/common/proto/requests_service"
 
 	"google.golang.org/grpc"
 )
 
 type Server struct {
 	config *config.Config
-	requestProto.UnimplementedRequestServiceServer
+	requestProto.UnimplementedRequestsServiceServer
 }
 
 func NewServer(config *config.Config) *Server {
@@ -31,14 +31,14 @@ func (server *Server) Start() {
 	server.startGrpcServer(requestHandler)
 }
 
-func (server *Server) startGrpcServer(reqHandler *handler_grpc.RequestHandler) {
+func (server *Server) startGrpcServer(reqHandler *handler_grpc.RequestsHandler) {
 	listener, err := net.Listen("tcp", fmt.Sprintf(":%s", server.config.Port))
 	if err != nil {
 		log.Fatalf("Failed to listen: %v", err)
 	}
 
 	grpcServer := grpc.NewServer()
-	requestProto.RegisterRequestServiceServer(grpcServer, reqHandler)
+	requestProto.RegisterRequestsServiceServer(grpcServer, reqHandler)
 	if err := grpcServer.Serve(listener); err != nil {
 		log.Fatalf("failed to serve: %s", err)
 	}

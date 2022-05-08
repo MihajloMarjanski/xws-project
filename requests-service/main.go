@@ -1,10 +1,11 @@
 package main
 
-import {
-	
-}
+import (
+	"requests-service/startup"
+	cfg "requests-service/startup/config"
+)
 
-func main(){
+func main() {
 	config := cfg.NewConfig()
 	server := startup.NewServer(config)
 	server.Start()
