@@ -10,7 +10,7 @@ type Config struct {
 }
 
 func NewConfig() *Config {
-	os.Setenv("POST_SERVICE_PORT", "8001")
+	os.Setenv("POST_SERVICE_PORT", "8300")
 	os.Setenv("POST_SERVICE_HOST", "post-service")
 	return &Config{
 		// err := godotenv.Load("dev.env")
