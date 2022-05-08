@@ -1,9 +1,10 @@
 package handler_grpc
 
 import (
-	pb "github.com/MihajloMarjanski/xws-project/common/proto/user_service"
 	"time"
 	"user-service/model"
+
+	pb "github.com/MihajloMarjanski/xws-project/common/proto/user_service"
 )
 
 func mapUserDtoToProto(user model.User) *pb.User {
