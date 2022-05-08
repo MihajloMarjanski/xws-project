@@ -30,3 +30,8 @@ type CommentDTO struct {
 	UserID uint               `bson:"userId" json:"userId"`
 	Text   string             `bson:"text" json:"text"`
 }
+
+type LikeDTO struct {
+	PostID primitive.ObjectID `bson:"postId" json:"postId"`
+	UserID uint               `bson:"userId" json:"userId"`
+}

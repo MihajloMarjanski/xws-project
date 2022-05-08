@@ -24,6 +24,9 @@ const _ = grpc.SupportPackageIsVersion7
 type PostServiceClient interface {
 	CreatePost(ctx context.Context, in *CreatePostRequest, opts ...grpc.CallOption) (*CreatePostResponse, error)
 	AddComment(ctx context.Context, in *AddCommentRequest, opts ...grpc.CallOption) (*AddCommnetResponse, error)
+	AddLike(ctx context.Context, in *AddLikeRequest, opts ...grpc.CallOption) (*AddLikeResponse, error)
+	AddDislike(ctx context.Context, in *AddDislikeRequest, opts ...grpc.CallOption) (*AddLikeResponse, error)
+	GetPostsForUser(ctx context.Context, in *User, opts ...grpc.CallOption) (*PostsResponse, error)
 }
 
 type postServiceClient struct {
@@ -52,12 +55,42 @@ func (c *postServiceClient) AddComment(ctx context.Context, in *AddCommentReques
 	return out, nil
 }
 
+func (c *postServiceClient) AddLike(ctx context.Context, in *AddLikeRequest, opts ...grpc.CallOption) (*AddLikeResponse, error) {
+	out := new(AddLikeResponse)
+	err := c.cc.Invoke(ctx, "/post.PostService/AddLike", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *postServiceClient) AddDislike(ctx context.Context, in *AddDislikeRequest, opts ...grpc.CallOption) (*AddLikeResponse, error) {
+	out := new(AddLikeResponse)
+	err := c.cc.Invoke(ctx, "/post.PostService/AddDislike", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *postServiceClient) GetPostsForUser(ctx context.Context, in *User, opts ...grpc.CallOption) (*PostsResponse, error) {
+	out := new(PostsResponse)
+	err := c.cc.Invoke(ctx, "/post.PostService/GetPostsForUser", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // PostServiceServer is the server API for PostService service.
 // All implementations must embed UnimplementedPostServiceServer
 // for forward compatibility
 type PostServiceServer interface {
 	CreatePost(context.Context, *CreatePostRequest) (*CreatePostResponse, error)
 	AddComment(context.Context, *AddCommentRequest) (*AddCommnetResponse, error)
+	AddLike(context.Context, *AddLikeRequest) (*AddLikeResponse, error)
+	AddDislike(context.Context, *AddDislikeRequest) (*AddLikeResponse, error)
+	GetPostsForUser(context.Context, *User) (*PostsResponse, error)
 	mustEmbedUnimplementedPostServiceServer()
 }
 
@@ -70,6 +103,15 @@ func (UnimplementedPostServiceServer) CreatePost(context.Context, *CreatePostReq
 }
 func (UnimplementedPostServiceServer) AddComment(context.Context, *AddCommentRequest) (*AddCommnetResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method AddComment not implemented")
+}
+func (UnimplementedPostServiceServer) AddLike(context.Context, *AddLikeRequest) (*AddLikeResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method AddLike not implemented")
+}
+func (UnimplementedPostServiceServer) AddDislike(context.Context, *AddDislikeRequest) (*AddLikeResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method AddDislike not implemented")
+}
+func (UnimplementedPostServiceServer) GetPostsForUser(context.Context, *User) (*PostsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetPostsForUser not implemented")
 }
 func (UnimplementedPostServiceServer) mustEmbedUnimplementedPostServiceServer() {}
 
@@ -120,6 +162,60 @@ func _PostService_AddComment_Handler(srv interface{}, ctx context.Context, dec f
 	return interceptor(ctx, in, info, handler)
 }
 
+func _PostService_AddLike_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(AddLikeRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PostServiceServer).AddLike(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/post.PostService/AddLike",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PostServiceServer).AddLike(ctx, req.(*AddLikeRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _PostService_AddDislike_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(AddDislikeRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PostServiceServer).AddDislike(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/post.PostService/AddDislike",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PostServiceServer).AddDislike(ctx, req.(*AddDislikeRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _PostService_GetPostsForUser_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(User)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PostServiceServer).GetPostsForUser(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/post.PostService/GetPostsForUser",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PostServiceServer).GetPostsForUser(ctx, req.(*User))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // PostService_ServiceDesc is the grpc.ServiceDesc for PostService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -134,6 +230,18 @@ var PostService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "AddComment",
 			Handler:    _PostService_AddComment_Handler,
+		},
+		{
+			MethodName: "AddLike",
+			Handler:    _PostService_AddLike_Handler,
+		},
+		{
+			MethodName: "AddDislike",
+			Handler:    _PostService_AddDislike_Handler,
+		},
+		{
+			MethodName: "GetPostsForUser",
+			Handler:    _PostService_GetPostsForUser_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

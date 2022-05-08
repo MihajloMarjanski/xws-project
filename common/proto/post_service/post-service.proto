@@ -4,6 +4,7 @@ option go_package = "common/user";
 
 package post;
 
+import "google/protobuf/timestamp.proto";
 import "google/api/annotations.proto";
 
 service PostService{
@@ -20,6 +21,26 @@ service PostService{
             body: "comment"
         };
         }
+
+        rpc AddLike(AddLikeRequest) returns(AddLikeResponse) {
+          option (google.api.http) = {
+          post: "/post/like"
+            body: "like"
+        };
+        }
+
+        rpc AddDislike(AddDislikeRequest) returns(AddLikeResponse) {
+          option (google.api.http) = {
+          post: "/post/dislike"
+            body: "dislike"
+        };
+        }
+
+        rpc GetPostsForUser(User) returns(PostsResponse) {
+          option (google.api.http) = {
+            get: "/post/user/{user}"
+        };
+        }
 }
 
 message CreatePostRequest {
@@ -28,17 +49,62 @@ message CreatePostRequest {
 message AddCommentRequest {
   Comment comment = 1;
 }
+message AddLikeRequest {
+  Like like = 1;
+}
+message AddDislikeRequest {
+  Like dislike = 1;
+}
+
+
+message PostsResponse {
+  repeated PostResp post = 1;
+}
 message CreatePostResponse {
   string id = 1;
 }
 message AddCommnetResponse {
   string id = 1;
 }
+message AddLikeResponse {
+  string id = 1;
+}
+
+message User {
+  string user = 1;
+}
 
 message Comment {
   string user = 1;
   string text = 2;
   string post = 3;
+}
+
+message Like {
+  string user = 1;
+  string post = 2;
+}
+
+message PostResp {
+  int64 user = 1;
+  string title = 2;
+  string text = 3;
+  string img = 4;
+  string link = 5;
+  repeated CommentResp comments = 6;
+  repeated LikeResp like = 7;
+  repeated LikeResp dislike = 8;
+  string id = 9;
+  google.protobuf.Timestamp createdAt = 10;
+}
+
+message CommentResp {
+  int64 user = 1;
+  string text = 2;
+  google.protobuf.Timestamp createdAt = 4;
+}
+message LikeResp {
+  int64 user = 1;
 }
 
 message Post {

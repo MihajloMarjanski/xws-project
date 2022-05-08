@@ -42,3 +42,15 @@ func (service *PostService) CreatePost(title string, text string, img string, li
 func (service *PostService) AddComment(comment *model.CommentDTO) error {
 	return service.postRepo.AddComment(comment)
 }
+
+func (service *PostService) AddLike(like *model.LikeDTO) error {
+	return service.postRepo.AddLike(like)
+}
+
+func (service *PostService) AddDislike(like *model.LikeDTO) error {
+	return service.postRepo.AddDislike(like)
+}
+
+func (service *PostService) GetPostsForUser(userID uint) []model.Post {
+	return service.postRepo.GetPostsForUser(&userID)
+}
