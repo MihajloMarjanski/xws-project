@@ -1,0 +1,88 @@
+<div class="stepper">
+    <h1>Registration form</h1>
+  <form name="rform" #registerForm="ngForm">
+      <mat-stepper orientation="vertical" linear #stepper >
+          <mat-step label="Fill in personal info">
+            
+            <ul>
+              <li>
+                <mat-form-field appearance="fill">
+                  <mat-label>First name</mat-label>
+                  <input matInput type="text" name="firstname" [(ngModel)]="companyOwner.firstName" required>
+                  <mat-hint *ngIf="companyOwner.firstName == ''">Required</mat-hint>
+                  <mat-icon matSuffix></mat-icon>
+                </mat-form-field>
+              </li>
+              <li>
+                <mat-form-field appearance="fill">
+                  <mat-label>Last name</mat-label>
+                  <input matInput type="text" name="lastname" [(ngModel)]="companyOwner.lastName" required>
+                  <mat-hint *ngIf="companyOwner.lastName == ''">Required</mat-hint>
+                </mat-form-field>
+              </li>
+              
+            </ul>
+            <div>
+              <button mat-button matStepperNext color="primary">Next</button>
+            </div>
+  
+          </mat-step>
+          <mat-step label="Fill in account info">
+            
+              <div>
+                <mat-form-field appearance="fill">
+                  <mat-label>E-mail</mat-label>
+                  <input matInput type="email" name="email" [formControl]="emailControl" [(ngModel)]="companyOwner.email" required [errorStateMatcher]="matcher"
+                          placeholder="pat@example.com">
+                  <mat-hint>Errors appear instantly!</mat-hint>
+                  <mat-error *ngIf="emailControl.hasError('email') && !emailControl.hasError('required')">
+                    Please enter a valid email address
+                  </mat-error>
+                  <mat-error *ngIf="emailControl.hasError('required')">
+                    Email is <strong>required</strong>
+                  </mat-error>
+                </mat-form-field>
+              </div>  
+              <div>
+                <mat-form-field appearance="fill">
+                  <mat-label>Username</mat-label>
+                  <input matInput type="text" name="username" [(ngModel)]="companyOwner.username" required >     
+                  <mat-hint *ngIf="companyOwner.username == ''">Requied</mat-hint>  
+                  <mat-hint *ngIf="usernames.includes(companyOwner.username)">Username already exists!</mat-hint>        
+                </mat-form-field>
+                <!-- <div *ngIf="usernames.includes(customer.username)" class="errorText">Username already exists!</div> -->
+              </div>   
+              <div>
+                <mat-form-field hintLabel="Between 6 and 16 characters" appearance="fill">
+                  <mat-label>Password</mat-label>
+                  <input matInput type="password" name="password" id="password" minlength="6" maxlength="16" [(ngModel)]="companyOwner.password" required>
+                </mat-form-field>
+              </div>
+              <div>
+                <mat-form-field appearance="fill">
+                  <mat-label>Confirm password</mat-label>
+                  <input matInput type="password" name="repassword" [(ngModel)]="repassword" required>
+                  <mat-hint *ngIf="companyOwner.password == ''">Required</mat-hint>
+                </mat-form-field>
+              </div>
+            
+  
+                <div>
+                  <button mat-button matStepperPrevious>Back</button>
+                  <button mat-button matStepperNext color="primary">Next</button>
+                </div>
+            </mat-step>
+            
+            <mat-step label="Submit registration request">
+              <p><b>Before submiting, please choose as which user are you registrating and check info you filled</b></p>
+              <div>                  
+                <div style="margin-top: 2%;">
+                  <button mat-button matStepperPrevious>Back</button>
+                  <button mat-raised-button color="accent" (click)="submit()" [disabled]="!(registerForm.valid && companyOwner.password === repassword)" >Submit</button>
+                </div>
+              </div>
+            </mat-step>
+      </mat-stepper>
+     </form>
+    </div>
+  

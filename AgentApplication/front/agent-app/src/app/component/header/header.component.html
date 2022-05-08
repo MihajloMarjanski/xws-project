@@ -1,0 +1,45 @@
+<mat-toolbar color="primary" class="navbar">
+    <button mat-button style="font-size : 25px" [routerLink]="['']">CompanyIn</button>
+    <button *ngIf="role != 'ROLE_ADMIN' && role != 'ROLE_BOAT_OWNER'&& role != 'ROLE_INSTRUCTOR'"
+             style="margin-left : 25px" mat-button [routerLink]="['weekend-houses']">Weekend houses</button>
+    <button *ngIf="role != 'ROLE_ADMIN' && role != 'ROLE_WEEKEND_HOUSE_OWNER' && role != 'ROLE_INSTRUCTOR'"
+             mat-button [routerLink]="['boats']">Boats</button>
+    <button *ngIf="role != 'ROLE_ADMIN' && role != 'ROLE_BOAT_OWNER' && role != 'ROLE_WEEKEND_HOUSE_OWNER'"
+             mat-button [routerLink]="['fishing-lessons']">Fishing lessons</button>
+    <button *ngIf="role == 'ROLE_INSTRUCTOR'" mat-button [routerLink]="['create-fishing-lesson']">Create</button>
+    <button *ngIf="role == 'ROLE_BOAT_OWNER'" mat-button [routerLink]="['create-boat']">Create</button>
+    <button *ngIf="role == 'ROLE_WEEKEND_HOUSE_OWNER'" mat-button [routerLink]="['create-weekend-house']">Create</button>
+    <button *ngIf="role == 'ROLE_WEEKEND_HOUSE_OWNER' || role == 'ROLE_BOAT_OWNER' || role == 'ROLE_INSTRUCTOR'"
+             mat-button [routerLink]="['report-customers']">Report customers</button>
+
+    <button *ngIf="role == 'ROLE_CUSTOMER'" mat-button [matMenuTriggerFor]="menu">Reservations history</button>
+        <mat-menu #menu="matMenu">
+        <button mat-menu-item [routerLink]="['customer-past-weekend-house-reservations']">Weekend houses</button>
+        <button mat-menu-item [routerLink]="['customer-past-boat-reservations']">Boats</button>
+        <button mat-menu-item [routerLink]="['customer-past-fishing-lesson-reservations']">Fishing lessons</button>
+        </mat-menu>
+
+    <button *ngIf="role == 'ROLE_CUSTOMER'" mat-button [matMenuTriggerFor]="menu1">My future reservations</button>
+        <mat-menu #menu1="matMenu">
+        <button mat-menu-item [routerLink]="['customer-future-weekend-house-reservations']">Weekend houses</button>
+        <button mat-menu-item [routerLink]="['customer-future-boat-reservations']">Boats</button>
+        <button mat-menu-item [routerLink]="['customer-future-fishing-lesson-reservations']">Fishing lessons</button>
+        </mat-menu>
+    
+
+
+
+
+    <span class="example-spacer" ></span>
+    <button *ngIf="role == 'ROLE_CUSTOMER' || role == 'ROLE_ADMIN' || role == 'ROLE_BOAT_OWNER' || role == 'ROLE_WEEKEND_HOUSE_OWNER' || 
+                    role == 'ROLE_INSTRUCTOR'" mat-icon-button [routerLink]="['user-profile']">
+        <mat-icon >account_circle</mat-icon>
+    </button>
+    <button *ngIf="role != 'ROLE_CUSTOMER' && role != 'ROLE_ADMIN' && role != 'ROLE_BOAT_OWNER' && role != 'ROLE_WEEKEND_HOUSE_OWNER' && 
+                    role != 'ROLE_INSTRUCTOR'" mat-button [routerLink]="['register']">Register</button>
+    <button *ngIf="role != 'ROLE_CUSTOMER' && role != 'ROLE_ADMIN' && role != 'ROLE_BOAT_OWNER' && role != 'ROLE_WEEKEND_HOUSE_OWNER' && 
+                    role != 'ROLE_INSTRUCTOR'" mat-raised-button [routerLink]="['login']">Log in</button>
+    <button *ngIf="role == 'ROLE_CUSTOMER' || role == 'ROLE_ADMIN' || role == 'ROLE_BOAT_OWNER' || role == 'ROLE_WEEKEND_HOUSE_OWNER' || 
+                    role == 'ROLE_INSTRUCTOR'" mat-raised-button mat-button (click)="logOut()">Log out</button>
+    </mat-toolbar>
+

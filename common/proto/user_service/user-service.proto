@@ -56,6 +56,12 @@ service UserService{
             delete: "/user/interest/{id}"
             };
         }
+        rpc Login(LoginRequest) returns(LoginResponse) {
+          option (google.api.http) = {
+            post: "/user/login"
+            body: "credentials"
+          };
+        }
 }
 
 
@@ -111,17 +117,25 @@ message RemoveInterestRequest {
 }
 message RemoveInterestResponse {
 }
+message LoginRequest {
+  Credentials credentials = 1;
+}
+message LoginResponse {
+  string token = 1;
+}
 
 
 message User {
-        int64 id = 1;
-        string name = 2;
-        string username = 3;
-        string email = 4;
-        string gender = 5;
-        string phone = 6;
-        string date = 7;
-        string biography = 8;
+  int64 id = 1;
+  string name = 2;
+  string username = 3;
+  string email = 4;
+  string gender = 5;
+  string phone = 6;
+  string date = 7;
+  string biography = 8;
+  repeated Experience experience = 9;
+  repeated Interest interests = 10;
 }
 
 message UserWithPass {
@@ -134,6 +148,8 @@ message UserWithPass {
   string date = 7;
   string biography = 8;
   string password = 9;
+  repeated Experience experience = 10;
+  repeated Interest interests = 11;
 }
 
 message Experience {
@@ -149,4 +165,9 @@ message Interest {
   int64 id = 1;
   string interest = 2;
   int64 userId = 3;
+}
+
+message Credentials {
+  string username = 1;
+  string password = 2;
 }

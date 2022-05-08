@@ -1,0 +1,17 @@
+<div class="loginPosition">
+    <div>
+        <mat-form-field appearance="fill" style="width: 350px;">
+            <mat-label>Username</mat-label>
+            <input matInput [(ngModel)]="credentials.username" required >
+        </mat-form-field>
+    </div>
+    <div style="width: 300px;">
+        <mat-form-field appearance="fill" style="width: 350px;">
+            <mat-label>Password</mat-label>
+            <input type="password"  matInput [(ngModel)]="credentials.password" required >
+        </mat-form-field>
+    </div>
+    <div>
+        <button mat-raised-button color="warn" (click)="submit()">Submit</button>
+    </div>
+</div>

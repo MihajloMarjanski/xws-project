@@ -6,7 +6,7 @@ import (
 	"user-service/model"
 )
 
-func mapUserDtoToProto(user model.UserDTO) *pb.User {
+func mapUserDtoToProto(user model.User) *pb.User {
 	userPb := &pb.User{
 		Id:        int64(user.ID),
 		Name:      user.Name,
@@ -17,23 +17,25 @@ func mapUserDtoToProto(user model.UserDTO) *pb.User {
 		Date:      user.DateOfBirth.String(),
 		Biography: user.Biography,
 	}
-	// for _, interest := range user.Interests {
-	// 	userPb.Interests = append(userPb.Interests, &pb.Interest{
-	// 		ID: interest.ID,
-	// 		Interest: interest.Interest,
-	// 		UserID: interest.UserID,
-	// 	})
-	// }
-	// for _, experience := range user.Experiences {
-	// 	userPb.Experiences = append(userPb.Experiences, &pb.Experience{
-	// 		ID: experience.ID,
-	// 		Company: experience.Company,
-	// 		Position: experience.Position,
-	// 		From: experience.From,
-	// 		Until: experience.Until,
-	// 		UserID: experience.UserID,
-	// 	})
-	// }
+
+	for _, interest := range user.Interests {
+		userPb.Interests = append(userPb.Interests, &pb.Interest{
+			Id:       int64(interest.ID),
+			Interest: interest.Interest,
+			UserId:   int64(interest.UserID),
+		})
+	}
+	for _, experience := range user.Experiences {
+		userPb.Experience = append(userPb.Experience, &pb.Experience{
+			Id:       int64(experience.ID),
+			Company:  experience.Company,
+			Position: experience.Position,
+			From:     experience.From.String(),
+			Until:    experience.Until.String(),
+			UserId:   int64(experience.UserID),
+		})
+	}
+
 	return userPb
 }
 
@@ -48,6 +50,24 @@ func mapUserToProto(user model.User) *pb.UserWithPass {
 		Date:      user.DateOfBirth.String(),
 		Biography: user.Biography,
 		Password:  user.Password,
+	}
+
+	for _, interest := range user.Interests {
+		userPb.Interests = append(userPb.Interests, &pb.Interest{
+			Id:       int64(interest.ID),
+			Interest: interest.Interest,
+			UserId:   int64(interest.UserID),
+		})
+	}
+	for _, experience := range user.Experiences {
+		userPb.Experience = append(userPb.Experience, &pb.Experience{
+			Id:       int64(experience.ID),
+			Company:  experience.Company,
+			Position: experience.Position,
+			From:     experience.From.String(),
+			Until:    experience.Until.String(),
+			UserId:   int64(experience.UserID),
+		})
 	}
 	return userPb
 }
