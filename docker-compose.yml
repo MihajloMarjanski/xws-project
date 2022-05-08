@@ -1,0 +1,54 @@
+version: "3.7"
+services:
+
+  gateway:
+    image: nginx:1.19.8-alpine
+    ports:
+      - 8080:8080
+    networks:
+      - backend
+    volumes:
+      - ./Gateway/nginx.conf:/etc/nginx/nginx.conf
+      - ./Gateway/api_gateway.conf:/etc/nginx/api_gateway.conf
+      
+  consumer-service:
+    image: consumer-service:compose_build
+    build:
+      context: ./consumer-service
+      dockerfile: Dockerfile
+    networks:
+      - backend
+    environment:
+      PORT: ${CONSUMER_SERVICE_PORT}
+      
+  order-service:
+    image: order-service:compose_build
+    build:
+      context: ./order-service
+      dockerfile: Dockerfile
+    networks:
+      - backend
+    environment:
+      CONSUMER_SERVICE_DOMAIN: ${CONSUMER_SERVICE_DOMAIN}
+      CONSUMER_SERVICE_PORT: ${CONSUMER_SERVICE_PORT}
+      KITCHEN_SERVICE_DOMAIN: ${KITCHEN_SERVICE_DOMAIN}
+      KITCHEN_SERVICE_PORT: ${KITCHEN_SERVICE_PORT}
+      PORT: ${ORDER_SERVICE_PORT}
+
+  kitchen-service:
+    image: kitchen-service:compose_build
+    build:
+      context: ./kitchen-service
+      dockerfile: Dockerfile
+    networks:
+      - backend
+    environment:
+      ORDER_SERVICE_DOMAIN: ${ORDER_SERVICE_DOMAIN}
+      ORDER_SERVICE_PORT: ${ORDER_SERVICE_PORT}
+      PORT: ${KITCHEN_SERVICE_PORT}
+
+
+networks:
+  backend:
+    name: restuarant
+    driver: bridge
