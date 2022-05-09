@@ -79,9 +79,9 @@ func (s *UserService) AddExperience(company string, position string, from time.T
 	return s.userRepo.AddExperience(company, position, from, until, userId)
 }
 
-func (s *UserService) UpdateUser(id uint, name string, email string, password string, username string, gender model.Gender, phonenumber string, dateofbirth time.Time, biography string) int {
+func (s *UserService) UpdateUser(id uint, name string, email string, password string, username string, gender model.Gender, phonenumber string, dateofbirth time.Time, biography string, isPublic bool) int {
 
-	return s.userRepo.UpdateUser(id, name, email, password, username, gender, phonenumber, dateofbirth, biography)
+	return s.userRepo.UpdateUser(id, name, email, password, username, gender, phonenumber, dateofbirth, biography, isPublic)
 }
 
 func (s *UserService) Login(username string, password string) string {
@@ -106,4 +106,14 @@ func (s *UserService) Login(username string, password string) string {
 		return ""
 	}
 	return tokenString
+}
+
+func (s *UserService) BlockUser(userId int, blockedUserId int) {
+	user := s.GetByID(userId)
+	block := s.GetByID(blockedUserId)
+	if userId == blockedUserId || user.ID == 0 || block.ID == 0 {
+		return
+	}
+	s.userRepo.BlockUser(userId, blockedUserId)
+	return
 }

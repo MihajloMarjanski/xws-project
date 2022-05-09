@@ -65,7 +65,7 @@ func (handler *UserHandler) GetMe(ctx context.Context, request *pb.GetMeRequest)
 
 func (handler *UserHandler) UpdateUser(ctx context.Context, request *pb.UpdateUserRequest) (*pb.UpdateUserResponse, error) {
 	user := mapProtoToUser(request.User)
-	id := handler.userService.UpdateUser(user.ID, user.Name, user.Email, user.Password, user.UserName, user.Gender, user.PhoneNumber, user.DateOfBirth, user.Biography)
+	id := handler.userService.UpdateUser(user.ID, user.Name, user.Email, user.Password, user.UserName, user.Gender, user.PhoneNumber, user.DateOfBirth, user.Biography, user.IsPublic)
 	response := &pb.UpdateUserResponse{
 		Id: int64(id),
 	}
@@ -130,5 +130,12 @@ func (handler *UserHandler) Login(ctx context.Context, request *pb.LoginRequest)
 	response := &pb.LoginResponse{
 		Token: token,
 	}
+	return response, nil
+}
+func (handler *UserHandler) BlockUser(ctx context.Context, request *pb.BlockUserRequest) (*pb.BlockUserResponse, error) {
+	userId := request.UserId
+	blockedUserId := request.BlockedUserId
+	handler.userService.BlockUser(int(userId), int(blockedUserId))
+	response := &pb.BlockUserResponse{}
 	return response, nil
 }

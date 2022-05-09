@@ -22,7 +22,7 @@ func New() (*UserRepository, error) {
 		return nil, err
 	}
 	repo.db = db
-	repo.db.AutoMigrate(&model.User{}, &model.Interest{}, model.Experience{})
+	repo.db.AutoMigrate(&model.User{}, &model.Interest{}, model.Experience{}, model.Block{})
 
 	return repo, nil
 }
@@ -90,9 +90,9 @@ func (repo *UserRepository) CreateUser(name string, email string, password strin
 	return int(user.ID)
 }
 
-func (repo *UserRepository) UpdateUser(id uint, name string, email string, password string, username string, gender model.Gender, phonenumber string, dateofbirth time.Time, biography string) int {
+func (repo *UserRepository) UpdateUser(id uint, name string, email string, password string, username string, gender model.Gender, phonenumber string, dateofbirth time.Time, biography string, isPublic bool) int {
 	user := model.User{
-		ID:          uint(id),
+		ID:          id,
 		Name:        name,
 		Email:       email,
 		UserName:    username,
@@ -100,7 +100,8 @@ func (repo *UserRepository) UpdateUser(id uint, name string, email string, passw
 		Gender:      gender,
 		PhoneNumber: phonenumber,
 		DateOfBirth: dateofbirth,
-		Biography:   biography}
+		Biography:   biography,
+		IsPublic:    isPublic}
 
 	if gender == "male" || gender == "female" {
 		repo.db.Save(&user)
@@ -131,4 +132,13 @@ func (repo *UserRepository) AddExperience(company string, position string, from 
 	repo.db.Create(&experience)
 
 	return int(experience.ID)
+}
+
+func (repo *UserRepository) BlockUser(userId int, blockedUserId int) {
+	block := model.Block{
+		User:        uint(userId),
+		BlockedUser: uint(blockedUserId)}
+
+	repo.db.Save(&block)
+	return
 }

@@ -14,6 +14,7 @@ type User struct {
 	Biography   string       `json:"biography"`
 	Interests   []Interest   `json:"interests"`
 	Experiences []Experience `json:"experiences"`
+	IsPublic    bool         `json:"isPublic"`
 }
 
 type Interest struct {
@@ -29,17 +30,6 @@ type Experience struct {
 	From     time.Time `json:"from" gorm:"not null"`
 	Until    time.Time `json:"until" gorm:"not null"`
 	UserID   uint      `json:"user" gorm:"not null"`
-}
-
-type UserDTO struct {
-	ID          uint      `json:"id"`
-	Name        string    `json:"name" gorm:"not null"`
-	UserName    string    `json:"username" gorm:"unique;not null"`
-	Email       string    `json:"email" gorm:"unique;not null"`
-	Gender      Gender    `json:"gender"`
-	PhoneNumber string    `json:"phone"`
-	DateOfBirth time.Time `json:"date"`
-	Biography   string    `json:"biography"`
 }
 
 type Gender string

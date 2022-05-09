@@ -62,6 +62,12 @@ service UserService{
             body: "credentials"
           };
         }
+        rpc BlockUser(BlockUserRequest) returns(BlockUserResponse) {
+          option (google.api.http) = {
+            put: "/user/block/{userId}/{blockedUserId}"
+            body: ""
+          };
+        }
 }
 
 
@@ -123,6 +129,12 @@ message LoginRequest {
 message LoginResponse {
   string token = 1;
 }
+message BlockUserRequest {
+  int64 userId = 1;
+  int64 blockedUserId = 2;
+}
+message BlockUserResponse {
+}
 
 
 message User {
@@ -136,6 +148,7 @@ message User {
   string biography = 8;
   repeated Experience experience = 9;
   repeated Interest interests = 10;
+  bool isPublic = 11;
 }
 
 message UserWithPass {
@@ -150,6 +163,7 @@ message UserWithPass {
   string password = 9;
   repeated Experience experience = 10;
   repeated Interest interests = 11;
+  bool isPublic = 12;
 }
 
 message Experience {
