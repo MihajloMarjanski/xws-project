@@ -64,3 +64,12 @@ func (handler *RequestsHandler) SendRequest(ctx context.Context, request *pb.Sen
 	response := &pb.SendRequestResponse{}
 	return response, nil
 }
+
+func (handler *RequestsHandler) SendMessage(ctx context.Context, request *pb.SendMessageRequest) (*pb.SendMessageResponse, error) {
+	senderID := request.SenderID
+	receiverID := request.RecieverID
+	message := request.Message.Text
+	handler.requestsService.SendMessage(uint(senderID), uint(receiverID), message)
+	response := &pb.SendMessageResponse{}
+	return response, nil
+}

@@ -4,6 +4,7 @@ import (
 	cfg "api-gateway/startup/config"
 	"context"
 	"fmt"
+	requestGw "github.com/MihajloMarjanski/xws-project/common/proto/requests_service"
 	userGw "github.com/MihajloMarjanski/xws-project/common/proto/user_service"
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 	"google.golang.org/grpc"
@@ -31,6 +32,11 @@ func (server *Server) initHandlers() {
 	userEndpoint := fmt.Sprintf("%s:%s", server.config.UserHost, server.config.UserPort)
 	err := userGw.RegisterUserServiceHandlerFromEndpoint(context.TODO(), server.mux, userEndpoint, opts)
 	if err != nil {
+		panic(err)
+	}
+	requestEndpoint := fmt.Sprintf("%s:%s", server.config.RequestHost, server.config.RequestPort)
+	err1 := requestGw.RegisterRequestsServiceHandlerFromEndpoint(context.TODO(), server.mux, requestEndpoint, opts)
+	if err1 != nil {
 		panic(err)
 	}
 

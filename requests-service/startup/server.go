@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"net"
+	"os"
 	"requests-service/handler_grpc"
 	config "requests-service/startup/config"
 
@@ -32,6 +33,7 @@ func (server *Server) Start() {
 }
 
 func (server *Server) startGrpcServer(reqHandler *handler_grpc.RequestsHandler) {
+	log.Println(os.Hostname())
 	listener, err := net.Listen("tcp", fmt.Sprintf(":%s", server.config.Port))
 	if err != nil {
 		log.Fatalf("Failed to listen: %v", err)

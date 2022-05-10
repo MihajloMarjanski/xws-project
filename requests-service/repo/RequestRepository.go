@@ -21,7 +21,7 @@ func New() (*RequestsRepository, error) {
 		return nil, err
 	}
 	repo.db = db
-	repo.db.AutoMigrate(&model.Request{}, &model.Connection{})
+	repo.db.AutoMigrate(&model.Request{}, &model.Connection{}, &model.Message{})
 
 	return repo, nil
 }
@@ -82,4 +82,22 @@ func (repo *RequestsRepository) SendRequest(sid, rid uint) {
 
 	repo.db.Create(&connection)
 	//}
+}
+
+func (repo *RequestsRepository) SendMessage(senderID, receiverID uint, text string) {
+	message := model.Message{
+		Text:       text,
+		SenderId:   senderID,
+		ReceiverId: receiverID,
+	}
+	repo.db.Create(&message)
+}
+
+func (repo *RequestsRepository) AreConnected(senderID, receiverID uint) bool {
+	var connection model.Connection
+	repo.db.Model(&connection).Where("user_one = ? AND user_two = ? OR user_one = ? AND user_two = ?", senderID, receiverID, receiverID, senderID).Find(&connection)
+	if connection.UserTwo == 0 {
+		return false
+	}
+	return true
 }

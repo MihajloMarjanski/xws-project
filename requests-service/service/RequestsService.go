@@ -39,3 +39,10 @@ func (s *RequestsService) DeclineRequest(sid, rid uint) {
 func (s *RequestsService) SendRequest(sid, rid uint) {
 	s.reqRepo.SendRequest(sid, rid)
 }
+
+func (s *RequestsService) SendMessage(senderID, receiverID uint, message string) {
+	if s.reqRepo.AreConnected(senderID, receiverID) == true {
+		s.reqRepo.SendMessage(senderID, receiverID, message)
+	}
+	return
+}

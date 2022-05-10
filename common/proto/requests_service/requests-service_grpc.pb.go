@@ -26,6 +26,7 @@ type RequestsServiceClient interface {
 	AcceptRequest(ctx context.Context, in *AcceptRequestRequest, opts ...grpc.CallOption) (*AcceptRequestResponse, error)
 	DeclineRequest(ctx context.Context, in *DeclineRequestRequest, opts ...grpc.CallOption) (*DeclineRequestResponse, error)
 	SendRequest(ctx context.Context, in *SendRequestRequest, opts ...grpc.CallOption) (*SendRequestResponse, error)
+	SendMessage(ctx context.Context, in *SendMessageRequest, opts ...grpc.CallOption) (*SendMessageResponse, error)
 }
 
 type requestsServiceClient struct {
@@ -72,6 +73,15 @@ func (c *requestsServiceClient) SendRequest(ctx context.Context, in *SendRequest
 	return out, nil
 }
 
+func (c *requestsServiceClient) SendMessage(ctx context.Context, in *SendMessageRequest, opts ...grpc.CallOption) (*SendMessageResponse, error) {
+	out := new(SendMessageResponse)
+	err := c.cc.Invoke(ctx, "/requests.RequestsService/SendMessage", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // RequestsServiceServer is the server API for RequestsService service.
 // All implementations must embed UnimplementedRequestsServiceServer
 // for forward compatibility
@@ -80,6 +90,7 @@ type RequestsServiceServer interface {
 	AcceptRequest(context.Context, *AcceptRequestRequest) (*AcceptRequestResponse, error)
 	DeclineRequest(context.Context, *DeclineRequestRequest) (*DeclineRequestResponse, error)
 	SendRequest(context.Context, *SendRequestRequest) (*SendRequestResponse, error)
+	SendMessage(context.Context, *SendMessageRequest) (*SendMessageResponse, error)
 	mustEmbedUnimplementedRequestsServiceServer()
 }
 
@@ -98,6 +109,9 @@ func (UnimplementedRequestsServiceServer) DeclineRequest(context.Context, *Decli
 }
 func (UnimplementedRequestsServiceServer) SendRequest(context.Context, *SendRequestRequest) (*SendRequestResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method SendRequest not implemented")
+}
+func (UnimplementedRequestsServiceServer) SendMessage(context.Context, *SendMessageRequest) (*SendMessageResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SendMessage not implemented")
 }
 func (UnimplementedRequestsServiceServer) mustEmbedUnimplementedRequestsServiceServer() {}
 
@@ -184,6 +198,24 @@ func _RequestsService_SendRequest_Handler(srv interface{}, ctx context.Context, 
 	return interceptor(ctx, in, info, handler)
 }
 
+func _RequestsService_SendMessage_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SendMessageRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RequestsServiceServer).SendMessage(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/requests.RequestsService/SendMessage",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RequestsServiceServer).SendMessage(ctx, req.(*SendMessageRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // RequestsService_ServiceDesc is the grpc.ServiceDesc for RequestsService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -206,6 +238,10 @@ var RequestsService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "SendRequest",
 			Handler:    _RequestsService_SendRequest_Handler,
+		},
+		{
+			MethodName: "SendMessage",
+			Handler:    _RequestsService_SendMessage_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

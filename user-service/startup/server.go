@@ -6,6 +6,7 @@ import (
 	"google.golang.org/grpc"
 	"log"
 	"net"
+	"os"
 	"user-service/handler_grpc"
 	"user-service/startup/config"
 )
@@ -30,6 +31,7 @@ func (server *Server) Start() {
 }
 
 func (server *Server) startGrpcServer(userHandler *handler_grpc.UserHandler) {
+	log.Println(os.Hostname())
 	listener, err := net.Listen("tcp", fmt.Sprintf(":%s", server.config.Port))
 	if err != nil {
 		log.Fatalf("failed to listen: %v", err)
