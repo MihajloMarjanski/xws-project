@@ -19,7 +19,7 @@ type PostRepository struct {
 
 func New() (*PostRepository, error) {
 
-	uri := fmt.Sprintf("mongodb://localhost:27017")
+	uri := fmt.Sprintf("mongodb://postdb:27017")
 	options := options.Client().ApplyURI(uri)
 	client, _ := mongo.Connect(context.TODO(), options)
 
