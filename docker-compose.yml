@@ -1,0 +1,77 @@
+version: "3.7"
+services:
+
+  user-service:
+    hostname: user-service
+    image: user-service
+    build:
+      context: ./
+      dockerfile: ./user-service/Dockerfile
+    restart: always
+    ports:
+      - 8001:8100
+    networks:
+      - backend
+
+  request-service:
+    hostname: request-service
+    image: request-service
+    build:
+      context: ./
+      dockerfile: ./requests-service/Dockerfile
+    restart: always
+    ports:
+      - 8002:8200
+    networks:
+      - backend
+    
+  post-service:
+    hostname: post-service
+    image: post-service
+    build:
+      context: ./
+      dockerfile: ./post-service/Dockerfile
+    restart: always
+    ports:
+      - 8003:8300
+    networks:
+      - backend
+
+  userdb:
+    image: postgres:latest
+    restart: always
+    environment:
+      POSTGRES_USER: XML
+      POSTGRES_PASSWORD: ftn
+      POSTGRES_DB: XML_TEST
+    ports:
+      - 4002:5432
+    networks:
+      - backend
+
+  requestdb:
+    image: postgres:latest
+    restart: always
+    environment:
+      POSTGRES_USER: XML
+      POSTGRES_PASSWORD: ftn
+      POSTGRES_DB: XML_REQUESTS
+    ports:
+      - 4000:5432
+    networks:
+      - backend
+
+  postdb:
+    image: mongo:3.6
+    restart: always
+    volumes:
+      - ./mongo-init/:/docker-entrypoint-initdb.d/:ro
+    ports:
+      - 4001:27017
+    networks:
+      - backend
+
+networks:
+  backend:
+    name: dislinkt
+    driver: bridge 

@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"net"
+	"os"
 	"post-service/handler_grpc"
 	"post-service/startup/config"
 
@@ -31,6 +32,12 @@ func (server *Server) Start() {
 }
 
 func (server *Server) startGrpcServer(postHandler *handler_grpc.PostHandler) {
+	name, err := os.Hostname()
+	if err != nil {
+		panic(err)
+	}
+
+	fmt.Println("hostname:", name)
 	listener, err := net.Listen("tcp", fmt.Sprintf(":%s", server.config.Port))
 	if err != nil {
 		log.Fatalf("failed to listen: %v", err)
