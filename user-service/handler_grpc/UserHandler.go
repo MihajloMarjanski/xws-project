@@ -2,6 +2,8 @@ package handler_grpc
 
 import (
 	"context"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 	"user-service/service"
 
 	pb "github.com/MihajloMarjanski/xws-project/common/proto/user_service"
@@ -32,6 +34,10 @@ func (userHandler *UserHandler) CloseDB() error {
 func (handler *UserHandler) GetUser(ctx context.Context, request *pb.GetUserRequest) (*pb.GetUserResponse, error) {
 	id := request.Id
 	user := handler.userService.GetByID(int(id))
+	if user.ID == 0 {
+		err := status.Error(codes.NotFound, "User with that id does not exist.")
+		return nil, err
+	}
 	userPb := mapUserDtoToProto(user)
 	response := &pb.GetUserResponse{
 		User: userPb,
@@ -42,6 +48,10 @@ func (handler *UserHandler) GetUser(ctx context.Context, request *pb.GetUserRequ
 func (handler *UserHandler) GetMe(ctx context.Context, request *pb.GetMeRequest) (*pb.GetMeResponse, error) {
 	id := request.Id
 	user := handler.userService.GetMe(int(id))
+	if user.ID == 0 {
+		err := status.Error(codes.NotFound, "User with that id does not exist.")
+		return nil, err
+	}
 	userPb := mapUserToProto(user)
 	response := &pb.GetMeResponse{
 		User: userPb,
@@ -65,6 +75,10 @@ func (handler *UserHandler) GetMe(ctx context.Context, request *pb.GetMeRequest)
 
 func (handler *UserHandler) UpdateUser(ctx context.Context, request *pb.UpdateUserRequest) (*pb.UpdateUserResponse, error) {
 	user := mapProtoToUser(request.User)
+	if handler.userService.GetByID(int(user.ID)).ID == 0 {
+		err := status.Error(codes.NotFound, "User with that id does not exist.")
+		return nil, err
+	}
 	id := handler.userService.UpdateUser(user.ID, user.Name, user.Email, user.Password, user.UserName, user.Gender, user.PhoneNumber, user.DateOfBirth, user.Biography, user.IsPublic)
 	response := &pb.UpdateUserResponse{
 		Id: int64(id),
@@ -87,6 +101,10 @@ func (handler *UserHandler) SearchUsers(ctx context.Context, request *pb.SearchU
 func (handler *UserHandler) CreateUser(ctx context.Context, request *pb.CreateUserRequest) (*pb.CreateUserResponse, error) {
 	user := mapProtoToUser(request.User)
 	id := handler.userService.CreateUser(user.Name, user.Email, user.Password, user.UserName, user.Gender, user.PhoneNumber, user.DateOfBirth, user.Biography)
+	if id == 0 {
+		err := status.Error(codes.AlreadyExists, "User with same username or email already exists.")
+		return nil, err
+	}
 	response := &pb.CreateUserResponse{
 		Id: int64(id),
 	}
@@ -135,6 +153,10 @@ func (handler *UserHandler) Login(ctx context.Context, request *pb.LoginRequest)
 func (handler *UserHandler) BlockUser(ctx context.Context, request *pb.BlockUserRequest) (*pb.BlockUserResponse, error) {
 	userId := request.UserId
 	blockedUserId := request.BlockedUserId
+	if handler.userService.GetByID(int(userId)).ID == 0 || handler.userService.GetByID(int(blockedUserId)).ID == 0 {
+		err := status.Error(codes.NotFound, "User with that id does not exist.")
+		return nil, err
+	}
 	handler.userService.BlockUser(int(userId), int(blockedUserId))
 	response := &pb.BlockUserResponse{}
 	return response, nil
