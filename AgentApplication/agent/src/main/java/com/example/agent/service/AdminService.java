@@ -11,9 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 public class AdminService {
@@ -35,7 +33,9 @@ public class AdminService {
 
         List<Role> roles = roleService.findByName("ROLE_COMPANY_OWNER");
         CompanyOwner owner = company.get().getCompanyOwner();
-        owner.setRole(roles.get(0));
+//        Set<Role> ownerRoles = owner.getRoles();
+//        ownerRoles.add(roles.get(0));
+        owner.setRoles((Set<Role>) roles);
         companyOwnerRepository.save(owner);
 
         company.get().setApproved(true);

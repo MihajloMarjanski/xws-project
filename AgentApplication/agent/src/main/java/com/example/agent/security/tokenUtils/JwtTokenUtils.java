@@ -11,6 +11,7 @@ import org.springframework.stereotype.Component;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Date;
+import java.util.Set;
 
 // Utility klasa za rad sa JSON Web Tokenima
 @Component
@@ -53,9 +54,9 @@ public class JwtTokenUtils {
      * @param roles
      * @return JWT token
      */
-    public String generateToken(String username, Role roles) {
+    public String generateToken(String username, Set<Role> roles) {
         return Jwts.builder()
-                .claim("role", roles.getName())
+                .claim("roles", roles)
                 .setIssuer(APP_NAME)
                 .setSubject(username)
                 .setAudience(generateAudience())

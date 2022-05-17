@@ -10,7 +10,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
 import java.util.Collection;
-import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -19,15 +20,21 @@ import java.util.Collections;
 @Entity
 public class CompanyOwner extends User implements UserDetails {
 
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "role_id")
-    private Role role;
+//    @ManyToOne(fetch = FetchType.EAGER)
+//    @JoinColumn(name = "role_id")
+//    private Role role;
+
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(name = "owner_roles",
+            joinColumns = @JoinColumn(name = "company_owner_id", referencedColumnName = "id"),
+            inverseJoinColumns = @JoinColumn(name = "role_id", referencedColumnName = "id"))
+    private Set<Role> roles = new HashSet<>();
 
 
     @JsonIgnore
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return Collections.singletonList( this.role);
+        return this.roles;
     }
 
     @JsonIgnore

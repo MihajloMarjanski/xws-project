@@ -9,7 +9,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -18,15 +17,11 @@ import java.util.Set;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-public class Admin extends User implements UserDetails {
-
-//    @ManyToOne(fetch = FetchType.EAGER)
-//    @JoinColumn(name = "role_id")
-//    private Role role;
+public class Client extends User implements UserDetails {
 
     @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(name = "admin_roles",
-            joinColumns = @JoinColumn(name = "admin_id", referencedColumnName = "id"),
+    @JoinTable(name = "client_roles",
+            joinColumns = @JoinColumn(name = "client_id", referencedColumnName = "id"),
             inverseJoinColumns = @JoinColumn(name = "role_id", referencedColumnName = "id"))
     private Set<Role> roles = new HashSet<>();
 

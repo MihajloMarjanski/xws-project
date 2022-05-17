@@ -54,10 +54,10 @@ public class AuthenticationController {
         String jwt;
         try {
             CompanyOwner companyOwner = (CompanyOwner) authentication.getPrincipal();
-            jwt = tokenUtils.generateToken(companyOwner.getUsername(), companyOwner.getRole());
+            jwt = tokenUtils.generateToken(companyOwner.getUsername(), companyOwner.getRoles());
         } catch (Exception e) {
             Admin admin = (Admin) authentication.getPrincipal();
-            jwt = tokenUtils.generateToken(admin.getUsername(), admin.getRole());
+            jwt = tokenUtils.generateToken(admin.getUsername(), admin.getRoles());
         }
 
         // Vrati token kao odgovor na uspesnu autentifikaciju
