@@ -1,0 +1,62 @@
+json for USER in POSTMAN
+{
+    "id": 2,
+    "name": "Petar",
+    "username": "PERA_PERA",
+    "email": "3pera222",
+    "password": "dwdawe21412dwawda",
+    "gender": "male",
+    "phone": "+1 (901) 448-2874",
+    "date": "2018-11-22T10:34:02+01:00",
+    "biography": "Sunt velit consequat ea sunt pariatur proident et. Nulla ad adipisicing eu mollit in laboris esse ex commodo commodo id laborum. Culpa Lorem aute officia tempor officia elit voluptate aliqua dolor dolor. Do est officia aute reprehenderit velit ea do do non consequat sunt. Eu ut eiusmod commodo amet do adipisicing dolore minim veniam Lorem dolor esse."
+}
+
+json for INTEREST in POSTMAN
+{
+    "interest": "Plivanje",
+    "user": 2
+}
+
+json for EXPERIENCE in POSTMAN
+{
+    "user": 2,
+    "company": "Neka firma",
+    "postiion": "Neki kurac",
+    "from": "2018-11-22T10:34:02+01:00",
+    "until" :"2018-12-22T10:34:02+01:00"
+}
+
+//REGISTER
+
+{
+    "Name": "Petar Petrovic",
+    "Email": "petarpetrovic@gmail.com",
+    "Password": "petar", 
+    "UserName": "petar", 
+    "Gender":"male", 
+    "Phone": "0656506502",
+    "Date": "2012-04-23T18:25:43.511Z", 
+    "Biography": "Petar II Petrovic Njegos srpski knjaz pisac i prosvetitelj"
+}
+
+{
+    "Name": "Marko Nikolic",
+    "Email": "markonikolic@gmail.com",
+    "Password": "marko", 
+    "UserName": "marko", 
+    "Gender":"male", 
+    "Phone": "0656506502",
+    "Date": "2012-04-23T18:25:43.511Z", 
+    "Biography": "Marko I Nikolic dobar samo kad je pijan"
+}
+
+//LOGIN
+
+{
+    "password": "petar",
+    "username": "petar"
+}
+{
+    "password": "marko",
+    "username": "marko"
+}

@@ -1,0 +1,187 @@
+syntax="proto3";
+
+option go_package = "common/user";
+
+package user;
+
+import "google/api/annotations.proto";
+
+service UserService{
+        rpc GetUser(GetUserRequest) returns(GetUserResponse) {
+        	option (google.api.http) = {
+            get: "/user/{id}"
+          };
+            }
+        rpc GetMe(GetMeRequest) returns(GetMeResponse) {
+              option (google.api.http) = {
+          get: "/user/me/{id}"
+        };
+        }
+        rpc UpdateUser(UpdateUserRequest) returns(UpdateUserResponse) {
+          option (google.api.http) = {
+          put: "/user"
+            body: "user"
+        };
+        }
+        rpc SearchUsers(SearchUsersRequest) returns(SearchUsersResponse) {
+          option (google.api.http) = {
+          get: "/user/search/{username}"
+        };
+        }
+        rpc CreateUser(CreateUserRequest) returns(CreateUserResponse) {
+          option (google.api.http) = {
+          post: "/user"
+            body: "user"
+          };
+        }
+        rpc AddExperience(AddExperienceRequest) returns(AddExperienceResponse) {
+            option (google.api.http) = {
+              post: "/user/experience"
+              body: "experience"
+        };
+        }
+        rpc AddInterest(AddInterestRequest) returns(AddInterestResponse) {
+          option (google.api.http) = {
+            post: "/user/interest"
+            body: "interest"
+            };
+        }
+        rpc RemoveExperience(RemoveExperienceRequest) returns(RemoveExperienceResponse) {
+          option (google.api.http) = {
+            delete: "/user/experience/{id}"
+            };
+        }
+        rpc RemoveInterest(RemoveInterestRequest) returns(RemoveInterestResponse) {
+          option (google.api.http) = {
+            delete: "/user/interest/{id}"
+            };
+        }
+        rpc Login(LoginRequest) returns(LoginResponse) {
+          option (google.api.http) = {
+            post: "/user/login"
+            body: "credentials"
+          };
+        }
+        rpc BlockUser(BlockUserRequest) returns(BlockUserResponse) {
+          option (google.api.http) = {
+            put: "/user/block/{userId}/{blockedUserId}"
+            body: ""
+          };
+        }
+}
+
+
+message GetUserRequest {
+        int64 id = 1;
+}
+message GetUserResponse {
+        User user = 1;
+}
+message GetMeRequest {
+  int64 id = 1;
+}
+message GetMeResponse {
+  UserWithPass user = 1;
+}
+message UpdateUserRequest {
+  UserWithPass user = 1;
+}
+message UpdateUserResponse {
+  int64 id = 1;
+}
+message SearchUsersRequest {
+  string username = 1;
+}
+message SearchUsersResponse {
+  repeated User users = 1;
+}
+message CreateUserRequest {
+  UserWithPass user = 1;
+}
+message CreateUserResponse {
+  int64 id = 1;
+}
+message AddExperienceRequest {
+  Experience experience = 1;
+}
+message AddExperienceResponse {
+  int64 id = 1;
+}
+message AddInterestRequest {
+  Interest interest = 1;
+}
+message AddInterestResponse {
+  int64 id = 1;
+}
+message RemoveExperienceRequest {
+  int64 id = 1;
+}
+message RemoveExperienceResponse {
+}
+message RemoveInterestRequest {
+  int64 id = 1;
+}
+message RemoveInterestResponse {
+}
+message LoginRequest {
+  Credentials credentials = 1;
+}
+message LoginResponse {
+  string token = 1;
+}
+message BlockUserRequest {
+  int64 userId = 1;
+  int64 blockedUserId = 2;
+}
+message BlockUserResponse {
+}
+
+
+message User {
+  int64 id = 1;
+  string name = 2;
+  string username = 3;
+  string email = 4;
+  string gender = 5;
+  string phone = 6;
+  string date = 7;
+  string biography = 8;
+  repeated Experience experience = 9;
+  repeated Interest interests = 10;
+  bool isPublic = 11;
+}
+
+message UserWithPass {
+  int64 id = 1;
+  string name = 2;
+  string username = 3;
+  string email = 4;
+  string gender = 5;
+  string phone = 6;
+  string date = 7;
+  string biography = 8;
+  string password = 9;
+  repeated Experience experience = 10;
+  repeated Interest interests = 11;
+  bool isPublic = 12;
+}
+
+message Experience {
+  int64 id = 1;
+  string company = 2;
+  string position = 3;
+  string from = 4;
+  string until = 5;
+  int64 userId = 6;
+}
+
+message Interest {
+  int64 id = 1;
+  string interest = 2;
+  int64 userId = 3;
+}
+
+message Credentials {
+  string username = 1;
+  string password = 2;
+}

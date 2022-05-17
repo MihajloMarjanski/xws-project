@@ -1,0 +1,19 @@
+.navbar {
+    /* justify-content: space-between; */
+    position: sticky;
+    top: 0;
+    z-index: 999;
+}
+
+.example-spacer {
+    flex: 1 1 auto;
+  }
+
+span {
+    padding-right: 1rem;
+}
+
+mat-button {
+    color: primary;
+}
+
