@@ -11,4 +11,6 @@ public interface CompanyOwnerRepository extends JpaRepository<CompanyOwner, Inte
 
     @Query("SELECT c.username FROM CompanyOwner c")
     Collection<String> findAllUsernames();
+
+    CompanyOwner findByEmail(String email);
 }

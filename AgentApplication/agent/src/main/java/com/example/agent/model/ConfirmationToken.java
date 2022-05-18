@@ -28,11 +28,11 @@ public class ConfirmationToken {
     private Date createdDate;
 
     @OneToOne(targetEntity = Client.class, fetch = FetchType.EAGER)
-    @JoinColumn(nullable = false, name = "client_id")
+    @JoinColumn(name = "client_id")
     private Client client;
 
     @OneToOne(targetEntity = CompanyOwner.class, fetch = FetchType.EAGER)
-    @JoinColumn(nullable = false, name = "company_owner_id")
+    @JoinColumn(name = "company_owner_id")
     private CompanyOwner companyOwner;
 
     public ConfirmationToken(Client client) {

@@ -13,10 +13,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.Optional;
-import java.util.Random;
-import java.util.Set;
+import java.util.*;
 
 @Service
 public class ClientService {
@@ -37,11 +34,18 @@ public class ClientService {
     public ResponseEntity<?> create(Client client) {
         PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
         try {
-            client.setPassword(passwordEncoder.encode(client.getPassword()));
-            List<Role> roles = roleService.findByName("ROLE_CLIENT");
-            client.setRoles((Set<Role>) roles);
+            client.setSalt(RandomStringInitializer.generateAlphaNumericString(10));
+            client.setPassword(passwordEncoder.encode(client.getPassword().concat(client.getSalt())));
+            client.setPin(RandomStringInitializer.generatePin());
+            client.setActivated(false);
+            client.setForgotten(0);
+            Role role = roleService.findByName("ROLE_CLIENT");
+            Set<Role> clientRoles = client.getRoles();
+            clientRoles.add(role);
+            client.setRoles(clientRoles);
             clientRepository.save(client);
-            emailService.sendActivationMailClientAsync(client);
+            emailService.sendActivationMailClientAsync(findByUsername(client.getUsername()));
+            emailService.sendPin(client.getEmail(), client.getPin());
             return new ResponseEntity<>(HttpStatus.OK);
         } catch (DataIntegrityViolationException e) {
             e.printStackTrace();
@@ -69,7 +73,36 @@ public class ClientService {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    public void save(Client verificationClient) {
-        clientRepository.save(verificationClient);
+    public void save(Client client) {
+        clientRepository.save(client);
+    }
+
+    public Client findByEmail(String email) {
+        return clientRepository.findByEmail(email);
+    }
+
+    public ResponseEntity<?> sendNewPassword(Client client) {
+        client.setPassword(RandomStringInitializer.generateAlphaNumericString(10));
+        client.setForgotten(1);
+        client.setPin(RandomStringInitializer.generatePin());
+        save(client);
+        emailService.sendNewPassword(client.getEmail(), client.getPassword());
+        emailService.sendPin(client.getEmail(), client.getPin());
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    public Collection<String> findAllUsernames() {
+        return clientRepository.findAllUsernames();
+    }
+
+    public boolean isPinOk(String username, Integer pin) {
+        Client user = clientRepository.findByUsername(username);
+        if (user == null)
+            return false;
+        return user.getPin().equals(pin);
+    }
+
+    public Client findByUsername(String username) {
+        return clientRepository.findByUsername(username);
     }
 }

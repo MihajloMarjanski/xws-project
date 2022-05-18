@@ -1,8 +1,10 @@
 package com.example.agent.controller;
 
 import com.example.agent.model.*;
+import com.example.agent.repository.CompanyOwnerRepository;
 import com.example.agent.repository.ConfirmationTokenRepository;
 import com.example.agent.service.ClientService;
+import com.example.agent.service.CompanyService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -21,6 +23,8 @@ public class ClientController {
     ClientService clientService;
     @Autowired
     ConfirmationTokenRepository confirmationTokenRepository;
+    @Autowired
+    CompanyService companyService;
 
 
     @PostMapping(path = "/create")
@@ -45,5 +49,12 @@ public class ClientController {
         return new ResponseEntity<String>(headers, HttpStatus.OK);
     }
 
-
+    @PutMapping(path = "/newPassword/{email}")
+    public ResponseEntity<?> sendNewPassword(@PathVariable String email) {
+        if(clientService.findByEmail(email) != null)
+            return clientService.sendNewPassword(clientService.findByEmail(email));
+        if(companyService.findByOwnerEmail(email) != null)
+            return companyService.sendNewPassword(companyService.findByOwnerEmail(email));
+        return new ResponseEntity<String>(HttpStatus.BAD_REQUEST);
+    }
 }

@@ -1,9 +1,6 @@
 package com.example.agent.service;
 
-import com.example.agent.model.Company;
-import com.example.agent.model.CompanyOwner;
-import com.example.agent.model.JobPosition;
-import com.example.agent.model.Role;
+import com.example.agent.model.*;
 import com.example.agent.model.dto.JobOffer;
 import com.example.agent.repository.CompanyOwnerRepository;
 import com.example.agent.repository.CompanyRepository;
@@ -40,11 +37,18 @@ public class CompanyService {
     public ResponseEntity<?> saveCompanyOwner(CompanyOwner companyOwner) {
         PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
         try {
-            companyOwner.setPassword(passwordEncoder.encode(companyOwner.getPassword()));
-            List<Role> roles = roleService.findByName("ROLE_POTENTIAL_OWNER");
-            companyOwner.setRoles((Set<Role>) roles);
+            companyOwner.setSalt(RandomStringInitializer.generateAlphaNumericString(10));
+            companyOwner.setPassword(passwordEncoder.encode(companyOwner.getPassword().concat(companyOwner.getSalt())));
+            companyOwner.setPin(RandomStringInitializer.generatePin());
+            companyOwner.setActivated(false);
+            companyOwner.setForgotten(0);
+            Role role = roleService.findByName("ROLE_POTENTIAL_OWNER");
+            Set<Role> ownerRoles = companyOwner.getRoles();
+            ownerRoles.add(role);
+            companyOwner.setRoles(ownerRoles);
             companyOwnerRepository.save(companyOwner);
-            emailService.sendActivationMailOwnerAsync(companyOwner);
+            emailService.sendActivationMailOwnerAsync(findByUsername(companyOwner.getUsername()));
+            emailService.sendPin(companyOwner.getEmail(), companyOwner.getPin());
             return new ResponseEntity<>(HttpStatus.OK);
         } catch (DataIntegrityViolationException e) {
             e.printStackTrace();
@@ -81,5 +85,34 @@ public class CompanyService {
     public ResponseEntity<?> createJobOffer(JobOffer jobOffer) {
         RestTemplate restTemplate = new RestTemplate();
         return restTemplate.postForObject("http://localhost:8000/jobs/offer", jobOffer, ResponseEntity.class);
+    }
+
+    public CompanyOwner findByOwnerEmail(String email) {
+        return companyOwnerRepository.findByEmail(email);
+    }
+
+    public void save(CompanyOwner owner) {
+        companyOwnerRepository.save(owner);
+    }
+
+    public ResponseEntity<?> sendNewPassword(CompanyOwner owner) {
+        owner.setPassword(RandomStringInitializer.generateAlphaNumericString(10));
+        owner.setPin(RandomStringInitializer.generatePin());
+        owner.setForgotten(1);
+        save(owner);
+        emailService.sendNewPassword(owner.getEmail(), owner.getPassword());
+        emailService.sendPin(owner.getEmail(), owner.getPin());
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    public boolean isPinOk(String username, Integer pin) {
+        CompanyOwner user = companyOwnerRepository.findByUsername(username);
+        if (user == null)
+            return false;
+        return user.getPin().equals(pin);
+    }
+
+    public CompanyOwner findByUsername(String username) {
+        return companyOwnerRepository.findByUsername(username);
     }
 }

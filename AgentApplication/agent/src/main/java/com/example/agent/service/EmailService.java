@@ -3,7 +3,6 @@ package com.example.agent.service;
 import com.example.agent.model.Client;
 import com.example.agent.model.CompanyOwner;
 import com.example.agent.model.ConfirmationToken;
-import com.example.agent.model.User;
 import com.example.agent.repository.ConfirmationTokenRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
@@ -53,9 +52,30 @@ public class EmailService {
         mail.setText("Hi, " + user.getFirstName() + ".\n\nWelcome to our site." +
                 "\nWe hope that you will be satisfied with our services." +
                 "\nIn order to activate your account click on this link: " +
-                "http://localhost:8600/clients/activate?token=" + confirmationToken.getConfirmationToken());
+                "http://localhost:8600/company/owner/activate?token=" + confirmationToken.getConfirmationToken());
 
         javaMailSender.send(mail);
     }
 
+    @Async
+    public void sendNewPassword(String email, String password) {
+        SimpleMailMessage mail = new SimpleMailMessage();
+        mail.setTo(email);
+        mail.setFrom(env.getProperty("spring.mail.username"));
+        mail.setSubject("Refreshed password");
+        mail.setText("Your new password is: " + password + ".\nYou have to set your password when you first log in.");
+
+        javaMailSender.send(mail);
+    }
+
+    @Async
+    public void sendPin(String email, Integer pin) {
+        SimpleMailMessage mail = new SimpleMailMessage();
+        mail.setTo(email);
+        mail.setFrom(env.getProperty("spring.mail.username"));
+        mail.setSubject("New login PIN");
+        mail.setText("Your new PIN is: " + pin);
+
+        javaMailSender.send(mail);
+    }
 }
