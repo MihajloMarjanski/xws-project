@@ -17,6 +17,8 @@ import java.util.Collections;
 @NoArgsConstructor
 @AllArgsConstructor
 @MappedSuperclass
+//@Entity
+//@Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -28,5 +30,6 @@ public class User {
     @Column(unique=true)
     protected String username;
     protected String password;
+    protected boolean isActivated = true;
 
 }

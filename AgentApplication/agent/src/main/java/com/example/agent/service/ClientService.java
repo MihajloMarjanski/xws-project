@@ -31,6 +31,8 @@ public class ClientService {
     JobPositionRepository jobPositionRepository;
     @Autowired
     InterviewInformationRepository interviewInformationRepository;
+    @Autowired
+    EmailService emailService;
 
     public ResponseEntity<?> create(Client client) {
         PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
@@ -39,6 +41,7 @@ public class ClientService {
             List<Role> roles = roleService.findByName("ROLE_CLIENT");
             client.setRoles((Set<Role>) roles);
             clientRepository.save(client);
+            emailService.sendActivationMailClientAsync(client);
             return new ResponseEntity<>(HttpStatus.OK);
         } catch (DataIntegrityViolationException e) {
             e.printStackTrace();
@@ -64,5 +67,9 @@ public class ClientService {
     public ResponseEntity<?> addInterviewInformation(InterviewInformation interviewInformation) {
         interviewInformationRepository.save(interviewInformation);
         return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    public void save(Client verificationClient) {
+        clientRepository.save(verificationClient);
     }
 }

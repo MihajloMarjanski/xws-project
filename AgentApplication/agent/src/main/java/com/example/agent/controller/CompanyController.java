@@ -2,11 +2,16 @@ package com.example.agent.controller;
 
 import com.example.agent.model.*;
 import com.example.agent.model.dto.JobOffer;
+import com.example.agent.repository.CompanyOwnerRepository;
+import com.example.agent.repository.ConfirmationTokenRepository;
 import com.example.agent.service.ClientService;
 import com.example.agent.service.CompanyService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.context.request.WebRequest;
 
 @RestController
 @RequestMapping(value = "/company")
@@ -16,6 +21,10 @@ public class CompanyController {
     private CompanyService companyService;
     @Autowired
     ClientService clientService;
+    @Autowired
+    ConfirmationTokenRepository confirmationTokenRepository;
+    @Autowired
+    private CompanyOwnerRepository companyOwnerRepository;
 
 
     @PostMapping(path = "/owner/create")
@@ -57,5 +66,21 @@ public class CompanyController {
     @PostMapping(path = "/jobs/offer")
     public ResponseEntity<?> createJobOffer(@RequestBody JobOffer jobOffer) {
         return companyService.createJobOffer(jobOffer);
+    }
+
+    @GetMapping(path = "/owner/activate")
+    public ResponseEntity<?> activateOwnerAccount(WebRequest request, @RequestParam("token") String hashCode) {
+        ConfirmationToken token = confirmationTokenRepository.findByConfirmationToken(hashCode);
+        CompanyOwner companyOwner = token.getCompanyOwner();
+        if (companyOwner == null || companyOwner.isActivated()) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+
+        companyOwner.setActivated(true);
+        companyOwnerRepository.save(companyOwner);
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Location", "http://localhost:4200");
+        return new ResponseEntity<String>(headers, HttpStatus.OK);
     }
 }

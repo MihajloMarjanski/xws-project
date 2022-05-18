@@ -34,6 +34,8 @@ public class CompanyService {
     private RoleService roleService;
     @Autowired
     private JobPositionRepository jobPositionRepository;
+    @Autowired
+    EmailService emailService;
 
     public ResponseEntity<?> saveCompanyOwner(CompanyOwner companyOwner) {
         PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
@@ -42,6 +44,7 @@ public class CompanyService {
             List<Role> roles = roleService.findByName("ROLE_POTENTIAL_OWNER");
             companyOwner.setRoles((Set<Role>) roles);
             companyOwnerRepository.save(companyOwner);
+            emailService.sendActivationMailOwnerAsync(companyOwner);
             return new ResponseEntity<>(HttpStatus.OK);
         } catch (DataIntegrityViolationException e) {
             e.printStackTrace();
