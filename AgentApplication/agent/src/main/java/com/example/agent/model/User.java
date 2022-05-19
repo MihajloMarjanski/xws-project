@@ -11,6 +11,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import javax.persistence.*;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Date;
 
 @Getter
 @Setter
@@ -32,4 +33,7 @@ public class User {
     protected Integer forgotten;
     protected Integer pin;
     protected String salt;
+    protected Integer missedPasswordCounter;
+    protected boolean isBlocked;
+    protected Date blockedDate;
 }

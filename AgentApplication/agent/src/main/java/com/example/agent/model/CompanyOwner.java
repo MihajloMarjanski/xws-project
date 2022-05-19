@@ -58,6 +58,6 @@ public class CompanyOwner extends User implements UserDetails {
     @JsonIgnore
     @Override
     public boolean isEnabled() {
-        return true;
+        return this.isActivated;
     }
 }

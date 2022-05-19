@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.WebRequest;
 
@@ -29,30 +30,40 @@ public class CompanyController {
 
     @PostMapping(path = "/owner/create")
     public ResponseEntity<?> createCompanyOwner(@RequestBody CompanyOwner companyOwner) {
-        return companyService.saveCompanyOwner(companyOwner);
+        return companyService.createCompanyOwner(companyOwner);
     }
 
+    @PreAuthorize("hasRole('COMPANY_OWNER')")
+    @PostMapping(path = "/owner/update")
+    public ResponseEntity<?> updateCompanyOwner(@RequestBody CompanyOwner companyOwner) {
+        return companyService.updateCompanyOwner(companyOwner);
+    }
+
+    @PreAuthorize("hasRole('COMPANY_OWNER')")
     @PostMapping(path = "/create")
     public ResponseEntity<?> createCompany(@RequestBody Company company) {
         return companyService.sendCompanyRegistrationRequest(company);
     }
 
+    @PreAuthorize("hasRole('COMPANY_OWNER')")
     @GetMapping(path = "/owner/{id}")
     public ResponseEntity<?> getOwner(@PathVariable Integer id) {
         return companyService.getOwner(id);
     }
 
-
+    @PreAuthorize("hasRole('CLIENT')")
     @PostMapping(path = "/comments/create")
     public ResponseEntity<?> createComment(@RequestBody Comment comment) {
         return clientService.createComment(comment);
     }
 
+    @PreAuthorize("hasRole('CLIENT')")
     @PostMapping(path = "/jobs/salary/update")
     public ResponseEntity<?> updateSalary(@RequestBody JobPosition jobSalary) {
         return clientService.updateSalary(jobSalary);
     }
 
+    @PreAuthorize("hasRole('CLIENT')")
     @PostMapping(path = "/jobs/interview")
     public ResponseEntity<?> addInformation(@RequestBody InterviewInformation interviewInformation) {
         return clientService.addInterviewInformation(interviewInformation);
@@ -63,6 +74,7 @@ public class CompanyController {
         return companyService.getAllJobs(companyId);
     }
 
+    @PreAuthorize("hasRole('COMPANY_OWNER')")
     @PostMapping(path = "/jobs/offer")
     public ResponseEntity<?> createJobOffer(@RequestBody JobOffer jobOffer) {
         return companyService.createJobOffer(jobOffer);
@@ -83,4 +95,5 @@ public class CompanyController {
         headers.add("Location", "http://localhost:4200");
         return new ResponseEntity<String>(headers, HttpStatus.OK);
     }
+
 }

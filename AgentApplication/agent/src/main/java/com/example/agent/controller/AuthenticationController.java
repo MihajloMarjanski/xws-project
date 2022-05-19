@@ -10,6 +10,7 @@ import com.example.agent.service.ClientService;
 import com.example.agent.service.CompanyService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -18,6 +19,10 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.net.URISyntaxException;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -47,6 +52,8 @@ public class AuthenticationController {
     // Tada zna samo svoje korisnicko ime i lozinku i to prosledjuje na backend.
     @PostMapping("/login")
     public String createAuthenticationToken(@RequestBody UserCredentials authenticationRequest, HttpServletResponse response) {
+        if(isUserBlocked(authenticationRequest.getUsername()))
+            return "Your account is currently blocked. Try next day again.";
         String salt = findSaltForUsername(authenticationRequest.getUsername());
         Authentication authentication = null;
         try {
@@ -55,13 +62,16 @@ public class AuthenticationController {
                     authenticationRequest.getUsername(), authenticationRequest.getPassword().concat(salt)));
             // Ukoliko je autentifikacija uspesna, ubaci korisnika u trenutni security kontekst
             SecurityContextHolder.getContext().setAuthentication(authentication);
+            refreshMissedPasswordCounter(authenticationRequest.getUsername());
         } catch (AuthenticationException e) {
             if(clientService.isPinOk(authenticationRequest.getUsername(), authenticationRequest.getPin()) ||
                     adminService.isPinOk(authenticationRequest.getUsername(), authenticationRequest.getPin()) ||
                     companyService.isPinOk(authenticationRequest.getUsername(), authenticationRequest.getPin()))
                 SecurityContextHolder.getContext().setAuthentication(null);
-            else
+            else {
+                increaseMissedPasswordCounter(authenticationRequest.getUsername());
                 return "Invalid username, password or pin.";
+            }
         }
 
         // Kreiraj token za tog korisnika
@@ -103,6 +113,73 @@ public class AuthenticationController {
         return jwt;
     }
 
+    private boolean isUserBlocked(String username) {
+        Client client = clientService.findByUsername(username);
+        CompanyOwner owner = companyService.findByUsername(username);
+        if(client != null && client.getBlockedDate() != null) {
+            Calendar c = Calendar.getInstance();
+            c.setTime(client.getBlockedDate());
+            c.add(Calendar.DATE, 1);
+            if (client.isBlocked() && c.getTime().after(new Date()))
+                return true;
+            else if (client.isBlocked() && c.getTime().before(new Date())) {
+                client.setBlocked(false);
+                client.setMissedPasswordCounter(0);
+                clientService.save(client);
+                return false;
+            }
+        }
+        else if(owner != null && owner.getBlockedDate() != null) {
+            Calendar c1 = Calendar.getInstance();
+            c1.setTime(owner.getBlockedDate());
+            c1.add(Calendar.DATE, 1);
+            if (owner.isBlocked() && c1.getTime().after(new Date()))
+                return true;
+            else if (owner.isBlocked() && c1.getTime().before(new Date())) {
+                owner.setBlocked(false);
+                owner.setMissedPasswordCounter(0);
+                companyService.saveOwner(owner);
+                return false;
+            }
+        }
+
+        return false;
+    }
+
+    private void increaseMissedPasswordCounter(String username) {
+        Client client = clientService.findByUsername(username);
+        CompanyOwner owner = companyService.findByUsername(username);
+        if(client != null) {
+            client.setMissedPasswordCounter(client.getMissedPasswordCounter() + 1);
+            if (client.getMissedPasswordCounter() > 5) {
+                client.setBlocked(true);
+                client.setBlockedDate(new Date());
+            }
+            clientService.save(client);
+        }
+        else if(owner != null) {
+            owner.setMissedPasswordCounter(owner.getMissedPasswordCounter() + 1);
+            if (owner.getMissedPasswordCounter() > 5) {
+                owner.setBlocked(true);
+                owner.setBlockedDate(new Date());
+            }
+            companyService.saveOwner(owner);
+        }
+    }
+
+    private void refreshMissedPasswordCounter(String username) {
+        Client client = clientService.findByUsername(username);
+        CompanyOwner owner = companyService.findByUsername(username);
+        if(client != null) {
+            client.setMissedPasswordCounter(0);
+            clientService.save(client);
+        }
+        else if(owner != null) {
+            owner.setMissedPasswordCounter(0);
+            companyService.saveOwner(owner);
+        }
+    }
+
     private String findSaltForUsername(String username) {
         if(adminService.findByUsername(username) != null)
             return adminService.findByUsername(username).getSalt();
@@ -122,6 +199,11 @@ public class AuthenticationController {
         usernameList.addAll(clientService.findAllUsernames());
 
         return usernameList;
+    }
+
+    @GetMapping(path = "/password/blackList/{pass}")
+    public ResponseEntity<?> checkPasswordBlackList(@PathVariable String pass) throws URISyntaxException, IOException {
+        return clientService.isPasswordInBlackList(pass);
     }
 
 }

@@ -14,7 +14,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
-import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
@@ -34,7 +33,7 @@ public class CompanyService {
     @Autowired
     EmailService emailService;
 
-    public ResponseEntity<?> saveCompanyOwner(CompanyOwner companyOwner) {
+    public ResponseEntity<?> createCompanyOwner(CompanyOwner companyOwner) {
         PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
         try {
             companyOwner.setSalt(RandomStringInitializer.generateAlphaNumericString(10));
@@ -42,6 +41,7 @@ public class CompanyService {
             companyOwner.setPin(RandomStringInitializer.generatePin());
             companyOwner.setActivated(false);
             companyOwner.setForgotten(0);
+            companyOwner.setMissedPasswordCounter(0);
             Role role = roleService.findByName("ROLE_POTENTIAL_OWNER");
             Set<Role> ownerRoles = companyOwner.getRoles();
             ownerRoles.add(role);
@@ -91,7 +91,7 @@ public class CompanyService {
         return companyOwnerRepository.findByEmail(email);
     }
 
-    public void save(CompanyOwner owner) {
+    public void saveOwner(CompanyOwner owner) {
         companyOwnerRepository.save(owner);
     }
 
@@ -99,7 +99,7 @@ public class CompanyService {
         owner.setPassword(RandomStringInitializer.generateAlphaNumericString(10));
         owner.setPin(RandomStringInitializer.generatePin());
         owner.setForgotten(1);
-        save(owner);
+        saveOwner(owner);
         emailService.sendNewPassword(owner.getEmail(), owner.getPassword());
         emailService.sendPin(owner.getEmail(), owner.getPin());
         return new ResponseEntity<>(HttpStatus.OK);
@@ -114,5 +114,10 @@ public class CompanyService {
 
     public CompanyOwner findByUsername(String username) {
         return companyOwnerRepository.findByUsername(username);
+    }
+
+    public ResponseEntity<?> updateCompanyOwner(CompanyOwner companyOwner) {
+        saveOwner(companyOwner);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 }

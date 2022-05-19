@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.WebRequest;
 
@@ -30,6 +31,12 @@ public class ClientController {
     @PostMapping(path = "/create")
     public ResponseEntity<?> create(@RequestBody Client client) {
         return clientService.create(client);
+    }
+
+    @PreAuthorize("hasRole('CLIENT')")
+    @PostMapping(path = "/update")
+    public ResponseEntity<?> updateClient(@RequestBody Client client) {
+        return clientService.updateClient(client);
     }
 
     @GetMapping(path = "/activate")

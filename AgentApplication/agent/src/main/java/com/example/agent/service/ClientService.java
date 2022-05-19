@@ -13,7 +13,14 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
+import java.net.URISyntaxException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Service
 public class ClientService {
@@ -39,6 +46,7 @@ public class ClientService {
             client.setPin(RandomStringInitializer.generatePin());
             client.setActivated(false);
             client.setForgotten(0);
+            client.setMissedPasswordCounter(0);
             Role role = roleService.findByName("ROLE_CLIENT");
             Set<Role> clientRoles = client.getRoles();
             clientRoles.add(role);
@@ -104,5 +112,23 @@ public class ClientService {
 
     public Client findByUsername(String username) {
         return clientRepository.findByUsername(username);
+    }
+
+    public ResponseEntity<?> isPasswordInBlackList(String pass) throws URISyntaxException, IOException {
+        Path path = Paths.get(getClass().getClassLoader().getResource("PasswordBlackList.txt").toURI());
+        Stream<String> lines = Files.lines(path);
+        String data = lines.collect(Collectors.joining("\n"));
+        lines.close();
+        List<String> passwords = Arrays.asList(data.split("\n"));
+        if(passwords.contains(pass))
+            return new ResponseEntity<>("Your password has been compromised. Please enter new password.", HttpStatus.OK);
+        else
+            return new ResponseEntity<>(HttpStatus.OK);
+
+    }
+
+    public ResponseEntity<?> updateClient(Client client) {
+        save(client);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 }
