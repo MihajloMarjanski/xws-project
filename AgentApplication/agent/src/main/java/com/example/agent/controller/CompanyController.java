@@ -96,4 +96,15 @@ public class CompanyController {
         return new ResponseEntity<String>(headers, HttpStatus.OK);
     }
 
+    @GetMapping(path = "/all")
+    public ResponseEntity<?> allCompanies() {
+        return companyService.getAll();
+    }
+
+    @PreAuthorize("hasRole('CLIENT')")
+    @GetMapping(path = "/username/{username}")
+    public ResponseEntity<?> ownerByUsername(@PathVariable String username) {
+        return companyService.getOwnerByUsername(username);
+    }
+
 }

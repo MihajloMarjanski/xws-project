@@ -42,6 +42,8 @@ import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HeaderComponent } from './component/header/header.component';
 import { FooterComponent } from './component/footer/footer.component';
+import { CompaniesComponent } from './component/companies/companies.component';
+import { UserProfileComponent } from './component/user-profile/user-profile.component';
 
 const MaterialComponents = [
   MatSliderModule,
@@ -78,7 +80,9 @@ const MaterialComponents = [
     RegistrationPageComponent,
     LandingPageComponent,
     HeaderComponent,
-    FooterComponent
+    FooterComponent,
+    CompaniesComponent,
+    UserProfileComponent
   ],
   imports: [
     MaterialComponents,

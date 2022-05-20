@@ -118,6 +118,16 @@ public class CompanyService {
 
     public ResponseEntity<?> updateCompanyOwner(CompanyOwner companyOwner) {
         saveOwner(companyOwner);
-        return new ResponseEntity<>(HttpStatus.OK);
+        return new ResponseEntity<>(companyOwner, HttpStatus.OK);
+    }
+
+    public ResponseEntity<?> getAll() {
+        return new ResponseEntity<>(companyRepository.findAll(), HttpStatus.OK);
+    }
+
+    public ResponseEntity<?> getOwnerByUsername(String username) {
+        if (findByUsername(username) == null)
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(findByUsername(username), HttpStatus.OK);
     }
 }

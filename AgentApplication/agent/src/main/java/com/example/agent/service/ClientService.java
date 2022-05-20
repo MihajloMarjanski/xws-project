@@ -129,6 +129,12 @@ public class ClientService {
 
     public ResponseEntity<?> updateClient(Client client) {
         save(client);
-        return new ResponseEntity<>(HttpStatus.OK);
+        return new ResponseEntity<>(client, HttpStatus.OK);
+    }
+
+    public ResponseEntity<?> getByUsername(String username) {
+        if (findByUsername(username) == null)
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(findByUsername(username), HttpStatus.OK);
     }
 }

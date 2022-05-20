@@ -64,4 +64,10 @@ public class ClientController {
             return companyService.sendNewPassword(companyService.findByOwnerEmail(email));
         return new ResponseEntity<String>(HttpStatus.BAD_REQUEST);
     }
+
+    @PreAuthorize("hasRole('CLIENT')")
+    @GetMapping(path = "/username/{username}")
+    public ResponseEntity<?> clientByUsername(@PathVariable String username) {
+        return clientService.getByUsername(username);
+    }
 }

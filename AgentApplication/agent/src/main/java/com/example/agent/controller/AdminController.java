@@ -24,4 +24,10 @@ public class AdminController {
     public ResponseEntity<?> createCompanyOwner(@PathVariable Integer id) {
         return adminService.approveCompany(id);
     }
+
+    @PreAuthorize("hasRole('ADMIN')")
+    @GetMapping(path = "/username/{username}")
+    public ResponseEntity<?> adminByUsername(@PathVariable String username) {
+        return adminService.getByUsername(username);
+    }
 }

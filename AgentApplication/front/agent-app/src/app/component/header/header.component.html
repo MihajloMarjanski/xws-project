@@ -1,7 +1,6 @@
 <mat-toolbar color="primary" class="navbar">
     <button mat-button style="font-size : 25px" [routerLink]="['']">CompanyIn</button>
-    <button *ngIf="role != 'ROLE_ADMIN' && role != 'ROLE_BOAT_OWNER'&& role != 'ROLE_INSTRUCTOR'"
-             style="margin-left : 25px" mat-button [routerLink]="['weekend-houses']">Weekend houses</button>
+    <button *ngIf="role === 'ROLE_ADMIN'" style="margin-left : 25px" mat-button [routerLink]="['companies']">Companies</button>
     <button *ngIf="role != 'ROLE_ADMIN' && role != 'ROLE_WEEKEND_HOUSE_OWNER' && role != 'ROLE_INSTRUCTOR'"
              mat-button [routerLink]="['boats']">Boats</button>
     <button *ngIf="role != 'ROLE_ADMIN' && role != 'ROLE_BOAT_OWNER' && role != 'ROLE_WEEKEND_HOUSE_OWNER'"

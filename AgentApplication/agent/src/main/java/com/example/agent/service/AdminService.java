@@ -56,4 +56,9 @@ public class AdminService {
         return adminRepository.findByUsername(username);
     }
 
+    public ResponseEntity<?> getByUsername(String username) {
+        if (findByUsername(username) == null)
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(findByUsername(username), HttpStatus.OK);
+    }
 }
