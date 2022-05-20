@@ -1,1 +1,54 @@
-<p>user-profile works!</p>
+<div class="stepper">
+    <h1>{{client.firstName}}'s informations</h1>
+  <form name="rform" #registerForm="ngForm">            
+              
+    <mat-form-field appearance="fill" style="margin-right: 2%;">
+      <mat-label>First name</mat-label>
+      <input matInput type="text" name="firstname" [(ngModel)]="client.firstName" required>
+      <mat-hint *ngIf="client.firstName == ''">Required</mat-hint>
+      
+    </mat-form-field>
+
+    <mat-form-field appearance="fill">
+      <mat-label>Last name</mat-label>
+      <input matInput type="text" name="lastname" [(ngModel)]="client.lastName" required>
+      <mat-hint *ngIf="client.lastName == ''">Required</mat-hint>
+    </mat-form-field>
+
+    <mat-checkbox style="margin-right: 10000px;" (change)="changeWantToChangePassword()">Change password</mat-checkbox>
+
+      <mat-form-field *ngIf="wantToChangePassword" hintLabel="Between 6 and 16 characters" appearance="fill"  style="margin-right: 2%;">
+        <mat-label>Password</mat-label>
+        <input matInput type="password" name="password" id="password" minlength="6" maxlength="16" [(ngModel)]="client.password" required>
+      </mat-form-field>
+      
+      <mat-form-field *ngIf="wantToChangePassword" appearance="fill">
+        <mat-label>Confirm password</mat-label>
+        <input matInput type="password" name="repassword" [(ngModel)]="repassword" required>
+        <mat-hint *ngIf="client.password == ''">Required</mat-hint>
+      </mat-form-field>
+
+      <h1 style="margin-top: 3%;" *ngIf="role ==='ROLE_COMPANY_OWNER'">Company informations</h1>
+        <mat-form-field *ngIf="role ==='ROLE_COMPANY_OWNER'" appearance="fill" style="margin-right: 2%;">
+            <mat-label>Name</mat-label>
+            <input matInput type="text" name="name" [(ngModel)]="owner.company.name" required>
+            <mat-hint *ngIf="owner.company.name == ''">Required</mat-hint>
+            <mat-icon matSuffix></mat-icon>
+          </mat-form-field>
+      
+          <mat-form-field *ngIf="role ==='ROLE_COMPANY_OWNER'" appearance="fill">
+            <mat-label>Info</mat-label>
+            <input matInput type="text" name="info" [(ngModel)]="owner.company.info" required>
+            <mat-hint *ngIf="owner.company.info == ''">Required</mat-hint>
+          </mat-form-field>
+
+            
+              <div>
+                <button mat-raised-button color="accent" [disabled]="!(registerForm.valid && client.password === repassword)" (click)="edit()"  >Edit</button>
+              </div>
+     </form>
+
+
+      
+      </div>
+  

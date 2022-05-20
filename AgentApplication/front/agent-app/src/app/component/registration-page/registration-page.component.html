@@ -41,6 +41,7 @@
                   <mat-error *ngIf="emailControl.hasError('required')">
                     Email is <strong>required</strong>
                   </mat-error>
+                  <mat-hint *ngIf="containSpace(client.email) === true" style="color:red;">Email can not contain space.</mat-hint>
                 </mat-form-field>
               </div>  
               <div>
@@ -49,6 +50,7 @@
                   <input matInput type="text" name="username" [(ngModel)]="client.username" required >     
                   <mat-hint *ngIf="client.username == ''">Required</mat-hint>  
                   <mat-hint *ngIf="usernames.includes(client.username)">Username already exists!</mat-hint>        
+                  <mat-hint *ngIf="containSpace(client.username) === true" style="color:red;">Username can not contain space.</mat-hint>
                 </mat-form-field>
                 <!-- <div *ngIf="usernames.includes(customer.username)" class="errorText">Username already exists!</div> -->
               </div>   
@@ -56,7 +58,8 @@
                 <mat-form-field hintLabel="Between 6 and 16 characters" appearance="fill">
                   <mat-label>Password</mat-label>
                   <input matInput type="password" name="password" id="password" minlength="6" maxlength="16" [(ngModel)]="client.password" required (change)="checkPass()">
-                  <mat-hint *ngIf="blackListPass">THIS PASSWORD IS NOT SECURE!</mat-hint>
+                  <mat-hint *ngIf="isInBlackList">{{blackListPassMessage}}</mat-hint>
+                  <mat-hint *ngIf="containSpace(client.password) === true" style="color:red;">Password can not contain space.</mat-hint>
                 </mat-form-field>
               </div>
               <div>
@@ -64,6 +67,7 @@
                   <mat-label>Confirm password</mat-label>
                   <input matInput type="password" name="repassword" [(ngModel)]="repassword" required>
                   <mat-hint *ngIf="client.password == ''">Required</mat-hint>
+                  <mat-hint *ngIf="client.password !== repassword">It has to match with password</mat-hint>
                 </mat-form-field>
               </div>
             

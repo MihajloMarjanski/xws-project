@@ -12,7 +12,7 @@ import { Company } from '../model/company';
 })
 export class CompanyService {
 
-  private _baseUrl = 'http://localhost:8600/';
+  private _baseUrl = 'https://localhost:8600/';
   private _approveCompany = this._baseUrl + 'admin/approve/company/';
 
   constructor(private _http: HttpClient) { }

@@ -1,7 +1,9 @@
 package com.example.agent.service;
 
+import com.example.agent.mapper.CompanyOwnerAdapter;
 import com.example.agent.model.*;
 import com.example.agent.model.dto.JobOffer;
+import com.example.agent.model.dto.OwnerWithCompany;
 import com.example.agent.repository.CompanyOwnerRepository;
 import com.example.agent.repository.CompanyRepository;
 import com.example.agent.repository.JobPositionRepository;
@@ -116,9 +118,22 @@ public class CompanyService {
         return companyOwnerRepository.findByUsername(username);
     }
 
-    public ResponseEntity<?> updateCompanyOwner(CompanyOwner companyOwner) {
-        saveOwner(companyOwner);
-        return new ResponseEntity<>(companyOwner, HttpStatus.OK);
+    public ResponseEntity<?> updateCompanyOwner(OwnerWithCompany companyOwner) {
+        CompanyOwner owner = findByUsername(companyOwner.getUsername());
+        owner.setEmail(companyOwner.getEmail());
+        owner.setFirstName(companyOwner.getFirstName());
+        owner.setLastName(companyOwner.getLastName());
+        if(!owner.getPassword().equals(companyOwner.getPassword())) {
+            PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+            owner.setPassword(passwordEncoder.encode(companyOwner.getPassword().concat(owner.getSalt())));
+        }
+        saveOwner(owner);
+
+        Company company = findByOwner(owner);
+        company.setInfo(companyOwner.getCompany().getInfo());
+        company.setName(companyOwner.getCompany().getName());
+        companyRepository.save(company);
+        return new ResponseEntity<>(owner, HttpStatus.OK);
     }
 
     public ResponseEntity<?> getAll() {
@@ -126,8 +141,13 @@ public class CompanyService {
     }
 
     public ResponseEntity<?> getOwnerByUsername(String username) {
-        if (findByUsername(username) == null)
+        CompanyOwner owner = findByUsername(username);
+        if (owner == null)
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        return new ResponseEntity<>(findByUsername(username), HttpStatus.OK);
+        return new ResponseEntity<>(CompanyOwnerAdapter.convertOwnerToDto(owner, findByOwner(owner)), HttpStatus.OK);
+    }
+
+    private Company findByOwner(CompanyOwner owner) {
+        return companyRepository.findByCompanyOwnerId(owner.getId());
     }
 }

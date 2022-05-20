@@ -52,7 +52,7 @@ public class ClientController {
         clientService.save(verificationClient);
 
         HttpHeaders headers = new HttpHeaders();
-        headers.add("Location", "http://localhost:4200");
+        headers.add("Location", "https://localhost:4200");
         return new ResponseEntity<String>(headers, HttpStatus.OK);
     }
 

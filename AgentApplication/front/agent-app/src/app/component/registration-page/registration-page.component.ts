@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormControl, FormGroupDirective, NgForm, Validators } from '@angular/forms';
+import { AbstractControl, FormControl, FormGroup, FormGroupDirective, NgForm, ValidationErrors, Validators } from '@angular/forms';
 import {ErrorStateMatcher} from '@angular/material/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
@@ -15,7 +15,23 @@ export class MyErrorStateMatcher implements ErrorStateMatcher {
     return !!(control && control.invalid && (control.dirty || control.touched || isSubmitted));
   }
 }
+// export class UsernameValidator {
+//   static cannotContainSpace(control: AbstractControl) : { [key: string]: boolean } | null {
+//       if((control.value as string).indexOf(' ') >= 0){
+//           return {cannotContainSpace: true}
+//       }
 
+//       return null
+//   }
+// }
+
+// function spaceValidator(control: AbstractControl): { [key: string]: boolean } | null {
+//   if((control.value as string).indexOf(' ') >= 0){
+//               return {cannotContainSpace: true}
+//           }
+    
+//           return null
+// }
 
 @Component({
   selector: 'app-registration-page',
@@ -25,6 +41,8 @@ export class MyErrorStateMatcher implements ErrorStateMatcher {
 export class RegistrationPageComponent implements OnInit {
 
   emailControl: FormControl = new FormControl('', [Validators.required, Validators.email]);
+  //space: FormControl = new FormControl('', [spaceValidator]);
+
   matcher = new MyErrorStateMatcher();
   client: Client = {
     id: 0,
@@ -37,9 +55,24 @@ export class RegistrationPageComponent implements OnInit {
   errorMessage : string  = '';
   repassword: string = '';
   usernames: string[] = [];
-  blackListPass: boolean = false;
+  blackListPassMessage: string = '';
+  isInBlackList: boolean = false;
   role: string = 'client';
-  owner!: CompanyOwner;
+  owner: CompanyOwner = {
+    id: 0,
+    firstName: "",
+    lastName: "",
+    email: "",
+    username: "",
+    password: "",
+    company: {
+      id: 0,
+      name: "",
+      info: "",
+      isApproved: true,
+      ownerUsername: ""
+    }
+  }
 
   constructor(public _userService: UserService, private _snackBar: MatSnackBar, private router: Router) { }
 
@@ -104,10 +137,20 @@ export class RegistrationPageComponent implements OnInit {
   checkPass() {
     this._userService.checkBlackListPass(this.client.password)
         .subscribe(data => {
-          this.blackListPass = data
-          console.log(this.blackListPass);},
+          if (data == null)
+            this.isInBlackList = false
+          else {
+            this.isInBlackList = true
+            this.blackListPassMessage = data
+          }
+          console.log(this.blackListPassMessage);},
                     error => this.errorMessage = <any>error);
   }
 
 
+  containSpace(username: string) {
+    if(username.split('').includes(' '))
+      return true
+    return false
+  }
 }

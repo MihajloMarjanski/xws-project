@@ -2,6 +2,7 @@ package com.example.agent.controller;
 
 import com.example.agent.model.*;
 import com.example.agent.model.dto.JobOffer;
+import com.example.agent.model.dto.OwnerWithCompany;
 import com.example.agent.repository.CompanyOwnerRepository;
 import com.example.agent.repository.ConfirmationTokenRepository;
 import com.example.agent.service.ClientService;
@@ -35,7 +36,7 @@ public class CompanyController {
 
     @PreAuthorize("hasRole('COMPANY_OWNER')")
     @PostMapping(path = "/owner/update")
-    public ResponseEntity<?> updateCompanyOwner(@RequestBody CompanyOwner companyOwner) {
+    public ResponseEntity<?> updateCompanyOwner(@RequestBody OwnerWithCompany companyOwner) {
         return companyService.updateCompanyOwner(companyOwner);
     }
 
@@ -92,7 +93,7 @@ public class CompanyController {
         companyOwnerRepository.save(companyOwner);
 
         HttpHeaders headers = new HttpHeaders();
-        headers.add("Location", "http://localhost:4200");
+        headers.add("Location", "https://localhost:4200");
         return new ResponseEntity<String>(headers, HttpStatus.OK);
     }
 
@@ -101,8 +102,8 @@ public class CompanyController {
         return companyService.getAll();
     }
 
-    @PreAuthorize("hasRole('CLIENT')")
-    @GetMapping(path = "/username/{username}")
+    @PreAuthorize("hasRole('COMPANY_OWNER')")
+    @GetMapping(path = "/owner/username/{username}")
     public ResponseEntity<?> ownerByUsername(@PathVariable String username) {
         return companyService.getOwnerByUsername(username);
     }

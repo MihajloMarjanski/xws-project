@@ -128,8 +128,16 @@ public class ClientService {
     }
 
     public ResponseEntity<?> updateClient(Client client) {
-        save(client);
-        return new ResponseEntity<>(client, HttpStatus.OK);
+        Client clientInDb = findByUsername(client.getUsername());
+        clientInDb.setEmail(client.getEmail());
+        clientInDb.setFirstName(client.getFirstName());
+        clientInDb.setLastName(client.getLastName());
+        if(!clientInDb.getPassword().equals(client.getPassword()) || client.getPassword() == "") {
+            PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+            clientInDb.setPassword(passwordEncoder.encode(client.getPassword().concat(clientInDb.getSalt())));
+        }
+        save(clientInDb);
+        return new ResponseEntity<>(clientInDb, HttpStatus.OK);
     }
 
     public ResponseEntity<?> getByUsername(String username) {

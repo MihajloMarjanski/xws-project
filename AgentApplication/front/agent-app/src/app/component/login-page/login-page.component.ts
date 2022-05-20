@@ -30,13 +30,18 @@ export class LoginPageComponent implements OnInit {
       data => {
         localStorage.setItem('jwtToken', data)
         let tokeninfo = this.getDecodedAccessToken(data)
-        localStorage.setItem('username', tokeninfo.sub)
-        localStorage.setItem('role', tokeninfo.role)
-        localStorage.setItem('exp', tokeninfo.exp)
-        console.log('Dobio: ', data)
-        this.router.navigateByUrl('/').then(() => {
-          window.location.reload();
-        });
+        if(tokeninfo == '') 
+          this._snackBar.open(data, 'Close', {duration: 3000});  
+        else {
+          localStorage.setItem('username', tokeninfo.sub)
+          localStorage.setItem('roles', tokeninfo.roles)
+          localStorage.setItem('authorities', tokeninfo.authorities)
+          localStorage.setItem('exp', tokeninfo.exp)
+          console.log('Dobio: ', data)
+          this.router.navigateByUrl('/').then(() => {
+            window.location.reload();
+          });
+        }
       },
       error => {
         console.log('Error!', error)

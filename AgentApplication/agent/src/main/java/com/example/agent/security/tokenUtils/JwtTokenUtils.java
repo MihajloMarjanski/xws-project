@@ -1,16 +1,19 @@
 package com.example.agent.security.tokenUtils;
 
+import com.example.agent.model.Permission;
 import com.example.agent.model.Role;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Set;
 
 // Utility klasa za rad sa JSON Web Tokenima
@@ -55,8 +58,16 @@ public class JwtTokenUtils {
      * @return JWT token
      */
     public String generateToken(String username, Set<Role> roles) {
+        Set<String> roleNames = new HashSet<>();
+        Set<String> permissions = new HashSet<>();
+        for (Role role : roles) {
+            for (Permission permission : role.getPermissions())
+                permissions.add(permission.getName());
+            roleNames.add(role.getName());
+        }
         return Jwts.builder()
-                .claim("roles", roles)
+                .claim("roles", roleNames)
+                .claim("authorities", permissions)
                 .setIssuer(APP_NAME)
                 .setSubject(username)
                 .setAudience(generateAudience())

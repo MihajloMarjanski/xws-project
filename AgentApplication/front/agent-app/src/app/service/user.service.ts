@@ -13,7 +13,7 @@ import { Company } from '../model/company';
 export class UserService {
   
 
-  private _baseUrl = 'http://localhost:8600/';
+  private _baseUrl = 'https://localhost:8600/';
   private _login = this._baseUrl + 'auth/login';
   private _getAllUsernames = this._baseUrl + 'auth/getAllUsernames';
   private _getCompanies = this._baseUrl + 'company/all';
@@ -26,6 +26,7 @@ export class UserService {
   private _approveCompany  = this._baseUrl + 'admin/approve/company/';
   private _editOwner  = this._baseUrl + 'company/owner/update';
   private _editClient  = this._baseUrl + 'clients/update';
+  private _editAdmin  = this._baseUrl + 'admin/update';
 
   constructor(private _http: HttpClient) { }
 
@@ -67,7 +68,7 @@ export class UserService {
   }
 
   checkBlackListPass(pass: string): Observable<any> { 
-    return this._http.get<boolean>(this._blackList + pass)
+    return this._http.get<any>(this._blackList + pass, {responseType: 'text' as 'json'})
                           .pipe(tap(data =>  console.log('All: ' + JSON.stringify(data))),
                             catchError(this.handleError)); 
   }
@@ -106,6 +107,12 @@ export class UserService {
     const body=JSON.stringify(owner);
     console.log(body)
     return this._http.post(this._editClient, body)
+  }
+
+  editAdmin(owner: Client) : Observable<any> {
+    const body=JSON.stringify(owner);
+    console.log(body)
+    return this._http.post(this._editAdmin, body)
   }
   
 

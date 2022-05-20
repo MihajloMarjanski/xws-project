@@ -16,7 +16,7 @@
 
           <ng-container matColumnDef="owner">
             <mat-header-cell *matHeaderCellDef > Owner </mat-header-cell>
-            <mat-cell *matCellDef="let element"> {{element.ownerUsername}} </mat-cell>
+            <mat-cell *matCellDef="let element"> {{element.companyOwner.firstName}} {{element.companyOwner.lastName}} - {{element.companyOwner.username}} </mat-cell>
           </ng-container>
 
         
@@ -25,8 +25,8 @@
           <ng-container matColumnDef="approve">
             <mat-header-cell *matHeaderCellDef> </mat-header-cell>
             <mat-cell *matCellDef="let element"> 
-                <button mat-button *ngIf="!element.isApproved " (click)="approve(element.id)" >Approve</button>
-                <ng-container *ngIf="element.isApproved " ><i>approved</i></ng-container>
+                <button mat-button *ngIf="!element.approved " (click)="approve(element.id)" >Approve</button>
+                <ng-container *ngIf="element.approved " ><i>approved</i></ng-container>
             </mat-cell>
           </ng-container>
     

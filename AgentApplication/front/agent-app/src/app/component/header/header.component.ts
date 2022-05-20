@@ -8,21 +8,22 @@ import { Router } from '@angular/router';
 })
 export class HeaderComponent implements OnInit {
 
-  role: any
+  roles: any
 
   constructor(private router: Router) { }
 
   ngOnInit(): void {
-    this.role = localStorage.getItem('role')
+    this.roles = localStorage.getItem('roles')
   }
 
   logOut() {
     localStorage.removeItem('id')
     localStorage.removeItem('jwtToken')
-    localStorage.removeItem('role')
+    localStorage.removeItem('roles')
+    localStorage.removeItem('authorities')
     localStorage.removeItem('username')
 
-    this.role = ''
+    this.roles = ''
 
     this.router.navigateByUrl('/');
   }

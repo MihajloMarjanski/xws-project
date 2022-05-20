@@ -1,5 +1,7 @@
 package com.example.agent.controller;
 
+import com.example.agent.model.Admin;
+import com.example.agent.model.Client;
 import com.example.agent.model.CompanyOwner;
 import com.example.agent.model.Role;
 import com.example.agent.service.AdminService;
@@ -29,5 +31,11 @@ public class AdminController {
     @GetMapping(path = "/username/{username}")
     public ResponseEntity<?> adminByUsername(@PathVariable String username) {
         return adminService.getByUsername(username);
+    }
+
+    @PreAuthorize("hasRole('ADMIN')")
+    @PostMapping(path = "/update")
+    public ResponseEntity<?> updateAdmin(@RequestBody Admin client) {
+        return adminService.updateAdmin(client);
     }
 }

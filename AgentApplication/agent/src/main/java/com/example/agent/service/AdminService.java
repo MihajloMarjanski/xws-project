@@ -7,6 +7,8 @@ import com.example.agent.repository.CompanyRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -60,5 +62,17 @@ public class AdminService {
         if (findByUsername(username) == null)
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         return new ResponseEntity<>(findByUsername(username), HttpStatus.OK);
+    }
+
+    public ResponseEntity<?> updateAdmin(Admin client) {
+        Admin admin = findByUsername(client.getUsername());
+        admin.setFirstName(client.getFirstName());
+        admin.setLastName(client.getLastName());
+        if(!admin.getPassword().equals(client.getPassword()) || client.getPassword() == "") {
+            PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+            admin.setPassword(passwordEncoder.encode(client.getPassword().concat(admin.getSalt())));
+        }
+        adminRepository.save(admin);
+        return new ResponseEntity<>(admin, HttpStatus.OK);
     }
 }
