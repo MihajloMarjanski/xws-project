@@ -2,13 +2,19 @@
     <div>
         <mat-form-field appearance="fill" style="width: 350px;">
             <mat-label>Username</mat-label>
-            <input matInput [(ngModel)]="credentials.username" required >
+            <input matInput [(ngModel)]="credentials.username"  >
         </mat-form-field>
     </div>
     <div style="width: 300px;">
         <mat-form-field appearance="fill" style="width: 350px;">
             <mat-label>Password</mat-label>
-            <input type="password"  matInput [(ngModel)]="credentials.password" required >
+            <input type="password"  matInput [(ngModel)]="credentials.password"  >
+        </mat-form-field>
+    </div>
+    <div style="width: 300px;">
+        <mat-form-field appearance="fill" style="width: 350px;">
+            <mat-label>PIN</mat-label>
+            <input type="password"  matInput [(ngModel)]="credentials.pin"  >
         </mat-form-field>
     </div>
     <div style="width: 300px;">

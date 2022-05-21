@@ -136,6 +136,9 @@ public class CompanyService {
         company.setName(companyOwner.getCompany().getName());
         company.setCity(companyOwner.getCompany().getCity());
         company.setCountry(companyOwner.getCompany().getCountry());
+
+        for(JobPosition job : companyOwner.getCompany().getPositions())
+            job.setCompany(company);
         company.setPositions(companyOwner.getCompany().getPositions());
         companyRepository.save(company);
         return new ResponseEntity<>(owner, HttpStatus.OK);

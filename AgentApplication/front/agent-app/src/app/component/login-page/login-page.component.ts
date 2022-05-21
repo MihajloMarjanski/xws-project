@@ -14,7 +14,8 @@ export class LoginPageComponent implements OnInit {
 
   credentials: Credentials = {
     username: '',
-    password: ''
+    password: '',
+    pin: ''
   }
 
   token: string = '';
