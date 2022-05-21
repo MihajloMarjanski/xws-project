@@ -27,9 +27,16 @@ export class UserService {
   private _editOwner  = this._baseUrl + 'company/owner/update';
   private _editClient  = this._baseUrl + 'clients/update';
   private _editAdmin  = this._baseUrl + 'admin/update';
+  private _forgotPassword  = this._baseUrl + 'clients/newPassword/';
 
   constructor(private _http: HttpClient) { }
 
+
+  forgotPassword(username: string) : Observable<any> {
+    return this._http.put<any>(this._forgotPassword + username, {})
+                  .pipe(tap(data =>  console.log('All: ' + JSON.stringify(data))),
+                  catchError(this.handleError)); 
+  }
 
   getClientByUsername(username: string): Observable<Client> {
     return this._http.get<Client>(this._clientByUsername + username)

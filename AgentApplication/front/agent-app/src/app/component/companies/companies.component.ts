@@ -31,7 +31,8 @@ export class CompaniesComponent implements OnInit {
 
   approve(id: number) {
     this._userService.approveCompany(id)
-        .subscribe(data =>  {  
+        .subscribe(data =>  { 
+          this.getCompanies() 
                     },
                    error => this.errorMessage = <any>error);
   }

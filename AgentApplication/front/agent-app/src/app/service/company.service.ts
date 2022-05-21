@@ -11,9 +11,25 @@ import { Company } from '../model/company';
   providedIn: 'root'
 })
 export class CompanyService {
-
+  
   private _baseUrl = 'https://localhost:8600/';
-  private _approveCompany = this._baseUrl + 'admin/approve/company/';
-
+  private _createCompany = this._baseUrl + 'company/create/';
+  
   constructor(private _http: HttpClient) { }
+
+
+
+  createCompany(company: Company): Observable<any> {
+    const body=JSON.stringify(company);
+    console.log(body)
+    return this._http.post(this._createCompany + company.ownerUsername, body)
+  }
+  
+
+
+  private handleError(err : HttpErrorResponse) {
+    console.log(err.message);
+    return Observable.throw(err.message);
+    throw new Error('Method not implemented.');
+  } 
 }

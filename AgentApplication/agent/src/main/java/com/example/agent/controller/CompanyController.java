@@ -40,10 +40,10 @@ public class CompanyController {
         return companyService.updateCompanyOwner(companyOwner);
     }
 
-    @PreAuthorize("hasRole('COMPANY_OWNER')")
-    @PostMapping(path = "/create")
-    public ResponseEntity<?> createCompany(@RequestBody Company company) {
-        return companyService.sendCompanyRegistrationRequest(company);
+    @PreAuthorize("hasRole('POTENTIAL_OWNER')")
+    @PostMapping(path = "/create/{ownerUsername}")
+    public ResponseEntity<?> createCompany(@RequestBody Company company, @PathVariable String ownerUsername) {
+        return companyService.sendCompanyRegistrationRequest(company, ownerUsername);
     }
 
     @PreAuthorize("hasRole('COMPANY_OWNER')")
@@ -102,7 +102,7 @@ public class CompanyController {
         return companyService.getAll();
     }
 
-    @PreAuthorize("hasRole('COMPANY_OWNER')")
+    @PreAuthorize("hasAnyRole('COMPANY_OWNER', 'POTENTIAL_OWNER')")
     @GetMapping(path = "/owner/username/{username}")
     public ResponseEntity<?> ownerByUsername(@PathVariable String username) {
         return companyService.getOwnerByUsername(username);

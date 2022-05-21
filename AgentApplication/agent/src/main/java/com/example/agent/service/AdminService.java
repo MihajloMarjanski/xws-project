@@ -33,7 +33,7 @@ public class AdminService {
 
         Role role = roleService.findByName("ROLE_COMPANY_OWNER");
         CompanyOwner owner = company.get().getCompanyOwner();
-        Set<Role> ownerRoles = owner.getRoles();
+        Set<Role> ownerRoles = new HashSet<>();
         ownerRoles.add(role);
         owner.setRoles(ownerRoles);
         companyOwnerRepository.save(owner);

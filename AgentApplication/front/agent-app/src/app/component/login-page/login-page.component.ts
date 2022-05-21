@@ -31,7 +31,7 @@ export class LoginPageComponent implements OnInit {
         localStorage.setItem('jwtToken', data)
         let tokeninfo = this.getDecodedAccessToken(data)
         if(tokeninfo == '') 
-          this._snackBar.open(data, 'Close', {duration: 3000});  
+          this._snackBar.open(data, 'Close', {duration: 6000});  
         else {
           localStorage.setItem('username', tokeninfo.sub)
           localStorage.setItem('roles', tokeninfo.roles)
@@ -57,6 +57,18 @@ export class LoginPageComponent implements OnInit {
     catch(Error){
         return '';
     }
+  }
+
+  sendPassword() {
+    this._userService.forgotPassword(this.credentials.username).subscribe(
+      data => {
+      },
+      error => {
+        console.log('Error!', error)
+        this._snackBar.open('You have to valid insert username first.', 'Close', {duration: 3000});
+      }
+      )
+      this._snackBar.open('Your new password has been sent to your email. You have to change it when you login for the first time!', 'Close', {duration: 7000});
   }
 
 }

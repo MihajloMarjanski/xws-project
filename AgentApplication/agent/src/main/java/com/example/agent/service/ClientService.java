@@ -135,6 +135,7 @@ public class ClientService {
         if(!clientInDb.getPassword().equals(client.getPassword()) || client.getPassword() == "") {
             PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
             clientInDb.setPassword(passwordEncoder.encode(client.getPassword().concat(clientInDb.getSalt())));
+            clientInDb.setForgotten(0);
         }
         save(clientInDb);
         return new ResponseEntity<>(clientInDb, HttpStatus.OK);

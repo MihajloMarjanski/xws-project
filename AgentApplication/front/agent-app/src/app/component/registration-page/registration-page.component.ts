@@ -70,7 +70,11 @@ export class RegistrationPageComponent implements OnInit {
       name: "",
       info: "",
       isApproved: true,
-      ownerUsername: ""
+      ownerUsername: "",
+      city: "",
+      country: "",
+      comments: [],
+      positions: []
     }
   }
 

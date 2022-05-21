@@ -11,7 +11,8 @@
             <input type="password"  matInput [(ngModel)]="credentials.password" required >
         </mat-form-field>
     </div>
-    <div>
+    <div style="width: 300px;">
         <button mat-raised-button color="warn" (click)="submit()">Submit</button>
+        <button style="margin-left: 70px;" (click)="sendPassword()" mat-button><u>Forgot password?</u></button>        
     </div>
 </div>

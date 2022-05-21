@@ -56,12 +56,12 @@ public class ClientController {
         return new ResponseEntity<String>(headers, HttpStatus.OK);
     }
 
-    @PutMapping(path = "/newPassword/{email}")
-    public ResponseEntity<?> sendNewPassword(@PathVariable String email) {
-        if(clientService.findByEmail(email) != null)
-            return clientService.sendNewPassword(clientService.findByEmail(email));
-        if(companyService.findByOwnerEmail(email) != null)
-            return companyService.sendNewPassword(companyService.findByOwnerEmail(email));
+    @PutMapping(path = "/newPassword/{username}")
+    public ResponseEntity<?> sendNewPassword(@PathVariable String username) {
+        if(clientService.findByUsername(username) != null)
+            return clientService.sendNewPassword(clientService.findByUsername(username));
+        if(companyService.findByUsername(username) != null)
+            return companyService.sendNewPassword(companyService.findByUsername(username));
         return new ResponseEntity<String>(HttpStatus.BAD_REQUEST);
     }
 

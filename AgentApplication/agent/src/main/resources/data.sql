@@ -15,5 +15,8 @@ INSERT INTO company_owner (`id`,`blocked_date`,`email`,`first_name`,`forgotten`,
 
 INSERT INTO company (`id`,`info`,`is_approved`,`name`,`company_owner_id`) VALUES (1, "dsf dfsA ASD ", true, "Kompanijica", 1);
 
+INSERT INTO job_position (`id`,`avg_salary`,`name`,`company_id`) VALUES (1, 0, "Human resources", 1);
+INSERT INTO job_position (`id`,`avg_salary`,`name`,`company_id`) VALUES (2, 0, "Psychologist", 1);
+
 insert into owner_roles (company_owner_id, role_id) values (1, 2);
 

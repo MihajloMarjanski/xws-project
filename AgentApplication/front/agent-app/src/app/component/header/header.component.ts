@@ -19,7 +19,7 @@ export class HeaderComponent implements OnInit {
   logOut() {
     localStorage.removeItem('id')
     localStorage.removeItem('jwtToken')
-    localStorage.removeItem('roles')
+    localStorage.setItem('roles', '')
     localStorage.removeItem('authorities')
     localStorage.removeItem('username')
 

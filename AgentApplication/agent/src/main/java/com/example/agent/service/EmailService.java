@@ -35,7 +35,7 @@ public class EmailService {
         mail.setText("Hi, " + user.getFirstName() + ".\n\nWelcome to our site." +
                 "\nWe hope that you will be satisfied with our services." +
                 "\nIn order to activate your account click on this link: " +
-                "http://localhost:8600/clients/activate?token=" + confirmationToken.getConfirmationToken());
+                "https://localhost:8600/clients/activate?token=" + confirmationToken.getConfirmationToken());
 
         javaMailSender.send(mail);
     }
@@ -52,7 +52,7 @@ public class EmailService {
         mail.setText("Hi, " + user.getFirstName() + ".\n\nWelcome to our site." +
                 "\nWe hope that you will be satisfied with our services." +
                 "\nIn order to activate your account click on this link: " +
-                "http://localhost:8600/company/owner/activate?token=" + confirmationToken.getConfirmationToken());
+                "https://localhost:8600/company/owner/activate?token=" + confirmationToken.getConfirmationToken());
 
         javaMailSender.send(mail);
     }

@@ -20,6 +20,8 @@ public class Company {
     private Integer id;
     private String name;
     private String info;
+    private String city;
+    private String country;
 
     @OneToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "company_owner_id")

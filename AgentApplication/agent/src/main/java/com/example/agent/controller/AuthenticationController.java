@@ -82,8 +82,10 @@ public class AuthenticationController {
                 companyOwner = companyService.findByUsername(authenticationRequest.getUsername());
             else
                 companyOwner = (CompanyOwner) authentication.getPrincipal();
-            if (companyOwner.getForgotten() == 1)
+            if (companyOwner.getForgotten() == 1) {
                 companyOwner.setForgotten(2);
+                companyService.saveOwner(companyOwner);
+            }
             else if (companyOwner.getForgotten() == 2)
                 return "You did not changed password first time. If you want to log in, refresh again your password.";
             jwt = tokenUtils.generateToken(companyOwner.getUsername(), companyOwner.getRoles());
@@ -94,8 +96,10 @@ public class AuthenticationController {
                     client = clientService.findByUsername(authenticationRequest.getUsername());
                 else
                     client = (Client) authentication.getPrincipal();
-                if (client.getForgotten() == 1)
+                if (client.getForgotten() == 1) {
                     client.setForgotten(2);
+                    clientService.save(client);
+                }
                 else if (client.getForgotten() == 2)
                     return "You did not changed password first time. If you want to log in, refresh again your password.";
                 jwt = tokenUtils.generateToken(client.getUsername(), client.getRoles());

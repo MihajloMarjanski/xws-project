@@ -1,7 +1,9 @@
 package com.example.agent.mapper;
 
+import com.example.agent.model.Comment;
 import com.example.agent.model.Company;
 import com.example.agent.model.CompanyOwner;
+import com.example.agent.model.JobPosition;
 import com.example.agent.model.dto.OwnerWithCompany;
 
 import java.util.Date;
@@ -26,6 +28,12 @@ public class CompanyOwnerAdapter {
         dto.setBlockedDate(owner.getBlockedDate());
 
         dto.setCompany(company);
+
+        for (JobPosition job : dto.getCompany().getPositions())
+            job.setCompany(null);
+
+        for (Comment comment : dto.getCompany().getComments())
+            comment.setCompany(null);
 
         return dto;
     }

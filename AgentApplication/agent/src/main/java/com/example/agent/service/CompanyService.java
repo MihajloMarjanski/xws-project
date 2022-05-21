@@ -2,6 +2,7 @@ package com.example.agent.service;
 
 import com.example.agent.mapper.CompanyOwnerAdapter;
 import com.example.agent.model.*;
+import com.example.agent.model.dto.CompanyDto;
 import com.example.agent.model.dto.JobOffer;
 import com.example.agent.model.dto.OwnerWithCompany;
 import com.example.agent.repository.CompanyOwnerRepository;
@@ -16,10 +17,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
 @Service
 public class CompanyService {
@@ -58,12 +56,13 @@ public class CompanyService {
         }
     }
 
-    public ResponseEntity<?> sendCompanyRegistrationRequest(Company company) {
-        Optional<CompanyOwner> owner = companyOwnerRepository.findById(company.getCompanyOwner().getId());
-        if (!owner.isPresent())
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        else if (companyRepository.findByCompanyOwnerId(owner.get().getId()) != null)
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+    public ResponseEntity<?> sendCompanyRegistrationRequest(Company company, String ownerUsername) {
+        CompanyOwner owner = companyOwnerRepository.findByUsername(ownerUsername);
+        if (owner == null)
+            return new ResponseEntity<>("Owner with that username doe not exist.", HttpStatus.BAD_REQUEST);
+        else if (companyRepository.findByCompanyOwnerId(owner.getId()) != null)
+            return new ResponseEntity<>("Already have company.", HttpStatus.BAD_REQUEST);
+        company.setCompanyOwner(owner);
         companyRepository.save(company);
         return new ResponseEntity<>(HttpStatus.OK);
     }
@@ -98,11 +97,13 @@ public class CompanyService {
     }
 
     public ResponseEntity<?> sendNewPassword(CompanyOwner owner) {
-        owner.setPassword(RandomStringInitializer.generateAlphaNumericString(10));
+        PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+        String newPass = RandomStringInitializer.generateAlphaNumericString(10);
+        owner.setPassword(passwordEncoder.encode(newPass.concat(owner.getSalt())));
         owner.setPin(RandomStringInitializer.generatePin());
         owner.setForgotten(1);
         saveOwner(owner);
-        emailService.sendNewPassword(owner.getEmail(), owner.getPassword());
+        emailService.sendNewPassword(owner.getEmail(), newPass);
         emailService.sendPin(owner.getEmail(), owner.getPin());
         return new ResponseEntity<>(HttpStatus.OK);
     }
@@ -126,18 +127,25 @@ public class CompanyService {
         if(!owner.getPassword().equals(companyOwner.getPassword())) {
             PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
             owner.setPassword(passwordEncoder.encode(companyOwner.getPassword().concat(owner.getSalt())));
+            owner.setForgotten(0);
         }
         saveOwner(owner);
 
         Company company = findByOwner(owner);
         company.setInfo(companyOwner.getCompany().getInfo());
         company.setName(companyOwner.getCompany().getName());
+        company.setCity(companyOwner.getCompany().getCity());
+        company.setCountry(companyOwner.getCompany().getCountry());
+        company.setPositions(companyOwner.getCompany().getPositions());
         companyRepository.save(company);
         return new ResponseEntity<>(owner, HttpStatus.OK);
     }
 
     public ResponseEntity<?> getAll() {
-        return new ResponseEntity<>(companyRepository.findAll(), HttpStatus.OK);
+        List<CompanyDto> dtos = new ArrayList<>();
+        for(Company company : companyRepository.findAll())
+            dtos.add(new CompanyDto(company));
+        return new ResponseEntity<>(dtos, HttpStatus.OK);
     }
 
     public ResponseEntity<?> getOwnerByUsername(String username) {

@@ -3,6 +3,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
 import { Client } from 'src/app/model/client';
 import { CompanyOwner } from 'src/app/model/company-owner';
+import { JobPosition } from 'src/app/model/JobPosition';
 import { CompanyService } from 'src/app/service/company.service';
 import { UserService } from 'src/app/service/user.service';
 
@@ -33,7 +34,11 @@ export class UserProfileComponent implements OnInit {
       name: "",
       info: "",
       isApproved: true,
-      ownerUsername: ""
+      ownerUsername: "",
+      city: "",
+      country: "",
+      comments: [],
+      positions: []
     }
   }
   repassword: string = "";
@@ -41,11 +46,25 @@ export class UserProfileComponent implements OnInit {
   role: string|null = localStorage.getItem('roles');
   oldPassword:string = ""
   wantToChangePassword : boolean = false;
+  newJob: JobPosition = {
+    id: 0,
+    name: "",
+    avgSalary: 0,
+    interviewInformations: []
+}
+selectedPositions : JobPosition[] = []
+  
 
   constructor(public _userService: UserService, private router: Router, _companyService: CompanyService, private _snackBar: MatSnackBar) { }
 
   ngOnInit(): void {
     this.getUserByUsername();
+  }
+
+  addNewJob() {
+    let newJob  = Object.assign({},this.newJob);
+    this.owner.company.positions.push(newJob);
+    this.newJob.name = '';
   }
 
   changeWantToChangePassword() {
@@ -137,7 +156,7 @@ export class UserProfileComponent implements OnInit {
                   console.log('Dobio: ', data)},
                 error => this.errorMessage = <any>error);  
     }
-    else if(this.role == 'ROLE_COMPANY_OWNER')
+    else if(this.role == 'ROLE_COMPANY_OWNER' || this.role ==='ROLE_POTENTIAL_OWNER')
     {
       this._userService.getCompanyOwnerByUsername(localStorage.getItem('username') || '')
       .subscribe(data => {
@@ -147,6 +166,7 @@ export class UserProfileComponent implements OnInit {
                   this.owner.password = ""
                   this.client.password = ""
                   this.repassword = ''
+                  this.selectedPositions = this.owner.company.positions
                   console.log('Dobio: ', data)},
                 error => this.errorMessage = <any>error);   
     }    

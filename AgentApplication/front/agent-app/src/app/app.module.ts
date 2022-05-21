@@ -44,6 +44,7 @@ import { HeaderComponent } from './component/header/header.component';
 import { FooterComponent } from './component/footer/footer.component';
 import { CompaniesComponent } from './component/companies/companies.component';
 import { UserProfileComponent } from './component/user-profile/user-profile.component';
+import { CreateCompanyComponent } from './component/create-company/create-company.component';
 
 const MaterialComponents = [
   MatSliderModule,
@@ -82,7 +83,8 @@ const MaterialComponents = [
     HeaderComponent,
     FooterComponent,
     CompaniesComponent,
-    UserProfileComponent
+    UserProfileComponent,
+    CreateCompanyComponent
   ],
   imports: [
     MaterialComponents,
