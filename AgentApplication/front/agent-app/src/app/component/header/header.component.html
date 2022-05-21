@@ -2,7 +2,8 @@
     <button mat-button style="font-size : 25px" [routerLink]="['']">CompanyIn</button>
     <button *ngIf="roles.includes('ROLE_ADMIN')" style="margin-left : 25px" mat-button [routerLink]="['companies']">Companies</button>
     <button *ngIf="roles.includes('ROLE_POTENTIAL_OWNER')" style="margin-left : 25px" mat-button [routerLink]="['create-company']">Create company</button>
-
+    <button *ngIf="roles.includes('ROLE_CLIENT')" style="margin-left : 25px" mat-button [routerLink]="['client-companies']">Companies</button>
+    <button *ngIf="roles.includes('ROLE_CLIENT')" style="margin-left : 25px" mat-button [routerLink]="['forum']">Forum</button>
 
 
     <span class="example-spacer" ></span>

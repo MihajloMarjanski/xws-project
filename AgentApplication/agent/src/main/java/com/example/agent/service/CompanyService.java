@@ -161,4 +161,18 @@ public class CompanyService {
     private Company findByOwner(CompanyOwner owner) {
         return companyRepository.findByCompanyOwnerId(owner.getId());
     }
+
+    public ResponseEntity<?> getAllApproved() {
+        List<Company> dtos = new ArrayList<>();
+        for(Company company : companyRepository.findAll())
+            if (company.isApproved()) {
+                for (Comment comment : company.getComments())
+                    comment.setCompany(null);
+                for (JobPosition job : company.getPositions())
+                    job.setCompany(null);
+                dtos.add(company);
+            }
+
+        return new ResponseEntity<>(dtos, HttpStatus.OK);
+    }
 }

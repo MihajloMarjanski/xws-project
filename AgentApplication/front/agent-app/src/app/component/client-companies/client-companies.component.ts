@@ -16,6 +16,7 @@ export class ClientCompaniesComponent implements OnInit {
   companies : Company[] = []
   displayedColumns: string[] = ['name', 'info', 'owner'];
   displayedColumns1: string[] = ['text', 'date', 'client'];
+  displayedColumns2: string[] = ['job', 'salary', 'interview'];
   errorMessage : string  = '';
   selectedCompany: Company = {
     id: 0,
@@ -28,14 +29,14 @@ export class ClientCompaniesComponent implements OnInit {
     comments: [],
     positions: []
   }
-  role : string|null = localStorage.getItem('role');
+  role : string|null = localStorage.getItem('roles');
   show: boolean = false;
   currentClient! : Client
 
   constructor(public _userService: UserService, private _companyService: CompanyService, private router: Router, private _snackBar: MatSnackBar) { }
 
   ngOnInit(): void {
-    if(this.role == 'ROLE_CLIENT')
+    if(localStorage.getItem('roles') == 'ROLE_CLIENT')
     {
       this.getClient();
       this.getAllApprovedCompanies();

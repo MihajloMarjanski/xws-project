@@ -1,8 +1,5 @@
-<mat-grid-list rowHeight="600px" cols="4" >
 
-    <!-- LISTA -->
-<mat-grid-tile   colspan="3" >
-<div style="margin-right: 43%; margin-top: 0%;">
+<div style="margin-left: 15%; margin-right: 15%; margin-top: 2%;">
 <h2>Companies</h2>    
 
 <!--  <div class="tableViewNonCustomer" *ngIf="role != 'ROLE_CUSTOMER' && role != 'ROLE_ADMIN' && role != 'ROLE_BOAT_OWNER' && role != 'ROLE_WEEKEND_HOUSE_OWNER' && role != 'ROLE_INSTRUCTOR'"> -->
@@ -24,37 +21,59 @@
       </ng-container>
 
       <mat-header-row *matHeaderRowDef="displayedColumns; sticky: true" ></mat-header-row>
-      <mat-row *matRowDef="let row; columns: displayedColumns;" ></mat-row>
+      <mat-row *matRowDef="let row; columns: displayedColumns;" (click)="showInfo(row)" [class.selected]="row.selected"></mat-row>
 </table>
 </div>
 </div>
-</mat-grid-tile>
 
 
-<!-- HOUSE INFO -->
-<mat-grid-tile colspan="2">
-<div  *ngIf="show" style="margin-top: -25%; margin-right: -20%; font-size: larger; position: static;">
+
+
+<div  *ngIf="show" style="position: static; margin-left: 15%; margin-right: 15%;">
 <h2>Company informations</h2>
 <div class="infoDiv"><label><b>Name:</b>   {{selectedCompany.name}}</label></div>
 <div class="infoDiv"><label><b>Details:</b>   {{selectedCompany.info}}</label></div>
 <div class="infoDiv"><label><b>City:</b>   {{selectedCompany.city}}</label></div>
 <div class="infoDiv"><label><b>Country:</b>   {{selectedCompany.country}}</label></div>
-<div class="infoDiv">
+<!-- <div class="infoDiv">
     <label><b>Job positions:</b></label>
-    <label *ngFor="let job of selectedCompany.positions">{{job}}</label>
-</div>
+    <label *ngFor="let job of selectedCompany.positions">{{job.name}} </label>
+</div> -->
+<h3>Job positions</h3>
 <div class="tableView" >
-    <table id="myTable" mat-table [dataSource]="selectedCompany.comments" class="mat-elevation-z8" >
-        <ng-container matColumnDef="text">
-            <mat-header-cell *matHeaderCellDef > Text </mat-header-cell>
-            <mat-cell *matCellDef="let element"> {{element.text}} </mat-cell>
-          </ng-container>
-    
-        <ng-container matColumnDef="date">
+  <table  id="myTable" mat-table [dataSource]="selectedCompany.positions" class="mat-elevation-z8" >
+      <ng-container matColumnDef="job">
+          <mat-header-cell *matHeaderCellDef > Job </mat-header-cell>
+          <mat-cell *matCellDef="let element"> {{element.name}} </mat-cell>
+        </ng-container>
+  
+      <ng-container matColumnDef="salary">
+          <mat-header-cell *matHeaderCellDef > Salary </mat-header-cell>
+          <mat-cell *matCellDef="let element"> {{element.avgSalary}} </mat-cell>
+        </ng-container>
+  
+        <ng-container matColumnDef="interview">
+          <mat-header-cell *matHeaderCellDef > Interview informations </mat-header-cell>
+          <mat-cell *matCellDef="let element"> <label *ngFor="let info of element.interviewInformations">{{info.info}} </label></mat-cell>
+        </ng-container>
+  
+        <mat-header-row *matHeaderRowDef="displayedColumns2; sticky: true" ></mat-header-row>
+        <mat-row *matRowDef="let row; columns: displayedColumns2;" ></mat-row>
+  </table>
+  </div>
+  <h3>Company Comments</h3>
+  <div class="tableView" >
+    <table  id="myTable" mat-table [dataSource]="selectedCompany.comments" class="mat-elevation-z8" >
+      <ng-container matColumnDef="text">
+        <mat-header-cell *matHeaderCellDef > Text </mat-header-cell>
+        <mat-cell *matCellDef="let element"> {{element.text}} </mat-cell>
+      </ng-container>
+      
+      <ng-container matColumnDef="date">
             <mat-header-cell *matHeaderCellDef > Created </mat-header-cell>
             <mat-cell *matCellDef="let element"> {{element.createdDate}} </mat-cell>
           </ng-container>
-    
+          
           <ng-container matColumnDef="client">
             <mat-header-cell *matHeaderCellDef > User </mat-header-cell>
             <mat-cell *matCellDef="let element"> {{element.client.username}} </mat-cell>
@@ -64,9 +83,7 @@
           <mat-row *matRowDef="let row; columns: displayedColumns1;" ></mat-row>
     </table>
     </div>
-</div>
-</mat-grid-tile>
+  </div>
 
 
-</mat-grid-list>
-
+    

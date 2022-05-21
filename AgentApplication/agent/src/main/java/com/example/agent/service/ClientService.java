@@ -1,10 +1,7 @@
 package com.example.agent.service;
 
 import com.example.agent.model.*;
-import com.example.agent.repository.ClientRepository;
-import com.example.agent.repository.CommentRepository;
-import com.example.agent.repository.InterviewInformationRepository;
-import com.example.agent.repository.JobPositionRepository;
+import com.example.agent.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
@@ -37,6 +34,8 @@ public class ClientService {
     InterviewInformationRepository interviewInformationRepository;
     @Autowired
     EmailService emailService;
+    @Autowired
+    CompanyRepository companyRepository;
 
     public ResponseEntity<?> create(Client client) {
         PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
@@ -61,7 +60,9 @@ public class ClientService {
         }
     }
 
-    public ResponseEntity<?> createComment(Comment comment) {
+    public ResponseEntity<?> createComment(Comment comment, Integer companyId) {
+        Company company = companyRepository.getById(companyId);
+        comment.setCompany(company);
         commentRepository.save(comment);
         return new ResponseEntity<>(HttpStatus.OK);
     }
@@ -76,7 +77,8 @@ public class ClientService {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    public ResponseEntity<?> addInterviewInformation(InterviewInformation interviewInformation) {
+    public ResponseEntity<?> addInterviewInformation(InterviewInformation interviewInformation, Integer jobId) {
+        interviewInformation.setJobPosition(jobPositionRepository.getById(jobId));
         interviewInformationRepository.save(interviewInformation);
         return new ResponseEntity<>(HttpStatus.OK);
     }

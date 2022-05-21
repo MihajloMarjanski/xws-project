@@ -1,7 +1,7 @@
 insert into role (name) values ('ROLE_ADMIN');
 insert into role (name) values ('ROLE_COMPANY_OWNER');
 insert into role (name) values ('ROLE_POTENTIAL_OWNER');
-insert into role (name) values ('ROLE_REGISTERED_USER');
+insert into role (name) values ('ROLE_CLIENT');
 
 INSERT INTO admin (`id`, `email`, `first_name`, `last_name`, `password`, `username`, is_activated, pin, is_blocked, salt)
     VALUES (1, "health.care.clinic.psw+admin@gmail.com", "Admin", "Admirovic", "$2a$10$AY69sMB2v7eJHChMtGG61O4KPmkfj0sfPKKdp9vG1sMGsTqT4lbhq", "admin", true, 1111, false, "admin");

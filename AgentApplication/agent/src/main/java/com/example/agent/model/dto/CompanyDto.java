@@ -35,4 +35,5 @@ public class CompanyDto {
         companyOwner = company.getCompanyOwner();
         isApproved = company.isApproved();
     }
+
 }

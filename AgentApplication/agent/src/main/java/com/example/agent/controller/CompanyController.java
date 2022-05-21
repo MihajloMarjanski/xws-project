@@ -53,9 +53,9 @@ public class CompanyController {
     }
 
     @PreAuthorize("hasRole('CLIENT')")
-    @PostMapping(path = "/comments/create")
-    public ResponseEntity<?> createComment(@RequestBody Comment comment) {
-        return clientService.createComment(comment);
+    @PostMapping(path = "/comments/create/{companyId}")
+    public ResponseEntity<?> createComment(@RequestBody Comment comment, @PathVariable Integer companyId) {
+        return clientService.createComment(comment, companyId);
     }
 
     @PreAuthorize("hasRole('CLIENT')")
@@ -65,9 +65,9 @@ public class CompanyController {
     }
 
     @PreAuthorize("hasRole('CLIENT')")
-    @PostMapping(path = "/jobs/interview")
-    public ResponseEntity<?> addInformation(@RequestBody InterviewInformation interviewInformation) {
-        return clientService.addInterviewInformation(interviewInformation);
+    @PostMapping(path = "/jobs/interview/{jobId}")
+    public ResponseEntity<?> addInformation(@RequestBody InterviewInformation interviewInformation, @PathVariable Integer jobId) {
+        return clientService.addInterviewInformation(interviewInformation, jobId);
     }
 
     @GetMapping(path = "/jobs/{companyId}")
@@ -100,6 +100,11 @@ public class CompanyController {
     @GetMapping(path = "/all")
     public ResponseEntity<?> allCompanies() {
         return companyService.getAll();
+    }
+
+    @GetMapping(path = "/all/approved")
+    public ResponseEntity<?> allApprovedCompanies() {
+        return companyService.getAllApproved();
     }
 
     @PreAuthorize("hasAnyRole('COMPANY_OWNER', 'POTENTIAL_OWNER')")
