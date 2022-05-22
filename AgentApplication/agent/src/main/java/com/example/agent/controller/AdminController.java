@@ -23,11 +23,11 @@ public class AdminController {
 
     @PreAuthorize("hasRole('ADMIN')")
     @PutMapping(path = "/approve/company/{id}")
-    public ResponseEntity<?> createCompanyOwner(@PathVariable Integer id) {
+    public ResponseEntity<?> approveCompany(@PathVariable Integer id) {
         return adminService.approveCompany(id);
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAuthority('adminByUsername')")
     @GetMapping(path = "/username/{username}")
     public ResponseEntity<?> adminByUsername(@PathVariable String username) {
         return adminService.getByUsername(username);

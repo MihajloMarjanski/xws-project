@@ -6,13 +6,11 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 @Getter
 @Setter
@@ -35,7 +33,14 @@ public class Admin extends User implements UserDetails {
     @JsonIgnore
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return this.roles;
+        List<GrantedAuthority> authorities = new ArrayList<>();
+        for(Role r : this.roles) {
+            authorities.add(new SimpleGrantedAuthority(r.name));
+            for(Permission p : r.getPermissions())
+                authorities.add(new SimpleGrantedAuthority(p.name));
+        }
+
+        return authorities;
     }
 
     @JsonIgnore

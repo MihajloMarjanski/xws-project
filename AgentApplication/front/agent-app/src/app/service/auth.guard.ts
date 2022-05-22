@@ -16,11 +16,12 @@ export class AuthGuard implements CanActivate {
         var hasExpired = this.authService.hasExpired();
 
         if (!isAuthenticated || hasExpired ) {          
-          this.router.navigate(['/login']);
+          this.router.navigate(['/login']).then(_ =>
+            this._snackBar.open('You have to login first', 'Close', {duration: 5000}))
           return false;
         }
 
-        if (!route.data.role.includes(localStorage.getItem('role'))) {          
+        if (!route.data.role.includes(localStorage.getItem('roles'))) {          
           this.router.navigate(['/']).then(_ =>
                 this._snackBar.open('You are not authorized for this funcionality', 'Close', {duration: 5000}))
           return false;

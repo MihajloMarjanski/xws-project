@@ -47,6 +47,7 @@ import { UserProfileComponent } from './component/user-profile/user-profile.comp
 import { CreateCompanyComponent } from './component/create-company/create-company.component';
 import { ClientCompaniesComponent } from './component/client-companies/client-companies.component';
 import { ForumComponent } from './component/forum/forum.component';
+import { CompanyService } from './service/company.service';
 
 const MaterialComponents = [
   MatSliderModule,
@@ -104,7 +105,7 @@ const MaterialComponents = [
     ReactiveFormsModule,
     CommonModule
   ],
-  providers: [UserService, { provide: JWT_OPTIONS, useValue: JWT_OPTIONS }, JwtHelperService,
+  providers: [UserService, CompanyService, { provide: JWT_OPTIONS, useValue: JWT_OPTIONS }, JwtHelperService,
     { provide: HTTP_INTERCEPTORS, useClass: InterceptorService, multi: true }],
   bootstrap: [AppComponent]
 })
