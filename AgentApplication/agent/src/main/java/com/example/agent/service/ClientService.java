@@ -43,8 +43,9 @@ public class ClientService {
         try {
             Client client = new Client(dto);
             client.setSalt(RandomStringInitializer.generateAlphaNumericString(10));
-            client.setPin(RandomStringInitializer.generatePin());
             client.setPassword(passwordEncoder.encode(client.getPassword().concat(client.getSalt())));
+            String pin = RandomStringInitializer.generatePin();
+            client.setPin(passwordEncoder.encode(pin.concat(client.getSalt())));
             client.setActivated(false);
             client.setForgotten(0);
             client.setMissedPasswordCounter(0);
@@ -54,7 +55,7 @@ public class ClientService {
             client.setRoles(clientRoles);
             clientRepository.save(client);
             emailService.sendActivationMailClientAsync(findByUsername(client.getUsername()));
-            emailService.sendPin(client.getEmail(), client.getPin());
+            emailService.sendPin(client.getEmail(), pin);
             return new ResponseEntity<>(HttpStatus.OK);
         } catch (DataIntegrityViolationException e) {
             e.printStackTrace();
@@ -109,11 +110,14 @@ public class ClientService {
         return clientRepository.findAllUsernames();
     }
 
-    public boolean isPinOk(String username, Integer pin) {
+    public boolean isPinOk(String username, String pin) {
         Client user = clientRepository.findByUsername(username);
         if (user == null)
             return false;
-        return user.getPin().equals(pin);
+        PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+        String saltedPin = pin.concat(user.getSalt());
+        boolean match = passwordEncoder.matches(saltedPin, user.getPin());
+        return match;
     }
 
     public Client findByUsername(String username) {
@@ -133,7 +137,7 @@ public class ClientService {
 
     }
 
-    public ResponseEntity<?> updateClient(UserDto client) {
+    public ResponseEntity<?> updateClient(Client client) {
         Client clientInDb = findByUsername(client.getUsername());
         clientInDb.setEmail(client.getEmail());
         clientInDb.setFirstName(client.getFirstName());
@@ -142,6 +146,8 @@ public class ClientService {
             PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
             clientInDb.setPassword(passwordEncoder.encode(client.getPassword().concat(clientInDb.getSalt())));
             clientInDb.setForgotten(0);
+            String pin = RandomStringInitializer.generatePin();
+            clientInDb.setPin(passwordEncoder.encode(pin.concat(clientInDb.getSalt())));
         }
         save(clientInDb);
         return new ResponseEntity<>(clientInDb, HttpStatus.OK);

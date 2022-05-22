@@ -7,12 +7,12 @@ public class UserCredentials {
     @NotBlank
     private String username;
     private String password;
-    private Integer pin;
+    private String pin;
 
     public UserCredentials() {
     }
 
-    public UserCredentials(String username, String password, Integer pin) {
+    public UserCredentials(String username, String password, String pin) {
         this.username = username;
         this.password = password;
         this.pin = pin;
@@ -34,11 +34,11 @@ public class UserCredentials {
         this.password = password;
     }
 
-    public Integer getPin() {
+    public String getPin() {
         return pin;
     }
 
-    public void setPin(Integer pin) {
+    public void setPin(String pin) {
         this.pin = pin;
     }
 }

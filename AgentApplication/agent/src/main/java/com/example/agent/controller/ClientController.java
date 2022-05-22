@@ -40,9 +40,7 @@ public class ClientController {
 
     @PreAuthorize("hasRole('CLIENT')")
     @PostMapping(path = "/update")
-    public ResponseEntity<?> updateClient(@Valid @RequestBody UserDto client, BindingResult res) {
-        if(res.hasErrors())
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+    public ResponseEntity<?> updateClient(@RequestBody Client client) {
         return clientService.updateClient(client);
     }
 

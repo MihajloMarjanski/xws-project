@@ -31,8 +31,8 @@ public class RandomStringInitializer {
         return sb.toString();
     }
 
-    public static Integer generatePin() {
+    public static String generatePin() {
         Random rand = new Random();
-        return rand.nextInt(9999 - 1000) + 1000;
+        return Integer.toString(rand.nextInt(9999 - 1000) + 1000);
     }
 }

@@ -40,7 +40,7 @@ public class User {
     protected String password;
     protected boolean isActivated = true;
     protected Integer forgotten;
-    protected Integer pin;
+    protected String pin;
     protected String salt;
     protected Integer missedPasswordCounter;
     protected boolean isBlocked;

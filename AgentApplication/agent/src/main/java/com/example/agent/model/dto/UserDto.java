@@ -22,11 +22,9 @@ public class UserDto {
     protected String firstName;
     @NotBlank
     protected String lastName;
-    @Column(unique=true)
     @NotBlank
     @Email
     protected String email;
-    @Column(unique=true)
     @NotBlank
     @Pattern(regexp = "^\\S*$")
     protected String username;
