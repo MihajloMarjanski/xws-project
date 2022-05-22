@@ -1,6 +1,7 @@
 package com.example.agent.service;
 
 import com.example.agent.model.*;
+import com.example.agent.model.dto.UserDto;
 import com.example.agent.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -37,9 +38,10 @@ public class ClientService {
     @Autowired
     CompanyRepository companyRepository;
 
-    public ResponseEntity<?> create(Client client) {
+    public ResponseEntity<?> create(UserDto dto) {
         PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
         try {
+            Client client = new Client(dto);
             client.setSalt(RandomStringInitializer.generateAlphaNumericString(10));
             client.setPassword(passwordEncoder.encode(client.getPassword().concat(client.getSalt())));
             client.setPin(RandomStringInitializer.generatePin());
@@ -129,7 +131,7 @@ public class ClientService {
 
     }
 
-    public ResponseEntity<?> updateClient(Client client) {
+    public ResponseEntity<?> updateClient(UserDto client) {
         Client clientInDb = findByUsername(client.getUsername());
         clientInDb.setEmail(client.getEmail());
         clientInDb.setFirstName(client.getFirstName());

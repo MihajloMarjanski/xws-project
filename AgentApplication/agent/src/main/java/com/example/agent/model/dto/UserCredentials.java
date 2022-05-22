@@ -1,6 +1,10 @@
 package com.example.agent.model.dto;
 
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Pattern;
+
 public class UserCredentials {
+    @NotBlank
     private String username;
     private String password;
     private Integer pin;

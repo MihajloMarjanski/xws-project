@@ -1,6 +1,7 @@
 package com.example.agent.controller;
 
 import com.example.agent.model.*;
+import com.example.agent.model.dto.UserDto;
 import com.example.agent.repository.CompanyOwnerRepository;
 import com.example.agent.repository.ConfirmationTokenRepository;
 import com.example.agent.service.ClientService;
@@ -10,9 +11,11 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.WebRequest;
 
+import javax.validation.Valid;
 import java.time.Period;
 import java.util.Date;
 
@@ -29,13 +32,17 @@ public class ClientController {
 
 
     @PostMapping(path = "/create")
-    public ResponseEntity<?> create(@RequestBody Client client) {
+    public ResponseEntity<?> create(@Valid @RequestBody UserDto client, BindingResult res) {
+        if(res.hasErrors())
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         return clientService.create(client);
     }
 
     @PreAuthorize("hasRole('CLIENT')")
     @PostMapping(path = "/update")
-    public ResponseEntity<?> updateClient(@RequestBody Client client) {
+    public ResponseEntity<?> updateClient(@Valid @RequestBody UserDto client, BindingResult res) {
+        if(res.hasErrors())
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         return clientService.updateClient(client);
     }
 
