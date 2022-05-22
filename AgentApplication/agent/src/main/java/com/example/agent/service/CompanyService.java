@@ -132,15 +132,17 @@ public class CompanyService {
         saveOwner(owner);
 
         Company company = findByOwner(owner);
-        company.setInfo(companyOwner.getCompany().getInfo());
-        company.setName(companyOwner.getCompany().getName());
-        company.setCity(companyOwner.getCompany().getCity());
-        company.setCountry(companyOwner.getCompany().getCountry());
+        if(company != null) {
+            company.setInfo(companyOwner.getCompany().getInfo());
+            company.setName(companyOwner.getCompany().getName());
+            company.setCity(companyOwner.getCompany().getCity());
+            company.setCountry(companyOwner.getCompany().getCountry());
 
-        for(JobPosition job : companyOwner.getCompany().getPositions())
-            job.setCompany(company);
-        company.setPositions(companyOwner.getCompany().getPositions());
-        companyRepository.save(company);
+            for (JobPosition job : companyOwner.getCompany().getPositions())
+                job.setCompany(company);
+            company.setPositions(companyOwner.getCompany().getPositions());
+            companyRepository.save(company);
+        }
         return new ResponseEntity<>(owner, HttpStatus.OK);
     }
 

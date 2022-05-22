@@ -15,6 +15,8 @@ export class MyErrorStateMatcher implements ErrorStateMatcher {
     return !!(control && control.invalid && (control.dirty || control.touched || isSubmitted));
   }
 }
+
+const specialChars = /[`!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~]/;
 // export class UsernameValidator {
 //   static cannotContainSpace(control: AbstractControl) : { [key: string]: boolean } | null {
 //       if((control.value as string).indexOf(' ') >= 0){
@@ -151,6 +153,10 @@ export class RegistrationPageComponent implements OnInit {
                     error => this.errorMessage = <any>error);
   }
 
+  containAllCharacters(pass: string) {
+    var res = specialChars.test(pass);
+    return res
+  }
 
   containSpace(username: string) {
     if(username.split('').includes(' '))

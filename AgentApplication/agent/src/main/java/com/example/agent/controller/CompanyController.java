@@ -34,7 +34,7 @@ public class CompanyController {
         return companyService.createCompanyOwner(companyOwner);
     }
 
-    @PreAuthorize("hasRole('COMPANY_OWNER', 'POTENTIAL_OWNER')")
+    @PreAuthorize("hasAnyRole('COMPANY_OWNER', 'POTENTIAL_OWNER')")
     @PostMapping(path = "/owner/update")
     public ResponseEntity<?> updateCompanyOwner(@RequestBody OwnerWithCompany companyOwner) {
         return companyService.updateCompanyOwner(companyOwner);

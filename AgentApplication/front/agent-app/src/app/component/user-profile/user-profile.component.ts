@@ -108,7 +108,7 @@ selectedPositions : JobPosition[] = []
       console.log(this.client);
       this._snackBar.open('Successfully edited', 'Close', {duration: 5000}); 
     }
-    else if(this.role == 'ROLE_COMPANY_OWNER')
+    else if(this.role == 'ROLE_COMPANY_OWNER' || this.role ==='ROLE_POTENTIAL_OWNER')
     {
       this.clientToOwner()
       if(!this.wantToChangePassword)

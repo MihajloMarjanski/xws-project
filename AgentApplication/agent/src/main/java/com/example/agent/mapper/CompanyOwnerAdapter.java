@@ -29,11 +29,13 @@ public class CompanyOwnerAdapter {
 
         dto.setCompany(company);
 
-        for (JobPosition job : dto.getCompany().getPositions())
-            job.setCompany(null);
+        if(dto.getCompany() != null) {
+            for (JobPosition job : dto.getCompany().getPositions())
+                job.setCompany(null);
 
-        for (Comment comment : dto.getCompany().getComments())
-            comment.setCompany(null);
+            for (Comment comment : dto.getCompany().getComments())
+                comment.setCompany(null);
+        }
 
         return dto;
     }

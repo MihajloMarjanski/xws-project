@@ -55,11 +55,12 @@
                 <!-- <div *ngIf="usernames.includes(customer.username)" class="errorText">Username already exists!</div> -->
               </div>   
               <div>
-                <mat-form-field hintLabel="Between 6 and 16 characters" appearance="fill">
+                <mat-form-field hintLabel="Between 8 and 20 characters, at least 1 letter, 1 number, 1 special character" appearance="fill">
                   <mat-label>Password</mat-label>
-                  <input matInput type="password" name="password" id="password" minlength="6" maxlength="16" [(ngModel)]="client.password" required (change)="checkPass()">
+                  <input matInput type="password" name="password" id="password" minlength="8" maxlength="20" [(ngModel)]="client.password" required (change)="checkPass()">
                   <mat-hint *ngIf="isInBlackList">{{blackListPassMessage}}</mat-hint>
                   <mat-hint *ngIf="containSpace(client.password) === true" style="color:red;">Password can not contain space.</mat-hint>
+                  <mat-hint *ngIf="containAllCharacters(client.password) === false" style="color:red;">Password must contain at least 1 letter, 1 number and 1 special character</mat-hint>
                 </mat-form-field>
               </div>
               <div>
@@ -88,7 +89,7 @@
                 </mat-radio-group>            
                 <div style="margin-top: 2%;">
                   <button mat-button matStepperPrevious>Back</button>
-                  <button mat-raised-button color="accent" (click)="submit()" [disabled]="!(registerForm.valid && client.password === repassword)" >Submit</button>
+                  <button mat-raised-button color="accent" (click)="submit()" [disabled]="!(registerForm.valid && client.password === repassword && containAllCharacters(client.password))" >Submit</button>
                 </div>
               </div>
             </mat-step>
