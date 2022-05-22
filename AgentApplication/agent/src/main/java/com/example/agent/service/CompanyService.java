@@ -5,6 +5,7 @@ import com.example.agent.model.*;
 import com.example.agent.model.dto.CompanyDto;
 import com.example.agent.model.dto.JobOffer;
 import com.example.agent.model.dto.OwnerWithCompany;
+import com.example.agent.model.dto.UserDto;
 import com.example.agent.repository.CompanyOwnerRepository;
 import com.example.agent.repository.CompanyRepository;
 import com.example.agent.repository.JobPositionRepository;
@@ -33,9 +34,10 @@ public class CompanyService {
     @Autowired
     EmailService emailService;
 
-    public ResponseEntity<?> createCompanyOwner(CompanyOwner companyOwner) {
+    public ResponseEntity<?> createCompanyOwner(UserDto dto) {
         PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
         try {
+            CompanyOwner companyOwner = new CompanyOwner(dto);
             companyOwner.setSalt(RandomStringInitializer.generateAlphaNumericString(10));
             companyOwner.setPassword(passwordEncoder.encode(companyOwner.getPassword().concat(companyOwner.getSalt())));
             companyOwner.setPin(RandomStringInitializer.generatePin());

@@ -1,5 +1,6 @@
 package com.example.agent.model;
 
+import com.example.agent.model.dto.UserDto;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -29,6 +30,16 @@ public class CompanyOwner extends User implements UserDetails {
             joinColumns = @JoinColumn(name = "company_owner_id", referencedColumnName = "id"),
             inverseJoinColumns = @JoinColumn(name = "role_id", referencedColumnName = "id"))
     private Set<Role> roles = new HashSet<>();
+
+
+
+    public CompanyOwner(UserDto dto) {
+        username = dto.getUsername();
+        password = dto.getPassword();
+        firstName = dto.getFirstName();
+        lastName = dto.getLastName();
+        email = dto.getEmail();
+    }
 
 
     @JsonIgnore
