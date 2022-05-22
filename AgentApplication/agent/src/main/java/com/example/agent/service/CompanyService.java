@@ -110,11 +110,14 @@ public class CompanyService {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    public boolean isPinOk(String username, Integer pin) {
+    public boolean isPinOk(String username, String pin) {
         CompanyOwner user = companyOwnerRepository.findByUsername(username);
         if (user == null)
             return false;
-        return user.getPin().equals(pin);
+        PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+        String saltedPin = pin.concat(user.getSalt());
+        boolean match = passwordEncoder.matches(saltedPin, user.getPin());
+        return match;
     }
 
     public CompanyOwner findByUsername(String username) {

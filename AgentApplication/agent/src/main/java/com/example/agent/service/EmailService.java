@@ -69,7 +69,7 @@ public class EmailService {
     }
 
     @Async
-    public void sendPin(String email, Integer pin) {
+    public void sendPin(String email, String pin) {
         SimpleMailMessage mail = new SimpleMailMessage();
         mail.setTo(email);
         mail.setFrom(env.getProperty("spring.mail.username"));

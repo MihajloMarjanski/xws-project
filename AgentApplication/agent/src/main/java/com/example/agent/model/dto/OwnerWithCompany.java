@@ -22,7 +22,7 @@ public class OwnerWithCompany {
     private String password;
     private boolean isActivated = true;
     private Integer forgotten;
-    private Integer pin;
+    private String pin;
     private String salt;
     private Integer missedPasswordCounter;
     private boolean isBlocked;
