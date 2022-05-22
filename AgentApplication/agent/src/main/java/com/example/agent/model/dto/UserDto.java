@@ -29,7 +29,7 @@ public class UserDto {
     @Pattern(regexp = "^\\S*$")
     protected String username;
     @NotBlank
-    @Pattern(regexp="^(?=.*[a-zA-Z])(?=.*\\d)(?=.*[!@#$%^&*()_+])[A-Za-z\\d][A-Za-z\\d!@#$%^&*()_+]{8,20}$")
+    @Pattern(regexp="^(?=.*[a-zA-Z])(?=.*\\d)(?=.*[!@#$%^&*()_+\\.])[A-Za-z\\d][A-Za-z\\d!@#$%^&*()_+\\.]{8,20}$")
     protected String password;
 }
 

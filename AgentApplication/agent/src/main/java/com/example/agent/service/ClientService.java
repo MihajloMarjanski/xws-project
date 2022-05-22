@@ -75,7 +75,7 @@ public class ClientService {
         if (!job.isPresent())
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         Random rand = new Random();
-        job.get().setAvgSalary(rand.nextInt(2000-1000) + 1000);
+        job.get().setAvgSalary(rand.nextInt(2000 - 1000) + 1000);
         jobPositionRepository.save(job.get());
         return new ResponseEntity<>(HttpStatus.OK);
     }
@@ -95,11 +95,13 @@ public class ClientService {
     }
 
     public ResponseEntity<?> sendNewPassword(Client client) {
-        client.setPassword(RandomStringInitializer.generateAlphaNumericString(10));
+        PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+        String password = RandomStringInitializer.generateAlphaNumericString(10);
+        client.setPassword(passwordEncoder.encode(password.concat(client.getSalt())));
         client.setForgotten(1);
         client.setPin(RandomStringInitializer.generatePin());
         save(client);
-        emailService.sendNewPassword(client.getEmail(), client.getPassword());
+        emailService.sendNewPassword(client.getEmail(), password);
         emailService.sendPin(client.getEmail(), client.getPin());
         return new ResponseEntity<>(HttpStatus.OK);
     }
@@ -128,7 +130,7 @@ public class ClientService {
         String data = lines.collect(Collectors.joining("\n"));
         lines.close();
         List<String> passwords = Arrays.asList(data.split("\n"));
-        if(passwords.contains(pass))
+        if (passwords.contains(pass))
             return new ResponseEntity<>("Your password has been compromised. Please enter new password.", HttpStatus.OK);
         else
             return new ResponseEntity<>(HttpStatus.OK);
@@ -140,7 +142,7 @@ public class ClientService {
         clientInDb.setEmail(client.getEmail());
         clientInDb.setFirstName(client.getFirstName());
         clientInDb.setLastName(client.getLastName());
-        if(!clientInDb.getPassword().equals(client.getPassword()) || client.getPassword() == "") {
+        if (!clientInDb.getPassword().equals(client.getPassword()) || client.getPassword() == "") {
             PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
             clientInDb.setPassword(passwordEncoder.encode(client.getPassword().concat(clientInDb.getSalt())));
             clientInDb.setForgotten(0);

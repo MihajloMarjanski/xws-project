@@ -15,7 +15,7 @@ const routes: Routes = [
   { path: 'register', component: RegistrationPageComponent },
   { path: 'login', component: LoginPageComponent },
   { path: 'companies', component: CompaniesComponent, canActivate: [AuthGuard], data: { role: ['ROLE_ADMIN']} },
-  { path: 'user-profile', component: UserProfileComponent, canActivate: [AuthGuard], data: { role: ['ROLE_CLIENT', 'ROLE_POTENTIAL_OWNER', 'ROLE_OWNER', 'ROLE_ADMIN']} },
+  { path: 'user-profile', component: UserProfileComponent, canActivate: [AuthGuard], data: { role: ['ROLE_CLIENT', 'ROLE_POTENTIAL_OWNER', 'ROLE_COMPANY_OWNER', 'ROLE_ADMIN']} },
   { path: 'create-company', component: CreateCompanyComponent, canActivate: [AuthGuard], data: { role: ['ROLE_POTENTIAL_OWNER']} },
   { path: 'client-companies', component: ClientCompaniesComponent, canActivate: [AuthGuard], data: { role: ['ROLE_CLIENT']} },
   { path: 'forum', component: ForumComponent, canActivate: [AuthGuard], data: { role: ['ROLE_CLIENT']} },
