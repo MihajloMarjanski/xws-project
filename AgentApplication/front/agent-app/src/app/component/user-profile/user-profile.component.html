@@ -17,15 +17,15 @@
 
     <mat-checkbox style="margin-right: 10000px;" (change)="changeWantToChangePassword()">Change password</mat-checkbox>
 
-      <mat-form-field *ngIf="wantToChangePassword" hintLabel="Between 6 and 16 characters" appearance="fill"  style="margin-right: 2%;">
+      <mat-form-field *ngIf="wantToChangePassword" hintLabel="Between 8 and 20 characters" appearance="fill"  style="margin-right: 2%;">
         <mat-label>Password</mat-label>
-        <input matInput type="password" name="password" id="password" minlength="6" maxlength="16" [(ngModel)]="client.password" required>
+        <input matInput type="password" name="password" id="password" minlength="8" maxlength="20" [(ngModel)]="client.password" required>
       </mat-form-field>
       
       <mat-form-field *ngIf="wantToChangePassword" appearance="fill">
         <mat-label>Confirm password</mat-label>
         <input matInput type="password" name="repassword" [(ngModel)]="repassword" required>
-        <mat-hint *ngIf="client.password == ''">Required</mat-hint>
+        <mat-hint *ngIf="repassword == ''">Required</mat-hint>
       </mat-form-field>
 
       <h1 style="margin-top: 3%;" *ngIf="role ==='ROLE_COMPANY_OWNER'">Company informations</h1>

@@ -62,11 +62,15 @@ public class CompanyService {
     public ResponseEntity<?> sendCompanyRegistrationRequest(Company company, String ownerUsername) {
         CompanyOwner owner = companyOwnerRepository.findByUsername(ownerUsername);
         if (owner == null)
-            return new ResponseEntity<>("Owner with that username doe not exist.", HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>("Owner with that username does not exist.", HttpStatus.BAD_REQUEST);
         else if (companyRepository.findByCompanyOwnerId(owner.getId()) != null)
             return new ResponseEntity<>("Already have company.", HttpStatus.BAD_REQUEST);
         company.setCompanyOwner(owner);
         companyRepository.save(company);
+        for (JobPosition job : company.getPositions()) {
+            job.setCompany(findByOwner(owner));
+            jobPositionRepository.save(job);
+        }
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
