@@ -22,16 +22,14 @@ public class UserDto {
     protected String firstName;
     @NotBlank
     protected String lastName;
-    @Column(unique=true)
     @NotBlank
     @Email
     protected String email;
-    @Column(unique=true)
     @NotBlank
     @Pattern(regexp = "^\\S*$")
     protected String username;
     @NotBlank
-    @Pattern(regexp="^(?=.*[a-zA-Z])(?=.*\\d)(?=.*[!@#$%^&*()_+])[A-Za-z\\d][A-Za-z\\d!@#$%^&*()_+]{8,20}$")
+    @Pattern(regexp="^(?=.*[a-zA-Z])(?=.*\\d)(?=.*[!@#$%^&*()_+\\.])[A-Za-z\\d][A-Za-z\\d!@#$%^&*()_+\\.]{8,20}$")
     protected String password;
 }
 

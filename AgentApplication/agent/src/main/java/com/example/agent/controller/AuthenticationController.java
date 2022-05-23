@@ -65,7 +65,6 @@ public class AuthenticationController {
             refreshMissedPasswordCounter(authenticationRequest.getUsername());
         } catch (AuthenticationException e) {
             if(clientService.isPinOk(authenticationRequest.getUsername(), authenticationRequest.getPin()) ||
-                    adminService.isPinOk(authenticationRequest.getUsername(), authenticationRequest.getPin()) ||
                     companyService.isPinOk(authenticationRequest.getUsername(), authenticationRequest.getPin()))
                 SecurityContextHolder.getContext().setAuthentication(null);
             else {

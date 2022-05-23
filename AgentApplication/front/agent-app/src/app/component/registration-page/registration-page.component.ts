@@ -106,7 +106,7 @@ export class RegistrationPageComponent implements OnInit {
             }
           },
           error => {
-            this._snackBar.open('Invalid input! Email already exists.', 'Close', {duration: 5000});
+            this._snackBar.open('Invalid input!', 'Close', {duration: 5000});
             console.log('Error!', error)
           }
         )
@@ -125,7 +125,7 @@ export class RegistrationPageComponent implements OnInit {
             }
           },
           error => {
-            this._snackBar.open('Invalid input! Email already exists.', 'Close', {duration: 5000});
+            this._snackBar.open('Invalid input!', 'Close', {duration: 5000});
             console.log('Error!', error)
           }
         )
