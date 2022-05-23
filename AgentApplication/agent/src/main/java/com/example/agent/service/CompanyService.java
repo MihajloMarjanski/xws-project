@@ -40,7 +40,8 @@ public class CompanyService {
             CompanyOwner companyOwner = new CompanyOwner(dto);
             companyOwner.setSalt(RandomStringInitializer.generateAlphaNumericString(10));
             companyOwner.setPassword(passwordEncoder.encode(companyOwner.getPassword().concat(companyOwner.getSalt())));
-            companyOwner.setPin(RandomStringInitializer.generatePin());
+            String pin = RandomStringInitializer.generatePin();
+            companyOwner.setPin(passwordEncoder.encode(pin.concat(companyOwner.getSalt())));
             companyOwner.setActivated(false);
             companyOwner.setForgotten(0);
             companyOwner.setMissedPasswordCounter(0);
@@ -50,7 +51,7 @@ public class CompanyService {
             companyOwner.setRoles(ownerRoles);
             companyOwnerRepository.save(companyOwner);
             emailService.sendActivationMailOwnerAsync(findByUsername(companyOwner.getUsername()));
-            emailService.sendPin(companyOwner.getEmail(), companyOwner.getPin());
+            emailService.sendPin(companyOwner.getEmail(), pin);
             return new ResponseEntity<>(HttpStatus.OK);
         } catch (DataIntegrityViolationException e) {
             e.printStackTrace();
