@@ -70,6 +70,11 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http
+                .headers()
+                .xssProtection()
+                .and()
+                .contentSecurityPolicy("script-src 'self'");
+        http
                 // komunikacija izmedju klijenta i servera je stateless posto je u pitanju REST aplikacija
                 // ovo znaci da server ne pamti nikakvo stanje, tokeni se ne cuvaju na serveru
                 // ovo nije slucaj kao sa sesijama koje se cuvaju na serverskoj strani - STATEFULL aplikacija
