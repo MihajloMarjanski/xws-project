@@ -180,8 +180,11 @@ public class CompanyService {
             if (company.isApproved()) {
                 for (Comment comment : company.getComments())
                     comment.setCompany(null);
-                for (JobPosition job : company.getPositions())
+                for (JobPosition job : company.getPositions()) {
+                    for (InterviewInformation info : job.getInterviewInformations())
+                        info.setJobPosition(null);
                     job.setCompany(null);
+                }
                 dtos.add(company);
             }
 

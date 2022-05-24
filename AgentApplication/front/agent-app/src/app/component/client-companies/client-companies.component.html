@@ -54,7 +54,7 @@
   
         <ng-container matColumnDef="interview">
           <mat-header-cell *matHeaderCellDef > Interview informations </mat-header-cell>
-          <mat-cell *matCellDef="let element"> <label *ngFor="let info of element.interviewInformations">{{info.info}} </label></mat-cell>
+          <mat-cell *matCellDef="let element"> <label *ngFor="let info of element.interviewInformations">|  {{info.info}}  | </label></mat-cell>
         </ng-container>
   
         <mat-header-row *matHeaderRowDef="displayedColumns2; sticky: true" ></mat-header-row>
@@ -71,7 +71,7 @@
       
       <ng-container matColumnDef="date">
             <mat-header-cell *matHeaderCellDef > Created </mat-header-cell>
-            <mat-cell *matCellDef="let element"> {{element.createdDate}} </mat-cell>
+            <mat-cell *matCellDef="let element"> {{element.createdDate | date: 'shortDate' }} </mat-cell>
           </ng-container>
           
           <ng-container matColumnDef="client">

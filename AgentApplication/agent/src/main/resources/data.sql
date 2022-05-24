@@ -39,8 +39,8 @@ INSERT INTO admin (`id`, `email`, `first_name`, `last_name`, `password`, `userna
 insert into admin_roles (admin_id, role_id) values (1, 1);
 
 INSERT INTO company_owner (`id`,`blocked_date`,`email`,`first_name`,`forgotten`,`is_activated`,`is_blocked`,`last_name`,`missed_password_counter`,`password`,`pin`,`salt`,`username`)
-    VALUES (1, null, "health.care.clinic.psw+owner@gmail.com", "Asd", 0, true, false, "ASD", 0, "$2a$10$S4KQX5hG/N3wvSXZ7ba/D.7Y7ELPLp4Q2AH.//3jJicoxnGd6AGwm",
-    "1234", "ownerr", "owner");
+    VALUES (1, null, "owner@gmail.com", "Asd", 0, true, false, "ASD", 0, "$2a$10$DRq8KussSpZpBw57z3mpsOBuBUI7D1Ut/tR5PWef5XebPdm1.VCL.",
+            "$2a$10$b9vQ1SxHQX7z06qJd7Jgt.22WwJ9PP81ERmii1nBwDCTYs2NEI0Mm", "QWEQWE", "owner");
 
 
 INSERT INTO company (`id`,`info`,`is_approved`,`name`,`company_owner_id`) VALUES (1, "dsf dfsA ASD ", true, "Kompanijica", 1);
@@ -49,4 +49,12 @@ INSERT INTO job_position (`id`,`avg_salary`,`name`,`company_id`) VALUES (1, 0, "
 INSERT INTO job_position (`id`,`avg_salary`,`name`,`company_id`) VALUES (2, 0, "Psychologist", 1);
 
 insert into owner_roles (company_owner_id, role_id) values (1, 2);
+
+
+INSERT INTO client (`id`,`blocked_date`,`email`,`first_name`,`forgotten`,`is_activated`,`is_blocked`,`last_name`,`missed_password_counter`,`password`,`pin`,`salt`,`username`)
+    VALUES (1, null, "asd@gmail.com", "Mile", 0, true, false, "Kitic", 0, "$2a$10$fIYdk9bNYb2QzrKJk5kNIeSSyFFKCnUnsVGsnJBRIpNZ0XLMtJ4h2",
+            "$2a$10$l9U3nJjCqQTyBfIUxko63.NfQvd6zLrd6o6zfZ5Aa.K32nNutdlrW", "ASDASD", "mile" );
+
+insert into client_roles (client_id, role_id) values (1, 4);
+
 
