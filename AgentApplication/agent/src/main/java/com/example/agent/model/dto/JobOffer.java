@@ -15,4 +15,5 @@ public class JobOffer {
     private String companyName;
     private String jobInfo;
     private String qualifications;
+    private String apiKey;
 }

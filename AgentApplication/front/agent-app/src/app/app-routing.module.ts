@@ -4,6 +4,7 @@ import { ClientCompaniesComponent } from './component/client-companies/client-co
 import { CompaniesComponent } from './component/companies/companies.component';
 import { CreateCompanyComponent } from './component/create-company/create-company.component';
 import { ForumComponent } from './component/forum/forum.component';
+import { JobOfferComponent } from './component/job-offer/job-offer.component';
 import { LandingPageComponent } from './component/landing-page/landing-page.component';
 import { LoginPageComponent } from './component/login-page/login-page.component';
 import { RegistrationPageComponent } from './component/registration-page/registration-page.component';
@@ -19,6 +20,7 @@ const routes: Routes = [
   { path: 'create-company', component: CreateCompanyComponent, canActivate: [AuthGuard], data: { role: ['ROLE_POTENTIAL_OWNER']} },
   { path: 'client-companies', component: ClientCompaniesComponent, canActivate: [AuthGuard], data: { role: ['ROLE_CLIENT']} },
   { path: 'forum', component: ForumComponent, canActivate: [AuthGuard], data: { role: ['ROLE_CLIENT']} },
+  { path: 'job-offer', component: JobOfferComponent, canActivate: [AuthGuard], data: { role: ['ROLE_COMPANY_OWNER']} },
 ];
 
 @NgModule({

@@ -12,7 +12,7 @@ import { Company } from '../model/company';
 })
 export class UserService {
   
-
+  
   private _baseUrl = 'https://localhost:8600/';
   private _login = this._baseUrl + 'auth/login';
   private _getAllUsernames = this._baseUrl + 'auth/getAllUsernames';
@@ -28,9 +28,23 @@ export class UserService {
   private _editClient  = this._baseUrl + 'clients/update';
   private _editAdmin  = this._baseUrl + 'admin/update';
   private _forgotPassword  = this._baseUrl + 'clients/newPassword/';
-
+  private _companyByOwnerUsername  = this._baseUrl + 'company/';
+  private _apiKey  = this._baseUrl + 'company/owner/apiKey/';
+  
   constructor(private _http: HttpClient) { }
+  
 
+  getApiKey(username: string, password: string) {
+    return this._http.get<string>(this._apiKey + username + '/' + password)
+                           .pipe(tap(data =>  console.log('Iz service-a: ', data)),                         
+                                catchError(this.handleError)); 
+  }
+  
+  getCompanyByOwnerUsername(username: string) {
+    return this._http.get<Company>(this._companyByOwnerUsername + username)
+                           .pipe(tap(data =>  console.log('Iz service-a: ', data)),                         
+                                catchError(this.handleError)); 
+  }
 
   forgotPassword(username: string) : Observable<any> {
     return this._http.put<any>(this._forgotPassword + username, {})

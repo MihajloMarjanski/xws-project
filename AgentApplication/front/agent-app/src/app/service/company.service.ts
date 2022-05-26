@@ -9,6 +9,7 @@ import { Company } from '../model/company';
 import { JobPosition } from '../model/JobPosition';
 import { InterviewInformation } from '../model/InterviewInformation';
 import { Comment } from '../model/comment';
+import { JobOffer } from '../model/job-offer';
 
 @Injectable({
   providedIn: 'root'
@@ -21,9 +22,15 @@ export class CompanyService {
   private _createComment = this._baseUrl + 'company/comments/create/';
   private _createInterviewInfo = this._baseUrl + 'company/jobs/interview/';
   private _addSalary = this._baseUrl + 'company/jobs/salary/update';
+  private _createOffer = this._baseUrl + 'company/jobs/offer';
   
   constructor(private _http: HttpClient) { }
+  
 
+  createOffer(offer: JobOffer): Observable<any>  {
+    const body=JSON.stringify(offer);
+    return this._http.post(this._createOffer, body)
+  }
 
   createComment(comment: Comment, id: number): Observable<any>  {
     const body=JSON.stringify(comment);

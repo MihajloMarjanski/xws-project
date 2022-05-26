@@ -1,0 +1,38 @@
+<div class="create_weekend_house" style="margin-bottom: 10%; margin-top: 2%; margin-left: 15%; margin-right: 15%;" >
+    
+    <h3>Job position</h3> 
+    <mat-form-field appearance="fill">
+        <mat-label>Select job position</mat-label>
+        <mat-select [(ngModel)]="selectedJob">
+          <mat-option *ngFor="let job of selectedCompany.positions" [value]="job">
+            {{job.name}}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <h3>Job description</h3>
+    <mat-form-field appearance="fill" style="margin-right: 2%;">
+        <mat-label>Description</mat-label>
+        <input matInput type="text" name="description" [(ngModel)]="offer.jobInfo" >
+    </mat-form-field>
+
+    <h3>Job qualifications</h3>
+    <mat-form-field appearance="fill" style="margin-right: 2%;">
+        <mat-label>Qualifications</mat-label>
+        <input matInput type="text" name="qualifications" [(ngModel)]="offer.qualifications" >
+    </mat-form-field>
+
+    <h3>Enter 'Dislinkt' profile credentials</h3>
+    <mat-form-field appearance="fill" style="margin-right: 2%;">
+        <mat-label>Username</mat-label>
+        <input matInput type="text" name="username" [(ngModel)]="credentials.username" >
+    </mat-form-field>
+
+    <mat-form-field appearance="fill" style="margin-right: 2%;">
+        <mat-label>Password</mat-label>
+        <input matInput type="password" name="password" [(ngModel)]="credentials.password" >
+    </mat-form-field>
+
+    <div >  <button mat-raised-button color="warn" (click)="createOffer()">Create</button> </div>
+
+    

@@ -119,4 +119,14 @@ public class CompanyController {
         return companyService.getOwnerByUsername(username);
     }
 
+    @GetMapping(path = "/{username}")
+    public ResponseEntity<?> companyByOwnerUsername(@PathVariable String username) {
+        return companyService.getByOwner(username);
+    }
+
+    @GetMapping(path = "/owner/{username}/{password}")
+    public ResponseEntity<?> apiKey(@PathVariable String username, @PathVariable String password) {
+        return companyService.getApiKey(username, password);
+    }
+
 }

@@ -190,4 +190,21 @@ public class CompanyService {
 
         return new ResponseEntity<>(dtos, HttpStatus.OK);
     }
+
+    public ResponseEntity<?> getByOwner(String username) {
+        Company company = companyRepository.findByCompanyOwnerUsername(username);
+        for (Comment comment : company.getComments())
+            comment.setCompany(null);
+        for (JobPosition job : company.getPositions()) {
+            for (InterviewInformation info : job.getInterviewInformations())
+                info.setJobPosition(null);
+            job.setCompany(null);
+        }
+        return new ResponseEntity<>(company, HttpStatus.OK);
+    }
+
+    public ResponseEntity<?> getApiKey(String username, String password) {
+        RestTemplate restTemplate = new RestTemplate();
+        return restTemplate.getForEntity("http://localhost:8000/user/apiKey" + username + "/" + password, String.class);
+    }
 }

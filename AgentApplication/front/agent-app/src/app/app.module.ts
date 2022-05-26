@@ -48,6 +48,7 @@ import { CreateCompanyComponent } from './component/create-company/create-compan
 import { ClientCompaniesComponent } from './component/client-companies/client-companies.component';
 import { ForumComponent } from './component/forum/forum.component';
 import { CompanyService } from './service/company.service';
+import { JobOfferComponent } from './component/job-offer/job-offer.component';
 
 const MaterialComponents = [
   MatSliderModule,
@@ -89,7 +90,8 @@ const MaterialComponents = [
     UserProfileComponent,
     CreateCompanyComponent,
     ClientCompaniesComponent,
-    ForumComponent
+    ForumComponent,
+    JobOfferComponent
   ],
   imports: [
     MaterialComponents,
