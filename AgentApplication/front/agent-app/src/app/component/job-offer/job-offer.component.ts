@@ -66,7 +66,7 @@ export class JobOfferComponent implements OnInit {
   createOffer() {
     this._userService.getApiKey(this.credentials.username, this.credentials.password) 
         .subscribe(data => {
-          this.offer.apiKey = data
+          this.offer.apiKey = data.apiKey
           this.offer.companyName = this.selectedCompany.name
           this.offer.jobPosition = this.selectedJob.name
           
@@ -79,7 +79,10 @@ export class JobOfferComponent implements OnInit {
               error => this.errorMessage = <any>error);  
 
           console.log('Dobio: ', data)},
-        error => this.errorMessage = <any>error);
+        error => {
+          this._snackBar.open('Invalid username or password', 'Close', {duration: 5000});
+          this.errorMessage = <any>error
+        });
 
   }
 

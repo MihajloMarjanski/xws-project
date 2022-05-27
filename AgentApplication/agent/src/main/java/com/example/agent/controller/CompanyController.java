@@ -124,7 +124,8 @@ public class CompanyController {
         return companyService.getByOwner(username);
     }
 
-    @GetMapping(path = "/owner/{username}/{password}")
+    @PreAuthorize("hasRole('COMPANY_OWNER')")
+    @GetMapping(path = "/owner/apiKey/{username}/{password}")
     public ResponseEntity<?> apiKey(@PathVariable String username, @PathVariable String password) {
         return companyService.getApiKey(username, password);
     }

@@ -15,6 +15,7 @@ type User struct {
 	Interests   []Interest   `json:"interests"`
 	Experiences []Experience `json:"experiences"`
 	IsPublic    bool         `json:"isPublic"`
+	ApiKey      string       `json:"apiKey"`
 }
 
 type Interest struct {

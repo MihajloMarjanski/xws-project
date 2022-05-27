@@ -2,10 +2,7 @@ package com.example.agent.service;
 
 import com.example.agent.mapper.CompanyOwnerAdapter;
 import com.example.agent.model.*;
-import com.example.agent.model.dto.CompanyDto;
-import com.example.agent.model.dto.JobOffer;
-import com.example.agent.model.dto.OwnerWithCompany;
-import com.example.agent.model.dto.UserDto;
+import com.example.agent.model.dto.*;
 import com.example.agent.repository.CompanyOwnerRepository;
 import com.example.agent.repository.CompanyRepository;
 import com.example.agent.repository.JobPositionRepository;
@@ -92,7 +89,8 @@ public class CompanyService {
 
     public ResponseEntity<?> createJobOffer(JobOffer jobOffer) {
         RestTemplate restTemplate = new RestTemplate();
-        return restTemplate.postForObject("http://localhost:8000/jobs/offer", jobOffer, ResponseEntity.class);
+        restTemplate.postForObject("http://localhost:8000/jobs/offer", jobOffer, Void.class);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     public CompanyOwner findByOwnerEmail(String email) {
@@ -205,6 +203,10 @@ public class CompanyService {
 
     public ResponseEntity<?> getApiKey(String username, String password) {
         RestTemplate restTemplate = new RestTemplate();
-        return restTemplate.getForEntity("http://localhost:8000/user/apiKey" + username + "/" + password, String.class);
+//        ResponseEntity<ApiKeyDto> keyRes = restTemplate.getForEntity("http://localhost:8000/user/apiKey/" + username + "/" + password, ApiKeyDto.class);
+//        ApiKeyDto res = restTemplate.getForObject("http://localhost:8000/user/apiKey/" + username + "/" + password, ApiKeyDto.class);
+//        if (res.getApiKey() == "")
+//            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        return restTemplate.getForEntity("http://localhost:8000/user/apiKey/" + username + "/" + password, ApiKeyDto.class);
     }
 }

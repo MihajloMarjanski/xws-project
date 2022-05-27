@@ -161,3 +161,19 @@ func (handler *UserHandler) BlockUser(ctx context.Context, request *pb.BlockUser
 	response := &pb.BlockUserResponse{}
 	return response, nil
 }
+func (handler *UserHandler) GetApiKey(ctx context.Context, request *pb.ApiKeyRequest) (*pb.ApiKeyResponse, error) {
+	key := handler.userService.GetApiKeyForUserCredentials(request.Username, request.Password)
+	if key == "" {
+		err := status.Error(codes.NotFound, "User with that username and password does not exist.")
+		return nil, err
+	}
+	response := &pb.ApiKeyResponse{
+		ApiKey: key,
+	}
+	return response, nil
+}
+func (handler *UserHandler) CreateJobOffer(ctx context.Context, request *pb.CreateJobOfferRequest) (*pb.CreateJobOfferResponse, error) {
+	handler.userService.CreateJobOffer(int(request.Offer.Id), request.Offer.JobInfo, request.Offer.JobPosition, request.Offer.CompanyName, request.Offer.Qualifications, request.Offer.ApiKey)
+	response := &pb.CreateJobOfferResponse{}
+	return response, nil
+}

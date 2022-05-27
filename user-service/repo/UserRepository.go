@@ -16,13 +16,13 @@ type UserRepository struct {
 func New() (*UserRepository, error) {
 	repo := &UserRepository{}
 
-	dsn := "host=userdb user=XML password=ftn dbname=XML_TEST port=5432 sslmode=disable"
+	dsn := "host=localhost user=XML password=ftn dbname=XML_TEST port=5432 sslmode=disable"
 	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
 	if err != nil {
 		return nil, err
 	}
 	repo.db = db
-	repo.db.AutoMigrate(&model.User{}, &model.Interest{}, model.Experience{}, model.Block{})
+	repo.db.AutoMigrate(&model.User{}, &model.Interest{}, model.Experience{}, model.Block{}, model.JobOffer{})
 
 	return repo, nil
 }
@@ -71,7 +71,7 @@ func (repo *UserRepository) RemoveInterest(id int) int {
 	return id
 }
 
-func (repo *UserRepository) CreateUser(name string, email string, password string, username string, gender model.Gender, phonenumber string, dateofbirth time.Time, biography string) int {
+func (repo *UserRepository) CreateUser(name string, email string, password string, username string, gender model.Gender, phonenumber string, dateofbirth time.Time, biography string, apiKey string) int {
 	user := model.User{
 		Name:        name,
 		Email:       email,
@@ -80,7 +80,9 @@ func (repo *UserRepository) CreateUser(name string, email string, password strin
 		Gender:      gender,
 		PhoneNumber: phonenumber,
 		DateOfBirth: dateofbirth,
-		Biography:   biography}
+		Biography:   biography,
+		ApiKey:      apiKey,
+	}
 
 	if gender == "male" || gender == "female" {
 		repo.db.Create(&user)
@@ -140,5 +142,18 @@ func (repo *UserRepository) BlockUser(userId int, blockedUserId int) {
 		BlockedUser: uint(blockedUserId)}
 
 	repo.db.Save(&block)
+	return
+}
+
+func (repo *UserRepository) CreateJobOffer(id int, info string, position string, companyName string, qualifications string, key string) {
+	offer := model.JobOffer{
+		CompanyName:    companyName,
+		JobPosition:    position,
+		ApiKey:         key,
+		Qualifications: qualifications,
+		JobInfo:        info,
+	}
+
+	repo.db.Create(&offer)
 	return
 }

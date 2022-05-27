@@ -3,6 +3,7 @@ package service
 import (
 	"github.com/dgrijalva/jwt-go"
 	"golang.org/x/crypto/bcrypt"
+	"math/rand"
 	"time"
 	"user-service/model"
 	"user-service/repo"
@@ -66,7 +67,8 @@ func (s *UserService) CloseDB() error {
 
 func (s *UserService) CreateUser(name string, email string, password string, username string, gender model.Gender, phonenumber string, dateofbirth time.Time, biography string) int {
 	hashedPassword, _ := bcrypt.GenerateFromPassword([]byte(password), 8)
-	return s.userRepo.CreateUser(name, email, string(hashedPassword), username, gender, phonenumber, dateofbirth, biography)
+	apiKey, _ := bcrypt.GenerateFromPassword([]byte(GenerateRandomString(10)), 8)
+	return s.userRepo.CreateUser(name, email, string(hashedPassword), username, gender, phonenumber, dateofbirth, biography, string(apiKey))
 }
 
 func (s *UserService) AddInterest(interest string, userId uint) int {
@@ -116,4 +118,29 @@ func (s *UserService) BlockUser(userId int, blockedUserId int) {
 	}
 	s.userRepo.BlockUser(userId, blockedUserId)
 	return
+}
+
+func (s *UserService) GetApiKeyForUserCredentials(username string, password string) string {
+	user := s.GetByUsername(username)
+	expectedPassword := user.Password
+	err := bcrypt.CompareHashAndPassword([]byte(expectedPassword), []byte(password))
+	if err != nil {
+		return ""
+	}
+	return user.ApiKey
+}
+
+func (s *UserService) CreateJobOffer(id int, info string, position string, companyName string, qualifications string, key string) {
+	s.userRepo.CreateJobOffer(id, info, position, companyName, qualifications, key)
+	return
+}
+
+const letterBytes = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
+
+func GenerateRandomString(n int) string {
+	b := make([]byte, n)
+	for i := range b {
+		b[i] = letterBytes[rand.Intn(len(letterBytes))]
+	}
+	return string(b)
 }

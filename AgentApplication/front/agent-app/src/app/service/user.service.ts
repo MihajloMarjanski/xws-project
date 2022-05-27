@@ -35,7 +35,7 @@ export class UserService {
   
 
   getApiKey(username: string, password: string) {
-    return this._http.get<string>(this._apiKey + username + '/' + password)
+    return this._http.get<any>(this._apiKey + username + '/' + password)
                            .pipe(tap(data =>  console.log('Iz service-a: ', data)),                         
                                 catchError(this.handleError)); 
   }

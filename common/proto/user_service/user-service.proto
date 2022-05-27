@@ -68,9 +68,32 @@ service UserService{
             body: ""
           };
         }
+        rpc GetApiKey(ApiKeyRequest) returns(ApiKeyResponse) {
+          option (google.api.http) = {
+            get: "/user/apiKey/{username}/{password}"
+          };
+        }
+        rpc CreateJobOffer(CreateJobOfferRequest) returns(CreateJobOfferResponse) {
+          option (google.api.http) = {
+            post: "/jobs/offer"
+            body: "offer"
+          };
+        }
 }
 
 
+message CreateJobOfferRequest {
+  JobOffer offer = 1;
+}
+message CreateJobOfferResponse {
+}
+message ApiKeyRequest {
+  string username = 1;
+  string password = 2;
+}
+message ApiKeyResponse {
+  string apiKey = 1;
+}
 message GetUserRequest {
         int64 id = 1;
 }
@@ -184,4 +207,13 @@ message Interest {
 message Credentials {
   string username = 1;
   string password = 2;
+}
+
+message JobOffer {
+  int64 id = 1;
+  string jobPosition = 2;
+  string companyName = 3;
+  string jobInfo = 4;
+  string qualifications = 5;
+  string apiKey = 6;
 }
