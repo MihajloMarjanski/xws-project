@@ -1,12 +1,14 @@
 package service
 
 import (
-	"github.com/dgrijalva/jwt-go"
-	"golang.org/x/crypto/bcrypt"
 	"math/rand"
+	"strconv"
 	"time"
 	"user-service/model"
 	"user-service/repo"
+
+	"github.com/dgrijalva/jwt-go"
+	"golang.org/x/crypto/bcrypt"
 )
 
 type Credentials struct {
@@ -16,6 +18,8 @@ type Credentials struct {
 
 type Claims struct {
 	Username string `json:"username"`
+	Id       string `json:"id"`
+	Role     string `json:"role"`
 	jwt.StandardClaims
 }
 
@@ -88,6 +92,7 @@ func (s *UserService) UpdateUser(id uint, name string, email string, password st
 
 func (s *UserService) Login(username string, password string) string {
 	expectedPassword := s.GetByUsername(username).Password
+	id := strconv.FormatUint(uint64(s.GetByUsername(username).ID), 10)
 	err := bcrypt.CompareHashAndPassword([]byte(expectedPassword), []byte(password))
 	if err != nil {
 		return ""
@@ -96,6 +101,8 @@ func (s *UserService) Login(username string, password string) string {
 
 	claims := &Claims{
 		Username: username,
+		Id:       id,
+		Role:     "user",
 		StandardClaims: jwt.StandardClaims{
 			ExpiresAt: expirationTime.Unix(),
 		},
