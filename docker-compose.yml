@@ -37,6 +37,18 @@ services:
     networks:
       - backend
 
+  api-gateway:
+    hostname: api-gateway
+    image: api-gateway
+    build:
+      context: ./
+      dockerfile: ./api-gateway/Dockerfile
+    restart: always
+    ports:
+      - 8000:8000
+    networks:
+      - backend
+
   userdb:
     image: postgres:latest
     restart: always

@@ -4,13 +4,15 @@ import (
 	cfg "api-gateway/startup/config"
 	"context"
 	"fmt"
+	"log"
+	"net/http"
+
+	postGw "github.com/MihajloMarjanski/xws-project/common/proto/post_service"
 	requestGw "github.com/MihajloMarjanski/xws-project/common/proto/requests_service"
 	userGw "github.com/MihajloMarjanski/xws-project/common/proto/user_service"
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
-	"log"
-	"net/http"
 )
 
 type Server struct {
@@ -37,7 +39,12 @@ func (server *Server) initHandlers() {
 	requestEndpoint := fmt.Sprintf("%s:%s", server.config.RequestHost, server.config.RequestPort)
 	err1 := requestGw.RegisterRequestsServiceHandlerFromEndpoint(context.TODO(), server.mux, requestEndpoint, opts)
 	if err1 != nil {
-		panic(err)
+		panic(err1)
+	}
+	postEndpoint := fmt.Sprintf("%s:%s", server.config.PostHost, server.config.PostPort)
+	err2 := postGw.RegisterPostServiceHandlerFromEndpoint(context.TODO(), server.mux, postEndpoint, opts)
+	if err2 != nil {
+		panic(err2)
 	}
 
 }

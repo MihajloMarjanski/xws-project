@@ -1,6 +1,8 @@
 package service
 
 import (
+	"fmt"
+	"os"
 	"post-service/model"
 	"post-service/repo"
 	"time"
@@ -23,6 +25,14 @@ func New() (*PostService, error) {
 }
 
 func (service *PostService) CreatePost(title string, text string, img string, link string, userId uint) model.Post {
+
+	name, err := os.Hostname()
+	if err != nil {
+		panic(err)
+	}
+
+	fmt.Println("hostname:", name)
+
 	post := model.Post{
 		UserID:    userId,
 		Title:     title,
