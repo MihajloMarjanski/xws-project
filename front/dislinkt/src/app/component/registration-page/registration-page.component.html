@@ -1,0 +1,99 @@
+<div class="stepper">
+    <h1>Registration form</h1>
+  <form name="rform" #registerForm="ngForm">
+      <mat-stepper orientation="vertical" linear #stepper >
+          <mat-step label="Fill in personal info">
+            
+            <ul>
+              <li>
+                <mat-form-field appearance="fill">
+                  <mat-label>First name</mat-label>
+                  <input matInput type="text" name="firstname" [(ngModel)]="client.firstName" required>
+                  <mat-hint *ngIf="client.firstName == ''">Required</mat-hint>
+                  <mat-icon matSuffix></mat-icon>
+                </mat-form-field>
+              </li>
+              <li>
+                <mat-form-field appearance="fill">
+                  <mat-label>Last name</mat-label>
+                  <input matInput type="text" name="lastname" [(ngModel)]="client.lastName" required>
+                  <mat-hint *ngIf="client.lastName == ''">Required</mat-hint>
+                </mat-form-field>
+              </li>
+              
+            </ul>
+            <div>
+              <button mat-button matStepperNext color="primary">Next</button>
+            </div>
+  
+          </mat-step>
+          <mat-step label="Fill in account info">
+            
+              <div>
+                <mat-form-field appearance="fill">
+                  <mat-label>E-mail</mat-label>
+                  <input matInput type="email" name="email" [formControl]="emailControl" [(ngModel)]="client.email" required [errorStateMatcher]="matcher"
+                          placeholder="pat@example.com">
+                  <mat-hint>Errors appear instantly!</mat-hint>
+                  <mat-error *ngIf="emailControl.hasError('email') && !emailControl.hasError('required')">
+                    Please enter a valid email address
+                  </mat-error>
+                  <mat-error *ngIf="emailControl.hasError('required')">
+                    Email is <strong>required</strong>
+                  </mat-error>
+                  <mat-hint *ngIf="containSpace(client.email) === true" style="color:red;">Email can not contain space.</mat-hint>
+                </mat-form-field>
+              </div>  
+              <div>
+                <mat-form-field appearance="fill">
+                  <mat-label>Username</mat-label>
+                  <input matInput type="text" name="username" [(ngModel)]="client.username" required >     
+                  <mat-hint *ngIf="client.username == ''">Required</mat-hint>  
+                  <mat-hint *ngIf="usernames.includes(client.username)">Username already exists!</mat-hint>        
+                  <mat-hint *ngIf="containSpace(client.username) === true" style="color:red;">Username can not contain space.</mat-hint>
+                </mat-form-field>
+                <!-- <div *ngIf="usernames.includes(customer.username)" class="errorText">Username already exists!</div> -->
+              </div>   
+              <div>
+                <mat-form-field hintLabel="Between 8 and 20 characters, at least 1 letter, 1 number, 1 special character" appearance="fill">
+                  <mat-label>Password</mat-label>
+                  <input matInput type="password" name="password" id="password" minlength="8" maxlength="20" [(ngModel)]="client.password" required (change)="checkPass()">
+                  <mat-hint *ngIf="isInBlackList">{{blackListPassMessage}}</mat-hint>
+                  <mat-hint *ngIf="containSpace(client.password) === true" style="color:red;">Password can not contain space.</mat-hint>
+                  <mat-hint *ngIf="containAllCharacters(client.password) === false" style="color:red;">Password must contain at least 1 letter, 1 number and 1 special character</mat-hint>
+                </mat-form-field>
+              </div>
+              <div>
+                <mat-form-field appearance="fill">
+                  <mat-label>Confirm password</mat-label>
+                  <input matInput type="password" name="repassword" [(ngModel)]="repassword" required>
+                  <mat-hint *ngIf="client.password == ''">Required</mat-hint>
+                  <mat-hint *ngIf="client.password !== repassword">It has to match with password</mat-hint>
+                </mat-form-field>
+              </div>
+            
+  
+                <div>
+                  <button mat-button matStepperPrevious>Back</button>
+                  <button mat-button matStepperNext color="primary">Next</button>
+                </div>
+            </mat-step>
+            
+            <mat-step label="Submit registration request">
+              <p><b>Before submiting, please choose as which user are you registrating and check info you filled</b></p>
+              <div>      
+                <mat-radio-group [(ngModel)]="role" name="role" label-position="before" required>
+                  <mat-label>Which one would you like to register?</mat-label>
+                  <mat-radio-button value="client">Regular user</mat-radio-button>
+                  <mat-radio-button value="owner">Company owner</mat-radio-button>
+                </mat-radio-group>            
+                <div style="margin-top: 2%;">
+                  <button mat-button matStepperPrevious>Back</button>
+                  <button mat-raised-button color="accent" (click)="submit()" [disabled]="!(registerForm.valid && client.password === repassword && containAllCharacters(client.password))" >Submit</button>
+                </div>
+              </div>
+            </mat-step>
+      </mat-stepper>
+     </form>
+    </div>
+  
