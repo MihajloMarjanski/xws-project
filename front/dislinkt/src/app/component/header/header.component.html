@@ -1,0 +1,18 @@
+<mat-toolbar color="primary" class="navbar">
+    <button mat-button style="font-size : 25px" [routerLink]="['']">CompanyIn</button>
+    <button *ngIf="roles.includes('ROLE_ADMIN')" style="margin-left : 25px" mat-button [routerLink]="['companies']">Companies</button>
+    <button *ngIf="roles.includes('ROLE_POTENTIAL_OWNER')" style="margin-left : 25px" mat-button [routerLink]="['create-company']">Create company</button>
+    <button *ngIf="roles.includes('ROLE_CLIENT')" style="margin-left : 25px" mat-button [routerLink]="['client-companies']">Companies</button>
+    <button *ngIf="roles.includes('ROLE_CLIENT')" style="margin-left : 25px" mat-button [routerLink]="['forum']">Forum</button>
+    <button *ngIf="roles.includes('ROLE_COMPANY_OWNER')" style="margin-left : 25px" mat-button [routerLink]="['job-offer']">Create job offer</button>
+
+
+    <span class="example-spacer" ></span>
+    <button *ngIf="roles.includes('ROLE_ADMIN') || roles.includes('ROLE_CLIENT') || roles.includes('ROLE_COMPANY_OWNER') || roles.includes('ROLE_POTENTIAL_OWNER')" mat-icon-button [routerLink]="['user-profile']">
+        <mat-icon >account_circle</mat-icon>
+    </button>
+    <button *ngIf="!roles.includes('ROLE_ADMIN') && !roles.includes('ROLE_CLIENT') && !roles.includes('ROLE_COMPANY_OWNER') && !roles.includes('ROLE_POTENTIAL_OWNER')" mat-button [routerLink]="['register']">Register</button>
+    <button *ngIf="!roles.includes('ROLE_ADMIN') && !roles.includes('ROLE_CLIENT') && !roles.includes('ROLE_COMPANY_OWNER') && !roles.includes('ROLE_POTENTIAL_OWNER')" mat-raised-button [routerLink]="['login']">Log in</button>
+    <button *ngIf="roles.includes('ROLE_ADMIN') || roles.includes('ROLE_CLIENT') || roles.includes('ROLE_COMPANY_OWNER') || roles.includes('ROLE_POTENTIAL_OWNER')" mat-raised-button mat-button (click)="logOut()">Log out</button>
+    </mat-toolbar>
+
