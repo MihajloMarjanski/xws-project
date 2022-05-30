@@ -2,15 +2,57 @@ package handler_grpc
 
 import (
 	"context"
+	"fmt"
+	"post-service/model"
 	"post-service/service"
 	"strconv"
+	"strings"
 
 	pb "github.com/MihajloMarjanski/xws-project/common/proto/post_service"
+	"github.com/dgrijalva/jwt-go"
+	"google.golang.org/grpc/metadata"
 )
 
 type PostHandler struct {
 	pb.UnimplementedPostServiceServer
 	postService *service.PostService
+}
+
+func Verify(accessToken string) (*model.Claims, error) {
+	token, err := jwt.ParseWithClaims(
+		accessToken,
+		&model.Claims{},
+		func(token *jwt.Token) (interface{}, error) {
+			_, ok := token.Method.(*jwt.SigningMethodHMAC)
+			if !ok {
+				return nil, fmt.Errorf("unexpected token signing method")
+			}
+
+			return []byte("tajni_kljuc_za_jwt_hash"), nil
+		},
+	)
+
+	if err != nil {
+		return nil, fmt.Errorf("invalid token: %w", err)
+	}
+
+	claims, ok := token.Claims.(*model.Claims)
+	if !ok {
+		return nil, fmt.Errorf("invalid token claims")
+	}
+
+	return claims, nil
+}
+
+func GetUserID(ctx context.Context) uint {
+	md, _ := metadata.FromIncomingContext(ctx)
+	values := md["authorization"]
+	accessToken := values[0]
+	words := strings.Fields(accessToken)
+
+	claims, _ := Verify(words[1])
+	id, _ := strconv.ParseUint(claims.Id, 10, 64)
+	return uint(id)
 }
 
 func New() (*PostHandler, error) {
@@ -27,6 +69,7 @@ func New() (*PostHandler, error) {
 
 func (handler *PostHandler) CreatePost(ctx context.Context, request *pb.CreatePostRequest) (*pb.CreatePostResponse, error) {
 	post := mapProtoToPost(request.Post)
+	post.UserID = GetUserID(ctx)
 	createdPost := handler.postService.CreatePost(post.Title, post.Text, post.Img, post.Link, post.UserID)
 	response := &pb.CreatePostResponse{
 		Id: createdPost.ID.Hex(),
@@ -36,6 +79,7 @@ func (handler *PostHandler) CreatePost(ctx context.Context, request *pb.CreatePo
 
 func (handler *PostHandler) AddComment(ctx context.Context, request *pb.AddCommentRequest) (*pb.AddCommnetResponse, error) {
 	comment := mapProtoToCommentDTO(request.Comment)
+	comment.UserID = GetUserID(ctx)
 	handler.postService.AddComment(&comment)
 	response := &pb.AddCommnetResponse{
 		Id: comment.Text,
@@ -45,6 +89,7 @@ func (handler *PostHandler) AddComment(ctx context.Context, request *pb.AddComme
 
 func (handler *PostHandler) AddLike(ctx context.Context, request *pb.AddLikeRequest) (*pb.AddLikeResponse, error) {
 	like := mapProtoToLikeDTO(request.Like)
+	like.UserID = GetUserID(ctx)
 	handler.postService.AddLike(&like)
 	response := &pb.AddLikeResponse{
 		Id: strconv.FormatUint(uint64(like.UserID), 10),
@@ -54,6 +99,7 @@ func (handler *PostHandler) AddLike(ctx context.Context, request *pb.AddLikeRequ
 
 func (handler *PostHandler) AddDislike(ctx context.Context, request *pb.AddDislikeRequest) (*pb.AddLikeResponse, error) {
 	like := mapProtoToLikeDTO(request.Dislike)
+	like.UserID = GetUserID(ctx)
 	handler.postService.AddDislike(&like)
 	response := &pb.AddLikeResponse{
 		Id: strconv.FormatUint(uint64(like.UserID), 10),

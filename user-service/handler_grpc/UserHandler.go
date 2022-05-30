@@ -2,16 +2,59 @@ package handler_grpc
 
 import (
 	"context"
-	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/status"
+	"fmt"
+	"strconv"
+	"strings"
 	"user-service/service"
 
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/metadata"
+	"google.golang.org/grpc/status"
+
 	pb "github.com/MihajloMarjanski/xws-project/common/proto/user_service"
+	"github.com/dgrijalva/jwt-go"
 )
 
 type UserHandler struct {
 	pb.UnimplementedUserServiceServer
 	userService *service.UserService
+}
+
+func Verify(accessToken string) (*service.Claims, error) {
+	token, err := jwt.ParseWithClaims(
+		accessToken,
+		&service.Claims{},
+		func(token *jwt.Token) (interface{}, error) {
+			_, ok := token.Method.(*jwt.SigningMethodHMAC)
+			if !ok {
+				return nil, fmt.Errorf("unexpected token signing method")
+			}
+
+			return []byte("tajni_kljuc_za_jwt_hash"), nil
+		},
+	)
+
+	if err != nil {
+		return nil, fmt.Errorf("invalid token: %w", err)
+	}
+
+	claims, ok := token.Claims.(*service.Claims)
+	if !ok {
+		return nil, fmt.Errorf("invalid token claims")
+	}
+
+	return claims, nil
+}
+
+func GetUserID(ctx context.Context) uint {
+	md, _ := metadata.FromIncomingContext(ctx)
+	values := md["authorization"]
+	accessToken := values[0]
+	words := strings.Fields(accessToken)
+
+	claims, _ := Verify(words[1])
+	id, _ := strconv.ParseUint(claims.Id, 10, 64)
+	return uint(id)
 }
 
 func New() (*UserHandler, error) {
@@ -75,6 +118,7 @@ func (handler *UserHandler) GetMe(ctx context.Context, request *pb.GetMeRequest)
 
 func (handler *UserHandler) UpdateUser(ctx context.Context, request *pb.UpdateUserRequest) (*pb.UpdateUserResponse, error) {
 	user := mapProtoToUser(request.User)
+	user.ID = GetUserID(ctx)
 	if handler.userService.GetByID(int(user.ID)).ID == 0 {
 		err := status.Error(codes.NotFound, "User with that id does not exist.")
 		return nil, err
@@ -113,6 +157,7 @@ func (handler *UserHandler) CreateUser(ctx context.Context, request *pb.CreateUs
 
 func (handler *UserHandler) AddExperience(ctx context.Context, request *pb.AddExperienceRequest) (*pb.AddExperienceResponse, error) {
 	experience := mapProtoToExperience(request.Experience)
+	experience.UserID = GetUserID(ctx)
 	id := handler.userService.AddExperience(experience.Company, experience.Position, experience.From, experience.Until, experience.UserID)
 	response := &pb.AddExperienceResponse{
 		Id: int64(id),
@@ -122,6 +167,7 @@ func (handler *UserHandler) AddExperience(ctx context.Context, request *pb.AddEx
 
 func (handler *UserHandler) AddInterest(ctx context.Context, request *pb.AddInterestRequest) (*pb.AddInterestResponse, error) {
 	interest := mapProtoToInterest(request.Interest)
+	interest.UserID = GetUserID(ctx)
 	id := handler.userService.AddInterest(interest.Interest, interest.UserID)
 	response := &pb.AddInterestResponse{
 		Id: int64(id),
@@ -151,7 +197,7 @@ func (handler *UserHandler) Login(ctx context.Context, request *pb.LoginRequest)
 	return response, nil
 }
 func (handler *UserHandler) BlockUser(ctx context.Context, request *pb.BlockUserRequest) (*pb.BlockUserResponse, error) {
-	userId := request.UserId
+	userId := GetUserID(ctx)
 	blockedUserId := request.BlockedUserId
 	if handler.userService.GetByID(int(userId)).ID == 0 || handler.userService.GetByID(int(blockedUserId)).ID == 0 {
 		err := status.Error(codes.NotFound, "User with that id does not exist.")
