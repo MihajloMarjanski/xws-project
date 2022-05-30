@@ -3,6 +3,7 @@ import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http
 import { Credentials } from '../model/credentials';
 import { Observable, throwError } from 'rxjs';
 import { map, catchError, tap } from 'rxjs/operators';
+import { User } from '../model/user';
 /* import { Client } from '../model/client';
 import { CompanyOwner } from '../model/company-owner';
 import { Company } from '../model/company'; */
@@ -13,13 +14,13 @@ import { Company } from '../model/company'; */
 export class UserService {
   
   
-  private _baseUrl = 'https://localhost:8000/';
+  private _baseUrl = 'http://localhost:8000/';
   private _login = this._baseUrl + 'auth/login';
   private _getAllUsernames = this._baseUrl + 'auth/getAllUsernames';
   private _getCompanies = this._baseUrl + 'company/all';
   private _blackList = this._baseUrl + 'auth/password/blackList/';
   private _submitRegistrationOwner  = this._baseUrl + 'company/owner/create';
-  private _submitRegistrationClient  = this._baseUrl + 'clients/create';
+  private _submitRegistration  = this._baseUrl + 'user';
   private _clientByUsername  = this._baseUrl + 'clients/username/';
   private _adminByUsername  = this._baseUrl + 'admin/username/';
   private _ownerByUsername  = this._baseUrl + 'company/owner/username/';
@@ -60,15 +61,16 @@ export class UserService {
                             catchError(this.handleError)); 
   }
 
-  /* createClient(client: Client) : Observable<any> {
+  createUser(client: User) : Observable<any> {
+    client.phone = client.phone.toString()
     const headers = new HttpHeaders({
       'Content-Type': 'application/json',
    });
     const body=JSON.stringify(client);
     console.log(body)
-    return this._http.post(this._submitRegistrationClient, body, {'headers':headers})
+    return this._http.post(this._submitRegistration, body, {'headers':headers})
   }
-
+/*
   approveCompany(id: number) : Observable<any> {
     return this._http.put<any>(this._approveCompany + id, {})
                   .pipe(tap(data =>  console.log('All: ' + JSON.stringify(data))),
