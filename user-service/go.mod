@@ -7,7 +7,6 @@ replace github.com/MihajloMarjanski/xws-project/common => ../common
 require (
 	github.com/MihajloMarjanski/xws-project/common v1.0.0
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible
-	github.com/gorilla/mux v1.8.0
 	golang.org/x/crypto v0.0.0-20210921155107-089bfa567519
 	google.golang.org/grpc v1.45.0
 	gorm.io/driver/postgres v1.3.5
@@ -16,7 +15,6 @@ require (
 
 require (
 	github.com/golang/protobuf v1.5.2 // indirect
-	github.com/gomodule/redigo v1.8.8 // indirect
 	github.com/grpc-ecosystem/grpc-gateway/v2 v2.9.0 // indirect
 	github.com/jackc/chunkreader/v2 v2.0.1 // indirect
 	github.com/jackc/pgconn v1.12.0 // indirect

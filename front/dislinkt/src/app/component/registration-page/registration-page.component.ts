@@ -3,8 +3,7 @@ import { AbstractControl, FormControl, FormGroup, FormGroupDirective, NgForm, Va
 import {ErrorStateMatcher} from '@angular/material/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
-import { Client } from 'src/app/model/client';
-import { CompanyOwner } from 'src/app/model/company-owner';
+import { User } from 'src/app/model/user';
 import { UserService } from 'src/app/service/user.service';
 
 
@@ -30,39 +29,23 @@ export class RegistrationPageComponent implements OnInit {
   //space: FormControl = new FormControl('', [spaceValidator]);
 
   matcher = new MyErrorStateMatcher();
-  client: Client = {
+  user: User = {
     id: 0,
-    firstName: "",
-    lastName: "",
+    name: "",
+    gender: "Male",
     email: "",
     username:  "",
     password: "",
+    biography: '',
+    date: new Date(),
+    phone: ''
   }
   errorMessage : string  = '';
   repassword: string = '';
   usernames: string[] = [];
   blackListPassMessage: string = '';
   isInBlackList: boolean = false;
-  role: string = 'client';
-  owner: CompanyOwner = {
-    id: 0,
-    firstName: "",
-    lastName: "",
-    email: "",
-    username: "",
-    password: "",
-    company: {
-      id: 0,
-      name: "",
-      info: "",
-      isApproved: true,
-      ownerUsername: "",
-      city: "",
-      country: "",
-      comments: [],
-      positions: []
-    }
-  }
+  role: string = 'user';
 
   constructor(public _userService: UserService, private _snackBar: MatSnackBar, private router: Router) { }
 
@@ -71,49 +54,20 @@ export class RegistrationPageComponent implements OnInit {
   }
 
   submit(): void {
-    if (this.role == 'owner') 
-    {
-      this.owner.email = this.client.email
-      this.owner.firstName = this.client.firstName
-      this.owner.lastName = this.client.lastName
-      this.owner.username = this.client.username
-      this.owner.password = this.client.password
-      this._userService.createCompanyOwner(this.owner)
+      this._userService.createUser(this.user)
         .subscribe(
           data => {
-            if(data != null)
-              this._snackBar.open(data, 'Close', {duration: 5000});
-            else {
               this.router.navigateByUrl('/').then(() => {
-                this._snackBar.open('Registration request successfully submited!', 'Close', {duration: 5000});
+                this._snackBar.open('Registration request successfully submited! Activate your account via email.', 'Close', {duration: 5000});
                 }); 
-            }
+            
           },
           error => {
             this._snackBar.open('Invalid input!', 'Close', {duration: 5000});
             console.log('Error!', error)
           }
         )
-    }  
-    else
-    {
-      this._userService.createClient(this.client)
-        .subscribe(
-          data => {
-            if(data != null)
-              this._snackBar.open(data, 'Close', {duration: 5000});
-            else {
-              this.router.navigateByUrl('/').then(() => {
-                this._snackBar.open('Registration request successfully submited!', 'Close', {duration: 5000});
-                }); 
-            }
-          },
-          error => {
-            this._snackBar.open('Invalid input!', 'Close', {duration: 5000});
-            console.log('Error!', error)
-          }
-        )
-    }  
+      
   }
 
   getAllUsernames() {
@@ -125,7 +79,7 @@ export class RegistrationPageComponent implements OnInit {
   }
 
   checkPass() {
-    this._userService.checkBlackListPass(this.client.password)
+    this._userService.checkBlackListPass(this.user.password)
         .subscribe(data => {
           if (data == null)
             this.isInBlackList = false
