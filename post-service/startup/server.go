@@ -30,12 +30,26 @@ func (server *Server) Start() {
 	server.startGrpcServer(postHandler)
 }
 
+func accessibleRoles() map[string][]string {
+	const servicePath = "/post.PostService/"
+	return map[string][]string{
+		servicePath + "CreatePost": {"user"},
+		servicePath + "AddComment": {"user"},
+		servicePath + "AddLike":    {"user"},
+		servicePath + "AddDislike": {"user"},
+	}
+}
+
 func (server *Server) startGrpcServer(postHandler *handler_grpc.PostHandler) {
 	listener, err := net.Listen("tcp", fmt.Sprintf(":%s", server.config.Port))
 	if err != nil {
 		log.Fatalf("failed to listen: %v", err)
 	}
-	grpcServer := grpc.NewServer()
+	interceptor := NewAuthInterceptor(accessibleRoles())
+	grpcServer := grpc.NewServer(
+		grpc.UnaryInterceptor(interceptor.Unary()),
+		grpc.StreamInterceptor(interceptor.Stream()),
+	)
 	post.RegisterPostServiceServer(grpcServer, postHandler)
 	if err := grpcServer.Serve(listener); err != nil {
 		log.Fatalf("failed to serve: %s", err)

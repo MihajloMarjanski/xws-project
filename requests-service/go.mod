@@ -6,6 +6,7 @@ replace github.com/MihajloMarjanski/xws-project/common => ../common
 
 require (
 	github.com/MihajloMarjanski/xws-project/common v1.0.0
+	github.com/dgrijalva/jwt-go v3.2.0+incompatible
 	google.golang.org/grpc v1.45.0
 	gorm.io/driver/postgres v1.3.5
 	gorm.io/gorm v1.23.5

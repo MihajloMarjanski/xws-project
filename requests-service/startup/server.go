@@ -32,6 +32,17 @@ func (server *Server) Start() {
 	server.startGrpcServer(requestHandler)
 }
 
+func accessibleRoles() map[string][]string {
+	const servicePath = "/requests.RequestsService/"
+	return map[string][]string{
+		servicePath + "GetAllByRecieverId": {"user"},
+		servicePath + "AcceptRequest":      {"user"},
+		servicePath + "DeclineRequest":     {"user"},
+		servicePath + "SendRequest":        {"user"},
+		servicePath + "SendMessage":        {"user"},
+	}
+}
+
 func (server *Server) startGrpcServer(reqHandler *handler_grpc.RequestsHandler) {
 	log.Println(os.Hostname())
 	listener, err := net.Listen("tcp", fmt.Sprintf(":%s", server.config.Port))
@@ -39,7 +50,11 @@ func (server *Server) startGrpcServer(reqHandler *handler_grpc.RequestsHandler) 
 		log.Fatalf("Failed to listen: %v", err)
 	}
 
-	grpcServer := grpc.NewServer()
+	interceptor := NewAuthInterceptor(accessibleRoles())
+	grpcServer := grpc.NewServer(
+		grpc.UnaryInterceptor(interceptor.Unary()),
+		grpc.StreamInterceptor(interceptor.Stream()),
+	)
 	requestProto.RegisterRequestsServiceServer(grpcServer, reqHandler)
 	if err := grpcServer.Serve(listener); err != nil {
 		log.Fatalf("failed to serve: %s", err)
