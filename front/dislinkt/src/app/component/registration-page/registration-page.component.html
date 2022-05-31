@@ -38,7 +38,7 @@
               <li>
                 <mat-form-field appearance="fill">
                   <mat-label>Biography</mat-label>
-                  <textarea required matInput [(ngModel)]="user.biography"  rows="15" cols="40" ></textarea>
+                  <textarea required matInput [(ngModel)]="user.biography" name="biography" rows="15" cols="40" ></textarea>
                   <!-- <input matInput type="text" name="biography" [(ngModel)]="user.biography" required> -->
                   <mat-hint *ngIf="user.biography == ''">Required</mat-hint>
                 </mat-form-field>

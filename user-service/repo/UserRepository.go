@@ -106,7 +106,7 @@ func (repo *UserRepository) UpdateUser(id uint, name string, email string, passw
 		Biography:   biography,
 		IsPublic:    isPublic}
 
-	if gender == "male" || gender == "female" {
+	if gender == "Male" || gender == "Female" {
 		repo.db.Save(&user)
 	} else {
 		user.ID = 0

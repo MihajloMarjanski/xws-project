@@ -38,7 +38,9 @@ export class RegistrationPageComponent implements OnInit {
     password: "",
     biography: '',
     date: new Date(),
-    phone: ''
+    phone: '',
+    experiences: [],
+    interests: []
   }
   errorMessage : string  = '';
   repassword: string = '';

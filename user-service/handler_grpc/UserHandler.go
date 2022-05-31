@@ -88,15 +88,15 @@ func (handler *UserHandler) GetUser(ctx context.Context, request *pb.GetUserRequ
 	return response, nil
 }
 
-func (handler *UserHandler) GetMe(ctx context.Context, request *pb.GetMeRequest) (*pb.GetMeResponse, error) {
-	id := request.Id
-	user := handler.userService.GetMe(int(id))
+func (handler *UserHandler) GetUserByUsername(ctx context.Context, request *pb.GetUserByUsernameRequest) (*pb.GetUserByUsernameResponse, error) {
+	username := request.Username
+	user := handler.userService.GetByUsername(username)
 	if user.ID == 0 {
-		err := status.Error(codes.NotFound, "User with that id does not exist.")
+		err := status.Error(codes.NotFound, "User with that username does not exist.")
 		return nil, err
 	}
 	userPb := mapUserToProto(user)
-	response := &pb.GetMeResponse{
+	response := &pb.GetUserByUsernameResponse{
 		User: userPb,
 	}
 

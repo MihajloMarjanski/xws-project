@@ -12,9 +12,9 @@ service UserService{
             get: "/user/{id}"
           };
             }
-        rpc GetMe(GetMeRequest) returns(GetMeResponse) {
+        rpc GetUserByUsername(GetUserByUsernameRequest) returns(GetUserByUsernameResponse) {
               option (google.api.http) = {
-          get: "/user/me/{id}"
+          get: "/user/username/{username}"
         };
         }
         rpc UpdateUser(UpdateUserRequest) returns(UpdateUserResponse) {
@@ -100,10 +100,10 @@ message GetUserRequest {
 message GetUserResponse {
         User user = 1;
 }
-message GetMeRequest {
-  int64 id = 1;
+message GetUserByUsernameRequest {
+  string username = 1;
 }
-message GetMeResponse {
+message GetUserByUsernameResponse {
   UserWithPass user = 1;
 }
 message UpdateUserRequest {

@@ -1,3 +1,6 @@
+import { Experience } from "./experience";
+import { Interest } from "./interest";
+
 export interface User {
     id: number ;
     name: string ;
@@ -6,6 +9,8 @@ export interface User {
     username: string;
     password: string ;
     phone: string ;
-    date: Date ;
+    date: Date|string| null;
     biography: string ;
+    experiences: Experience[]
+    interests: Interest[]
 }

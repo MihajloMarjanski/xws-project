@@ -86,23 +86,27 @@ func (s *UserService) AddExperience(company string, position string, from time.T
 }
 
 func (s *UserService) UpdateUser(id uint, name string, email string, password string, username string, gender model.Gender, phonenumber string, dateofbirth time.Time, biography string, isPublic bool) int {
-
+	if password != s.GetByID(int(id)).Password {
+		hashedPassword, _ := bcrypt.GenerateFromPassword([]byte(password), 8)
+		return s.userRepo.UpdateUser(id, name, email, string(hashedPassword), username, gender, phonenumber, dateofbirth, biography, isPublic)
+	}
 	return s.userRepo.UpdateUser(id, name, email, password, username, gender, phonenumber, dateofbirth, biography, isPublic)
 }
 
 func (s *UserService) Login(username string, password string) string {
 	expectedPassword := s.GetByUsername(username).Password
 	id := strconv.FormatUint(uint64(s.GetByUsername(username).ID), 10)
+	//hashedPass, _ := bcrypt.GenerateFromPassword([]byte(password), 8)
 	err := bcrypt.CompareHashAndPassword([]byte(expectedPassword), []byte(password))
 	if err != nil {
 		return ""
 	}
-	expirationTime := time.Now().Add(15 * time.Minute)
+	expirationTime := time.Now().Add(60 * time.Minute)
 
 	claims := &Claims{
 		Username: username,
 		Id:       id,
-		Role:     "user",
+		Role:     "ROLE_USER",
 		StandardClaims: jwt.StandardClaims{
 			ExpiresAt: expirationTime.Unix(),
 		},

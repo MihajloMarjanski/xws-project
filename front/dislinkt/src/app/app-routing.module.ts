@@ -10,7 +10,7 @@ const routes: Routes = [
   { path: '', component: LandingPageComponent },
   { path: 'register', component: RegistrationPageComponent },
   { path: 'login', component: LoginPageComponent },
-  { path: 'user-profile', component: UserProfileComponent, canActivate: [AuthGuard], data: { role: ['ROLE_CLIENT', 'ROLE_POTENTIAL_OWNER', 'ROLE_COMPANY_OWNER', 'ROLE_ADMIN']} },
+  { path: 'user-profile', component: UserProfileComponent, canActivate: [AuthGuard], data: { role: ['ROLE_USER', 'ROLE_ADMIN']} },
 ];
 
 @NgModule({

@@ -60,3 +60,7 @@ table {
   width: 100%;
 }
 
+
+.mat-column-cancel {
+  flex: 0 0 10%;
+}
