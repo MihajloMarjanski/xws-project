@@ -40,7 +40,8 @@ export class RegistrationPageComponent implements OnInit {
     date: new Date(),
     phone: '',
     experiences: [],
-    interests: []
+    interests: [],
+    isPrivate: false
   }
   errorMessage : string  = '';
   repassword: string = '';

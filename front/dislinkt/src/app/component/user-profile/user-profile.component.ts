@@ -25,7 +25,8 @@ export class UserProfileComponent implements OnInit {
     date: new Date(),
     phone: '',
     experiences: [],
-    interests: []
+    interests: [],
+    isPrivate: false
   };
   repassword: string = "";
   errorMessage : string  = '';
@@ -56,11 +57,16 @@ export class UserProfileComponent implements OnInit {
   }
 
 
+  changePublic() {
+    this.user.isPrivate = !this.user.isPrivate
+  }
+
   addInterest() {
     this.newInterest.userId = this.user.id
     this._userService.addInterest(this.newInterest)
         .subscribe(data => {
-                  this.interests.push(this.newInterest)
+                this.getUserByUsername()
+                this.newInterest.interest = ''
               },
           error => this.errorMessage = <any>error);
   }
@@ -69,10 +75,7 @@ export class UserProfileComponent implements OnInit {
     this._userService.removeInterest(interest.id)
         .subscribe(data => {
                 this._snackBar.open('Successfully removed', 'Close', {duration: 3000});
-                const index: number = this.interests.indexOf(interest);
-                if (index !== -1) {
-                    this.interests.splice(index, 1);
-                }    
+                this.getUserByUsername()   
               },
           error => this.errorMessage = <any>error);    
   }
@@ -81,7 +84,7 @@ export class UserProfileComponent implements OnInit {
     this.newExperience.userId = this.user.id
     this._userService.addExperience(this.newExperience)
         .subscribe(data => {
-               this.experiences.push(this.newExperience)
+              this.getUserByUsername()
                this.newExperience.company = ''
                this.newExperience.from = new Date(),
                this.newExperience.until = new Date(),
@@ -98,10 +101,7 @@ export class UserProfileComponent implements OnInit {
     this._userService.removeExperience(experience.id)
         .subscribe(data => {
                 this._snackBar.open('Successfully removed', 'Close', {duration: 3000});
-                const index: number = this.experiences.indexOf(experience);
-                if (index !== -1) {
-                    this.experiences.splice(index, 1);
-                }    
+                this.getUserByUsername()    
               },
           error => this.errorMessage = <any>error);    
   }
@@ -136,7 +136,7 @@ export class UserProfileComponent implements OnInit {
                   this.oldPassword = data.user.password
                   this.user.password = ""
                   this.repassword = ''
-                  this.experiences = data.user.experiences
+                  this.experiences = data.user.experience
                   this.interests = data.user.interests
                   
                   console.log('Dobio: ', data.user)},

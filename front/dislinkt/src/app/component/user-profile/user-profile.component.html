@@ -32,6 +32,9 @@
       </mat-form-field>
     </li>
     <li>
+      <mat-checkbox [checked]="user.isPrivate" (change)="changePublic()">Private profil</mat-checkbox>
+    </li>
+    <li>
       <mat-form-field appearance="fill">
         <mat-label>Biography</mat-label>
         <textarea required matInput [(ngModel)]="user.biography" name="biography"  rows="15" cols="40" ></textarea>
@@ -72,7 +75,7 @@
                 <mat-label>Enter interest</mat-label>
                 <input matInput type="text" name="interest" [(ngModel)]="newInterest.interest" >
             </mat-form-field>
-            <button mat-raised-button color="accent"  (click)="addInterest()"  >Add</button>
+            <button style="margin-left: 2%;" mat-raised-button color="accent"  (click)="addInterest()"  >Add</button>
         </div>
 
         <!--  EXPERIENCES -->
@@ -94,14 +97,14 @@
               <ng-container matColumnDef="from">
                 <mat-header-cell *matHeaderCellDef> From </mat-header-cell>
                     <mat-cell *matCellDef="let element" >
-                      <ng-container >{{element.from | date: 'shortDate' }}</ng-container>
+                      <ng-container >{{element.from}}</ng-container>
                         </mat-cell>
               </ng-container>
 
               <ng-container matColumnDef="until">
                 <mat-header-cell *matHeaderCellDef> Until </mat-header-cell>
                     <mat-cell *matCellDef="let element" >
-                      <ng-container >{{element.until | date: 'shortDate' }}</ng-container>
+                      <ng-container >{{element.until}}</ng-container>
                         </mat-cell>
               </ng-container>
         

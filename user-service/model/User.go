@@ -14,8 +14,10 @@ type User struct {
 	Biography   string       `json:"biography"`
 	Interests   []Interest   `json:"interests"`
 	Experiences []Experience `json:"experiences"`
-	IsPublic    bool         `json:"isPublic"`
+	IsPrivate   bool         `json:"isPrivate"`
 	ApiKey      string       `json:"apiKey"`
+	IsActivated bool         `json:"isActivated"`
+	Pin         int          `json:"pin"`
 }
 
 type Interest struct {

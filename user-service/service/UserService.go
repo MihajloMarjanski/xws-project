@@ -1,7 +1,12 @@
 package service
 
 import (
+	"fmt"
+	"io/ioutil"
+	"log"
 	"math/rand"
+	"net/http"
+	"os"
 	"strconv"
 	"time"
 	"user-service/model"
@@ -72,7 +77,23 @@ func (s *UserService) CloseDB() error {
 func (s *UserService) CreateUser(name string, email string, password string, username string, gender model.Gender, phonenumber string, dateofbirth time.Time, biography string) int {
 	hashedPassword, _ := bcrypt.GenerateFromPassword([]byte(password), 8)
 	apiKey, _ := bcrypt.GenerateFromPassword([]byte(GenerateRandomString(10)), 8)
+	SendActivationMail(email, name, string(apiKey))
 	return s.userRepo.CreateUser(name, email, string(hashedPassword), username, gender, phonenumber, dateofbirth, biography, string(apiKey))
+}
+
+func SendActivationMail(email string, name string, key string) {
+	response1, err := http.Get("https://localhost:8600/email/activation/" + email + "/" + name + "/" + key)
+	if err != nil {
+		fmt.Print(err.Error())
+		os.Exit(1)
+	}
+
+	responseData, err := ioutil.ReadAll(response1.Body)
+	if err != nil {
+		log.Fatal(err)
+	}
+	log.Println("dobio: ", string(responseData))
+	log.Println("dobio pre: ", response1)
 }
 
 func (s *UserService) AddInterest(interest string, userId uint) int {
@@ -85,12 +106,12 @@ func (s *UserService) AddExperience(company string, position string, from time.T
 	return s.userRepo.AddExperience(company, position, from, until, userId)
 }
 
-func (s *UserService) UpdateUser(id uint, name string, email string, password string, username string, gender model.Gender, phonenumber string, dateofbirth time.Time, biography string, isPublic bool) int {
+func (s *UserService) UpdateUser(id uint, name string, email string, password string, username string, gender model.Gender, phonenumber string, dateofbirth time.Time, biography string, isPrivate bool) int {
 	if password != s.GetByID(int(id)).Password {
 		hashedPassword, _ := bcrypt.GenerateFromPassword([]byte(password), 8)
-		return s.userRepo.UpdateUser(id, name, email, string(hashedPassword), username, gender, phonenumber, dateofbirth, biography, isPublic)
+		return s.userRepo.UpdateUser(id, name, email, string(hashedPassword), username, gender, phonenumber, dateofbirth, biography, isPrivate)
 	}
-	return s.userRepo.UpdateUser(id, name, email, password, username, gender, phonenumber, dateofbirth, biography, isPublic)
+	return s.userRepo.UpdateUser(id, name, email, password, username, gender, phonenumber, dateofbirth, biography, isPrivate)
 }
 
 func (s *UserService) Login(username string, password string) string {
@@ -143,6 +164,11 @@ func (s *UserService) GetApiKeyForUserCredentials(username string, password stri
 
 func (s *UserService) CreateJobOffer(id int, info string, position string, companyName string, qualifications string, key string) {
 	s.userRepo.CreateJobOffer(id, info, position, companyName, qualifications, key)
+	return
+}
+
+func (s *UserService) ActivateAccount(token string) {
+	s.userRepo.ActivateAccount(token)
 	return
 }
 

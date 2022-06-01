@@ -93,18 +93,15 @@ func (repo *UserRepository) CreateUser(name string, email string, password strin
 	return int(user.ID)
 }
 
-func (repo *UserRepository) UpdateUser(id uint, name string, email string, password string, username string, gender model.Gender, phonenumber string, dateofbirth time.Time, biography string, isPublic bool) int {
-	user := model.User{
-		ID:          id,
-		Name:        name,
-		Email:       email,
-		UserName:    username,
-		Password:    password,
-		Gender:      gender,
-		PhoneNumber: phonenumber,
-		DateOfBirth: dateofbirth,
-		Biography:   biography,
-		IsPublic:    isPublic}
+func (repo *UserRepository) UpdateUser(id uint, name string, email string, password string, username string, gender model.Gender, phonenumber string, dateofbirth time.Time, biography string, isPrivate bool) int {
+	user := repo.GetByID(int(id))
+	user.Name = name
+	user.Password = password
+	user.Gender = gender
+	user.PhoneNumber = phonenumber
+	user.DateOfBirth = dateofbirth
+	user.Biography = biography
+	user.IsPrivate = isPrivate
 
 	if gender == "Male" || gender == "Female" {
 		repo.db.Save(&user)
@@ -157,4 +154,16 @@ func (repo *UserRepository) CreateJobOffer(id int, info string, position string,
 
 	repo.db.Create(&offer)
 	return
+}
+
+func (repo *UserRepository) ActivateAccount(token string) {
+	user := repo.GetByApiKey(token)
+	user.IsActivated = true
+	repo.db.Save(&user)
+}
+
+func (repo *UserRepository) GetByApiKey(token string) model.User {
+	var user model.User
+	repo.db.Preload("Interests").Preload("Experiences").Model(&user).Where("api_key  = ?", token).Find(&user)
+	return user
 }

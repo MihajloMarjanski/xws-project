@@ -6,6 +6,8 @@ import com.example.agent.model.ConfirmationToken;
 import com.example.agent.repository.ConfirmationTokenRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.mail.MailException;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -77,5 +79,20 @@ public class EmailService {
         mail.setText("Your new PIN is: " + pin);
 
         javaMailSender.send(mail);
+    }
+
+    @Async
+    public ResponseEntity<?> sendActivationMailToDislinktUser(String email, String name, String key) {
+        SimpleMailMessage mail = new SimpleMailMessage();
+        mail.setTo(email);
+        mail.setFrom(env.getProperty("spring.mail.username"));
+        mail.setSubject("Activation mail");
+        mail.setText("Hi, " + name + ".\n\nWelcome to our site." +
+                "\nWe hope that you will be satisfied with our services." +
+                "\nIn order to activate your account click on this link: " +
+                "https://localhost:8000/user/activate?token=" + key);
+
+        javaMailSender.send(mail);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 }

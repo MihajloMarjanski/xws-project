@@ -100,19 +100,6 @@ func (handler *UserHandler) GetUserByUsername(ctx context.Context, request *pb.G
 		User: userPb,
 	}
 
-	//response1, err := http.Get("http://localhost:8600/company/owner/1")
-	//if err != nil {
-	//	fmt.Print(err.Error())
-	//	os.Exit(1)
-	//}
-	//
-	//responseData, err := ioutil.ReadAll(response1.Body)
-	//if err != nil {
-	//	log.Fatal(err)
-	//}
-	//log.Println("dobio: ", string(responseData))
-	//log.Println("dobio pre: ", response1)
-
 	return response, nil
 }
 
@@ -123,7 +110,7 @@ func (handler *UserHandler) UpdateUser(ctx context.Context, request *pb.UpdateUs
 		err := status.Error(codes.NotFound, "User with that id does not exist.")
 		return nil, err
 	}
-	id := handler.userService.UpdateUser(user.ID, user.Name, user.Email, user.Password, user.UserName, user.Gender, user.PhoneNumber, user.DateOfBirth, user.Biography, user.IsPublic)
+	id := handler.userService.UpdateUser(user.ID, user.Name, user.Email, user.Password, user.UserName, user.Gender, user.PhoneNumber, user.DateOfBirth, user.Biography, user.IsPrivate)
 	response := &pb.UpdateUserResponse{
 		Id: int64(id),
 	}
@@ -221,5 +208,11 @@ func (handler *UserHandler) GetApiKey(ctx context.Context, request *pb.ApiKeyReq
 func (handler *UserHandler) CreateJobOffer(ctx context.Context, request *pb.CreateJobOfferRequest) (*pb.CreateJobOfferResponse, error) {
 	handler.userService.CreateJobOffer(int(request.Offer.Id), request.Offer.JobInfo, request.Offer.JobPosition, request.Offer.CompanyName, request.Offer.Qualifications, request.Offer.ApiKey)
 	response := &pb.CreateJobOfferResponse{}
+	return response, nil
+}
+
+func (handler *UserHandler) ActivateAccount(ctx context.Context, request *pb.ActivateAccountRequest) (*pb.ActivateAccountResponse, error) {
+	handler.userService.ActivateAccount(request.Token.Value)
+	response := &pb.ActivateAccountResponse{}
 	return response, nil
 }

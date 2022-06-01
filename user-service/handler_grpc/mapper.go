@@ -17,7 +17,7 @@ func mapUserDtoToProto(user model.User) *pb.User {
 		Phone:     user.PhoneNumber,
 		Date:      user.DateOfBirth.String(),
 		Biography: user.Biography,
-		IsPublic:  user.IsPublic,
+		IsPrivate: user.IsPrivate,
 	}
 
 	for _, interest := range user.Interests {
@@ -49,10 +49,10 @@ func mapUserToProto(user model.User) *pb.UserWithPass {
 		Email:     user.Email,
 		Gender:    string(user.Gender),
 		Phone:     user.PhoneNumber,
-		Date:      user.DateOfBirth.String(),
+		Date:      user.DateOfBirth.Format("02-Jan-2006"),
 		Biography: user.Biography,
 		Password:  user.Password,
-		IsPublic:  user.IsPublic,
+		IsPrivate: user.IsPrivate,
 	}
 
 	for _, interest := range user.Interests {
@@ -67,8 +67,8 @@ func mapUserToProto(user model.User) *pb.UserWithPass {
 			Id:       int64(experience.ID),
 			Company:  experience.Company,
 			Position: experience.Position,
-			From:     experience.From.String(),
-			Until:    experience.Until.String(),
+			From:     experience.From.Format("02-Jan-2006"),
+			Until:    experience.Until.Format("02-Jan-2006"),
 			UserId:   int64(experience.UserID),
 		})
 	}
@@ -87,7 +87,7 @@ func mapProtoToUser(user *pb.UserWithPass) model.User {
 		DateOfBirth: date,
 		Biography:   user.Biography,
 		Password:    user.Password,
-		IsPublic:    user.IsPublic,
+		IsPrivate:   user.IsPrivate,
 	}
 	return userPb
 }

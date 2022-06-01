@@ -35,6 +35,7 @@ type UserServiceClient interface {
 	BlockUser(ctx context.Context, in *BlockUserRequest, opts ...grpc.CallOption) (*BlockUserResponse, error)
 	GetApiKey(ctx context.Context, in *ApiKeyRequest, opts ...grpc.CallOption) (*ApiKeyResponse, error)
 	CreateJobOffer(ctx context.Context, in *CreateJobOfferRequest, opts ...grpc.CallOption) (*CreateJobOfferResponse, error)
+	ActivateAccount(ctx context.Context, in *ActivateAccountRequest, opts ...grpc.CallOption) (*ActivateAccountResponse, error)
 }
 
 type userServiceClient struct {
@@ -162,6 +163,15 @@ func (c *userServiceClient) CreateJobOffer(ctx context.Context, in *CreateJobOff
 	return out, nil
 }
 
+func (c *userServiceClient) ActivateAccount(ctx context.Context, in *ActivateAccountRequest, opts ...grpc.CallOption) (*ActivateAccountResponse, error) {
+	out := new(ActivateAccountResponse)
+	err := c.cc.Invoke(ctx, "/user.UserService/ActivateAccount", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // UserServiceServer is the server API for UserService service.
 // All implementations must embed UnimplementedUserServiceServer
 // for forward compatibility
@@ -179,6 +189,7 @@ type UserServiceServer interface {
 	BlockUser(context.Context, *BlockUserRequest) (*BlockUserResponse, error)
 	GetApiKey(context.Context, *ApiKeyRequest) (*ApiKeyResponse, error)
 	CreateJobOffer(context.Context, *CreateJobOfferRequest) (*CreateJobOfferResponse, error)
+	ActivateAccount(context.Context, *ActivateAccountRequest) (*ActivateAccountResponse, error)
 	mustEmbedUnimplementedUserServiceServer()
 }
 
@@ -224,6 +235,9 @@ func (UnimplementedUserServiceServer) GetApiKey(context.Context, *ApiKeyRequest)
 }
 func (UnimplementedUserServiceServer) CreateJobOffer(context.Context, *CreateJobOfferRequest) (*CreateJobOfferResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateJobOffer not implemented")
+}
+func (UnimplementedUserServiceServer) ActivateAccount(context.Context, *ActivateAccountRequest) (*ActivateAccountResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ActivateAccount not implemented")
 }
 func (UnimplementedUserServiceServer) mustEmbedUnimplementedUserServiceServer() {}
 
@@ -472,6 +486,24 @@ func _UserService_CreateJobOffer_Handler(srv interface{}, ctx context.Context, d
 	return interceptor(ctx, in, info, handler)
 }
 
+func _UserService_ActivateAccount_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ActivateAccountRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserServiceServer).ActivateAccount(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/user.UserService/ActivateAccount",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserServiceServer).ActivateAccount(ctx, req.(*ActivateAccountRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // UserService_ServiceDesc is the grpc.ServiceDesc for UserService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -530,6 +562,10 @@ var UserService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "CreateJobOffer",
 			Handler:    _UserService_CreateJobOffer_Handler,
+		},
+		{
+			MethodName: "ActivateAccount",
+			Handler:    _UserService_ActivateAccount_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

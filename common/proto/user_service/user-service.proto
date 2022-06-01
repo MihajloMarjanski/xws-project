@@ -5,6 +5,7 @@ option go_package = "common/user";
 package user;
 
 import "google/api/annotations.proto";
+import "google/protobuf/wrappers.proto";
 
 service UserService{
         rpc GetUser(GetUserRequest) returns(GetUserResponse) {
@@ -79,8 +80,18 @@ service UserService{
             body: "offer"
           };
         }
+        rpc ActivateAccount(ActivateAccountRequest) returns(ActivateAccountResponse) {
+          option (google.api.http) = {
+            get: "/user/activate"
+          };
+        }
 }
 
+message ActivateAccountRequest {
+  google.protobuf.StringValue token = 1;
+}
+message ActivateAccountResponse {
+}
 
 message CreateJobOfferRequest {
   JobOffer offer = 1;
@@ -171,7 +182,7 @@ message User {
   string biography = 8;
   repeated Experience experience = 9;
   repeated Interest interests = 10;
-  bool isPublic = 11;
+  bool isPrivate = 11;
 }
 
 message UserWithPass {
@@ -186,7 +197,7 @@ message UserWithPass {
   string password = 9;
   repeated Experience experience = 10;
   repeated Interest interests = 11;
-  bool isPublic = 12;
+  bool isPrivate = 12;
 }
 
 message Experience {
