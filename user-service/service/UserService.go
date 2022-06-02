@@ -52,12 +52,14 @@ func (s *UserService) SearchUsers(username string, id uint) []model.User {
 		return users
 	}
 	blockedIds := s.userRepo.FindBlockedForUserId(id)
-	for i, user := range users {
-		if s.userRepo.Contains(blockedIds, user.ID) {
-			users = append(users[:i], users[i+1:]...)
+	i := 0
+	for _, user := range users {
+		if !s.userRepo.Contains(blockedIds, user.ID) {
+			users[i] = user
+			i++
 		}
 	}
-
+	users = users[:i]
 	return users
 }
 
