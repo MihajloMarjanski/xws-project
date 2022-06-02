@@ -205,6 +205,17 @@ func (handler *UserHandler) GetApiKey(ctx context.Context, request *pb.ApiKeyReq
 	}
 	return response, nil
 }
+func (handler *UserHandler) GetApiKeyForUsername(ctx context.Context, request *pb.GetApiKeyForUsernameRequest) (*pb.GetApiKeyForUsernameResponse, error) {
+	key := handler.userService.GetApiKeyForUsername(request.Username)
+	if key == "" {
+		err := status.Error(codes.NotFound, "User with that username does not exist.")
+		return nil, err
+	}
+	response := &pb.GetApiKeyForUsernameResponse{
+		ApiKey: key,
+	}
+	return response, nil
+}
 func (handler *UserHandler) CreateJobOffer(ctx context.Context, request *pb.CreateJobOfferRequest) (*pb.CreateJobOfferResponse, error) {
 	handler.userService.CreateJobOffer(int(request.Offer.Id), request.Offer.JobInfo, request.Offer.JobPosition, request.Offer.CompanyName, request.Offer.Qualifications, request.Offer.ApiKey)
 	response := &pb.CreateJobOfferResponse{}

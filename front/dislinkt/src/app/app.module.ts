@@ -42,6 +42,7 @@ import { FooterComponent } from './component/footer/footer.component';
 import { RegistrationPageComponent } from './component/registration-page/registration-page.component';
 import { LoginPageComponent } from './component/login-page/login-page.component';
 import { UserProfileComponent } from './component/user-profile/user-profile.component';
+import { CreateJobOfferComponent } from './component/create-job-offer/create-job-offer.component';
 
 const MaterialComponents = [
   MatSliderModule,
@@ -80,6 +81,7 @@ const MaterialComponents = [
     RegistrationPageComponent,
     LoginPageComponent,
     UserProfileComponent,
+    CreateJobOfferComponent,
   ],
   imports: [
     MaterialComponents,

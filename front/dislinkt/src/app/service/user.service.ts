@@ -6,6 +6,7 @@ import { map, catchError, tap } from 'rxjs/operators';
 import { User } from '../model/user';
 import { Experience } from '../model/experience';
 import { Interest } from '../model/interest';
+import { JobOffer } from '../model/job-offer';
 /* import { Client } from '../model/client';
 import { CompanyOwner } from '../model/company-owner';
 import { Company } from '../model/company'; */
@@ -27,11 +28,24 @@ export class UserService {
   private _removeInterest  = this._baseUrl + 'user/interest/';
   private _editUser  = this._baseUrl + 'user';
   private _forgotPassword  = this._baseUrl + 'clients/newPassword/';
-  private _companyByOwnerUsername  = this._baseUrl + 'company/';
-  private _apiKey  = this._baseUrl + 'company/owner/apiKey/';
+  private _createOffer  = this._baseUrl + 'jobs/offer';
+  private _apiKey  = this._baseUrl + 'user/apiKey/';
   
   constructor(private _http: HttpClient) { }
   
+
+
+
+  createOffer(offer: JobOffer): Observable<any>  {
+    const body=JSON.stringify(offer);
+    return this._http.post(this._createOffer, body)
+  }
+
+  getApiKey(username: string | null) {
+    return this._http.get<any>(this._apiKey + username)
+                           .pipe(tap(data =>  console.log('Iz service-a: ', data)),                         
+                                catchError(this.handleError)); 
+  }
 
   getUserByUsername(username: string): Observable<any> {
     return this._http.get<any>(this._getUserByUsername + username)

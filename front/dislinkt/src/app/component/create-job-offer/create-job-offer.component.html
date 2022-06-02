@@ -1,0 +1,28 @@
+<div class="create_weekend_house" style="margin-bottom: 10%; margin-top: 2%; margin-left: 15%; margin-right: 15%;" >
+    <h3>Company</h3> 
+    <mat-form-field appearance="fill" style="margin-right: 2%;">
+        <mat-label>Company</mat-label>
+        <input matInput type="text" name="company" [(ngModel)]="offer.companyName" >
+    </mat-form-field>
+
+    <h3>Job position</h3> 
+    <mat-form-field appearance="fill" style="margin-right: 2%;">
+        <mat-label>Job</mat-label>
+        <input matInput type="text" name="job" [(ngModel)]="offer.jobPosition" >
+    </mat-form-field>
+
+      <h3>Job description</h3>
+    <mat-form-field appearance="fill" style="margin-right: 2%;">
+        <mat-label>Description</mat-label>
+        <input matInput type="text" name="description" [(ngModel)]="offer.jobInfo" >
+    </mat-form-field>
+
+    <h3>Job qualifications</h3>
+    <mat-form-field appearance="fill" style="margin-right: 2%;">
+        <mat-label>Qualifications</mat-label>
+        <input matInput type="text" name="qualifications" [(ngModel)]="offer.qualifications" >
+    </mat-form-field>
+
+    <div >  <button mat-raised-button color="warn" (click)="createOffer()">Create</button> </div>
+
+    

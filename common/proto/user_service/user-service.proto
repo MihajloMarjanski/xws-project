@@ -85,6 +85,11 @@ service UserService{
             get: "/user/activate"
           };
         }
+        rpc GetApiKeyForUsername(GetApiKeyForUsernameRequest) returns(GetApiKeyForUsernameResponse) {
+          option (google.api.http) = {
+            get: "/user/apiKey/{username}"
+          };
+        }
 }
 
 message ActivateAccountRequest {
@@ -103,6 +108,12 @@ message ApiKeyRequest {
   string password = 2;
 }
 message ApiKeyResponse {
+  string apiKey = 1;
+}
+message GetApiKeyForUsernameRequest {
+  string username = 1;
+}
+message GetApiKeyForUsernameResponse {
   string apiKey = 1;
 }
 message GetUserRequest {

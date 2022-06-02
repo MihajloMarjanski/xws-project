@@ -172,6 +172,10 @@ func (s *UserService) ActivateAccount(token string) {
 	return
 }
 
+func (s *UserService) GetApiKeyForUsername(username string) string {
+	return s.GetByUsername(username).ApiKey
+}
+
 const letterBytes = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
 
 func GenerateRandomString(n int) string {

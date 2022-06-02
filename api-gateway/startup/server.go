@@ -51,7 +51,7 @@ func (server *Server) initHandlers() {
 }
 
 func (server *Server) Start() {
-	origins := handlers.AllowedOrigins([]string{"https://localhost:4200", "https://localhost:4200/**", "http://localhost:4200", "http://localhost:4200/**"})
+	origins := handlers.AllowedOrigins([]string{"https://localhost:4300", "https://localhost:4300/**", "http://localhost:4300", "http://localhost:4300/**"})
 	methods := handlers.AllowedMethods([]string{"GET", "POST", "PUT", "DELETE"})
 	headers := handlers.AllowedHeaders([]string{"Accept", "Accept-Language", "Content-Type", "Content-Language", "Origin", "Authorization", "Access-Control-Allow-Origin", "*"})
 
