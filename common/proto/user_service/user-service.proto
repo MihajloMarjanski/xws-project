@@ -26,7 +26,7 @@ service UserService{
         }
         rpc SearchUsers(SearchUsersRequest) returns(SearchUsersResponse) {
           option (google.api.http) = {
-          get: "/user/search/{username}"
+          get: "/user/search/{username}/{loggedUserId}"
         };
         }
         rpc CreateUser(CreateUserRequest) returns(CreateUserResponse) {
@@ -90,8 +90,19 @@ service UserService{
             get: "/user/apiKey/{username}"
           };
         }
+        rpc FindAllBlocked(FindAllBlockedRequest) returns(FindAllBlockedResponse) {
+          option (google.api.http) = {
+            get: "/user/blocked/{id}"
+          };
+        }
 }
 
+message FindAllBlockedRequest {
+  string id = 1;
+}
+message FindAllBlockedResponse {
+  repeated User users = 1;
+}
 message ActivateAccountRequest {
   google.protobuf.StringValue token = 1;
 }
@@ -136,6 +147,7 @@ message UpdateUserResponse {
 }
 message SearchUsersRequest {
   string username = 1;
+  int64 loggedUserId = 2;
 }
 message SearchUsersResponse {
   repeated User users = 1;

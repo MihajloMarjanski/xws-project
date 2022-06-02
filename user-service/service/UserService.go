@@ -46,8 +46,19 @@ func New() (*UserService, error) {
 	}, nil
 }
 
-func (s *UserService) SearchUsers(username string) []model.User {
-	return s.userRepo.SearchUsers(username)
+func (s *UserService) SearchUsers(username string, id uint) []model.User {
+	users := s.userRepo.SearchUsers(username)
+	if id == 0 {
+		return users
+	}
+	blockedIds := s.userRepo.FindBlockedForUserId(id)
+	for i, user := range users {
+		if s.userRepo.Contains(blockedIds, user.ID) {
+			users = append(users[:i], users[i+1:]...)
+		}
+	}
+
+	return users
 }
 
 func (s *UserService) GetByID(id int) model.User {

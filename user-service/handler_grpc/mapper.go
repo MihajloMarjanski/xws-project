@@ -15,7 +15,7 @@ func mapUserDtoToProto(user model.User) *pb.User {
 		Email:     user.Email,
 		Gender:    string(user.Gender),
 		Phone:     user.PhoneNumber,
-		Date:      user.DateOfBirth.String(),
+		Date:      user.DateOfBirth.Format("02-Jan-2006"),
 		Biography: user.Biography,
 		IsPrivate: user.IsPrivate,
 	}

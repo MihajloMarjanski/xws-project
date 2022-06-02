@@ -5,6 +5,7 @@ import { LandingPageComponent } from './component/landing-page/landing-page.comp
 import { LoginPageComponent } from './component/login-page/login-page.component';
 import { RegistrationPageComponent } from './component/registration-page/registration-page.component';
 import { UserProfileComponent } from './component/user-profile/user-profile.component';
+import { UsersComponent } from './component/users/users.component';
 import { AuthGuard } from './service/auth.guard';
 
 const routes: Routes = [
@@ -13,6 +14,7 @@ const routes: Routes = [
   { path: 'login', component: LoginPageComponent },
   { path: 'user-profile', component: UserProfileComponent, canActivate: [AuthGuard], data: { role: ['ROLE_USER', 'ROLE_ADMIN']} },
   { path: 'create-job-offer', component: CreateJobOfferComponent, canActivate: [AuthGuard], data: { role: ['ROLE_USER']} },
+  { path: 'users', component: UsersComponent},
 ];
 
 @NgModule({

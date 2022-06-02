@@ -167,3 +167,29 @@ func (repo *UserRepository) GetByApiKey(token string) model.User {
 	repo.db.Preload("Interests").Preload("Experiences").Model(&user).Where("api_key  = ?", token).Find(&user)
 	return user
 }
+
+func (repo *UserRepository) FindBlockedForUserId(id uint) []uint {
+	var blocked []model.Block
+	//repo.db.Raw("SELECT * FROM blocks WHERE user = ?").Scan(&blocked)"%"+strings.ToLower(username)+"%"
+	//repo.db.Model(&blocked).Where("user = ?", "%"+strings.ToLower(string(id))+"%").Find(&blocked)
+	var ids []uint
+	for _, u := range blocked {
+		if !repo.Contains(ids, u.BlockedUser) {
+			ids = append(ids, u.BlockedUser)
+		}
+		if !repo.Contains(ids, u.User) {
+			ids = append(ids, u.User)
+		}
+	}
+
+	return ids
+}
+
+func (repo *UserRepository) Contains(elems []uint, v uint) bool {
+	for _, s := range elems {
+		if v == s {
+			return true
+		}
+	}
+	return false
+}

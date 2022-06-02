@@ -119,8 +119,9 @@ func (handler *UserHandler) UpdateUser(ctx context.Context, request *pb.UpdateUs
 
 func (handler *UserHandler) SearchUsers(ctx context.Context, request *pb.SearchUsersRequest) (*pb.SearchUsersResponse, error) {
 	username := request.Username
+	loggedUserId := request.LoggedUserId
 	var users []*pb.User
-	for _, user := range handler.userService.SearchUsers(username) {
+	for _, user := range handler.userService.SearchUsers(username, uint(loggedUserId)) {
 		users = append(users, mapUserDtoToProto(user))
 	}
 	response := &pb.SearchUsersResponse{
@@ -128,6 +129,18 @@ func (handler *UserHandler) SearchUsers(ctx context.Context, request *pb.SearchU
 	}
 	return response, nil
 }
+
+//func (handler *UserHandler) FindAllBlocked(ctx context.Context, request *pb.FindAllBlockedRequest) (*pb.FindAllBlockedResponse, error) {
+//	id := request.Id
+//	var users []*pb.User
+//	for _, user := range handler.userService.FindAllBlocked(id) {
+//		users = append(users, mapUserDtoToProto(user))
+//	}
+//	response := &pb.FindAllBlockedResponse{
+//		Users: users,
+//	}
+//	return response, nil
+//}
 
 func (handler *UserHandler) CreateUser(ctx context.Context, request *pb.CreateUserRequest) (*pb.CreateUserResponse, error) {
 	user := mapProtoToUser(request.User)

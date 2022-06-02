@@ -37,6 +37,7 @@ type UserServiceClient interface {
 	CreateJobOffer(ctx context.Context, in *CreateJobOfferRequest, opts ...grpc.CallOption) (*CreateJobOfferResponse, error)
 	ActivateAccount(ctx context.Context, in *ActivateAccountRequest, opts ...grpc.CallOption) (*ActivateAccountResponse, error)
 	GetApiKeyForUsername(ctx context.Context, in *GetApiKeyForUsernameRequest, opts ...grpc.CallOption) (*GetApiKeyForUsernameResponse, error)
+	FindAllBlocked(ctx context.Context, in *FindAllBlockedRequest, opts ...grpc.CallOption) (*FindAllBlockedResponse, error)
 }
 
 type userServiceClient struct {
@@ -182,6 +183,15 @@ func (c *userServiceClient) GetApiKeyForUsername(ctx context.Context, in *GetApi
 	return out, nil
 }
 
+func (c *userServiceClient) FindAllBlocked(ctx context.Context, in *FindAllBlockedRequest, opts ...grpc.CallOption) (*FindAllBlockedResponse, error) {
+	out := new(FindAllBlockedResponse)
+	err := c.cc.Invoke(ctx, "/user.UserService/FindAllBlocked", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // UserServiceServer is the server API for UserService service.
 // All implementations must embed UnimplementedUserServiceServer
 // for forward compatibility
@@ -201,6 +211,7 @@ type UserServiceServer interface {
 	CreateJobOffer(context.Context, *CreateJobOfferRequest) (*CreateJobOfferResponse, error)
 	ActivateAccount(context.Context, *ActivateAccountRequest) (*ActivateAccountResponse, error)
 	GetApiKeyForUsername(context.Context, *GetApiKeyForUsernameRequest) (*GetApiKeyForUsernameResponse, error)
+	FindAllBlocked(context.Context, *FindAllBlockedRequest) (*FindAllBlockedResponse, error)
 	mustEmbedUnimplementedUserServiceServer()
 }
 
@@ -252,6 +263,9 @@ func (UnimplementedUserServiceServer) ActivateAccount(context.Context, *Activate
 }
 func (UnimplementedUserServiceServer) GetApiKeyForUsername(context.Context, *GetApiKeyForUsernameRequest) (*GetApiKeyForUsernameResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetApiKeyForUsername not implemented")
+}
+func (UnimplementedUserServiceServer) FindAllBlocked(context.Context, *FindAllBlockedRequest) (*FindAllBlockedResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method FindAllBlocked not implemented")
 }
 func (UnimplementedUserServiceServer) mustEmbedUnimplementedUserServiceServer() {}
 
@@ -536,6 +550,24 @@ func _UserService_GetApiKeyForUsername_Handler(srv interface{}, ctx context.Cont
 	return interceptor(ctx, in, info, handler)
 }
 
+func _UserService_FindAllBlocked_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(FindAllBlockedRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserServiceServer).FindAllBlocked(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/user.UserService/FindAllBlocked",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserServiceServer).FindAllBlocked(ctx, req.(*FindAllBlockedRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // UserService_ServiceDesc is the grpc.ServiceDesc for UserService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -602,6 +634,10 @@ var UserService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetApiKeyForUsername",
 			Handler:    _UserService_GetApiKeyForUsername_Handler,
+		},
+		{
+			MethodName: "FindAllBlocked",
+			Handler:    _UserService_FindAllBlocked_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

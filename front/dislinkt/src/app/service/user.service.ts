@@ -14,7 +14,7 @@ import { Company } from '../model/company'; */
 @Injectable({
   providedIn: 'root'
 })
-export class UserService {
+export class UserService {  
   
   private _baseUrl = 'http://localhost:8000/';
   private _login = this._baseUrl + 'user/login';
@@ -30,11 +30,33 @@ export class UserService {
   private _forgotPassword  = this._baseUrl + 'clients/newPassword/';
   private _createOffer  = this._baseUrl + 'jobs/offer';
   private _apiKey  = this._baseUrl + 'user/apiKey/';
+  private _search  = this._baseUrl + 'user/search/';
+  private _blockUser  = this._baseUrl + 'user/block/';
+  private _findAllBlocked  = this._baseUrl + 'user/blocked/';
   
   constructor(private _http: HttpClient) { }
   
 
 
+  findAllBlocked(id: string | null) {
+    return this._http.get<any>(this._findAllBlocked + id)
+                           .pipe(tap(data =>  console.log('Iz service-a: ', data)),                         
+                                catchError(this.handleError));
+  }
+
+  blockUser(logedUserId: string | null, blockedUserId: number) : Observable<any> {
+    return this._http.put<any>(this._blockUser + logedUserId + "/" + blockedUserId, {})
+                  .pipe(tap(data =>  console.log('All: ' + JSON.stringify(data))),
+                  catchError(this.handleError)); 
+  }
+
+  searchUsers(username: string, id: string|null|number) {
+    if (id == null)
+      id = 0
+    return this._http.get<any>(this._search + username + "/" + id)
+                           .pipe(tap(data =>  console.log('Iz service-a: ', data)),                         
+                                catchError(this.handleError)); 
+  }
 
   createOffer(offer: JobOffer): Observable<any>  {
     const body=JSON.stringify(offer);
