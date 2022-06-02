@@ -187,6 +187,10 @@ func (s *UserService) GetApiKeyForUsername(username string) string {
 	return s.GetByUsername(username).ApiKey
 }
 
+func (s *UserService) GetPrivateStatusForUserId(id int64) bool {
+	return s.GetByID(int(id)).IsPrivate
+}
+
 const letterBytes = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
 
 func GenerateRandomString(n int) string {

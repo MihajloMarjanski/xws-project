@@ -46,3 +46,7 @@ func (s *RequestsService) SendMessage(senderID, receiverID uint, message string)
 	}
 	return
 }
+
+func (s *RequestsService) AreConnected(id1 int64, id2 int64) bool {
+	return s.reqRepo.AreConnected(uint(id1), uint(id2)) || s.reqRepo.AreRequested(uint(id1), uint(id2))
+}

@@ -36,8 +36,20 @@ service RequestsService{
             body: "message"
         };
     }
+    rpc AreConnected(AreConnectedRequest) returns (AreConnectedResponse){
+        option (google.api.http) = {
+            get: "/connection/{FirstId}/{SecondId}"
+        };
+    }
 }
 
+message AreConnectedRequest{
+    int64 FirstId = 1;
+    int64 SecondId = 2;
+}
+message AreConnectedResponse{
+    bool AreConnected = 1;
+}
 message GetAllByRecieverIdRequest{
     int64 RecieverID = 1;
 }

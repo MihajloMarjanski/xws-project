@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
 import { User } from 'src/app/model/user';
+import { RequestService } from 'src/app/service/request.service';
 import { UserService } from 'src/app/service/user.service';
 
 @Component({
@@ -31,8 +32,10 @@ export class UsersComponent implements OnInit {
     isPrivate: false
   }
   role : string|null = ''
+  isConnected : boolean = false
 
-  constructor(public _userService: UserService, private _snackBar: MatSnackBar, private router: Router) { }
+
+  constructor(private _requestService: RequestService, public _userService: UserService, private _snackBar: MatSnackBar, private router: Router) { }
 
   ngOnInit(): void {
     this.searchTable()
@@ -44,13 +47,14 @@ export class UsersComponent implements OnInit {
   showUser(selectedUser: User) {
     this.user = selectedUser
     this.show = true
+    this.areConnected()
   }
 
   searchTable() {
     this._userService.searchUsers(this.searchField, localStorage.getItem("id"))
           .subscribe(data => {
               this.users = data.users
-              this.filterForBlocked()
+              // this.filterForBlocked()
             console.log('Dobio: ', data)},
           error => this.errorMessage = <any>error);  
     
@@ -64,12 +68,21 @@ export class UsersComponent implements OnInit {
           error => this.errorMessage = <any>error);  
   }
 
-  isConnected() : boolean {
-    return false
+  areConnected() {
+    this._requestService.areConnected(localStorage.getItem("id"), this.user.id)
+          .subscribe(data => {
+            this.isConnected = data.AreConnected
+            console.log('Dobio: ', data)},
+          error => this.errorMessage = <any>error); 
   }
 
   connect() {
-
+    this._requestService.sendConnectRequest(localStorage.getItem("id"), this.user.id)
+          .subscribe(data => {
+            this.show = false
+            this.searchTable()
+            console.log('Dobio: ', data)},
+          error => this.errorMessage = <any>error); 
   }
 
   block() {

@@ -120,3 +120,11 @@ func (handler *RequestsHandler) SendMessage(ctx context.Context, request *pb.Sen
 	response := &pb.SendMessageResponse{}
 	return response, nil
 }
+
+func (handler *RequestsHandler) AreConnected(ctx context.Context, request *pb.AreConnectedRequest) (*pb.AreConnectedResponse, error) {
+	res := handler.requestsService.AreConnected(request.FirstId, request.SecondId)
+	response := &pb.AreConnectedResponse{
+		AreConnected: res,
+	}
+	return response, nil
+}

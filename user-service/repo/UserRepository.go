@@ -136,7 +136,7 @@ func (repo *UserRepository) AddExperience(company string, position string, from 
 
 func (repo *UserRepository) BlockUser(userId int, blockedUserId int) {
 	block := model.Block{
-		User:        uint(userId),
+		UserId:      uint(userId),
 		BlockedUser: uint(blockedUserId)}
 
 	repo.db.Save(&block)
@@ -171,14 +171,14 @@ func (repo *UserRepository) GetByApiKey(token string) model.User {
 func (repo *UserRepository) FindBlockedForUserId(id uint) []uint {
 	var blocked []model.Block
 	//repo.db.Raw("SELECT * FROM blocks WHERE user = ?").Scan(&blocked)"%"+strings.ToLower(username)+"%"
-	//repo.db.Model(&blocked).Where("user = ?", "%"+strings.ToLower(string(id))+"%").Find(&blocked)
+	repo.db.Model(&blocked).Where("user_id = ?", id).Find(&blocked)
 	var ids []uint
 	for _, u := range blocked {
 		if !repo.Contains(ids, u.BlockedUser) {
 			ids = append(ids, u.BlockedUser)
 		}
-		if !repo.Contains(ids, u.User) {
-			ids = append(ids, u.User)
+		if !repo.Contains(ids, u.UserId) {
+			ids = append(ids, u.UserId)
 		}
 	}
 

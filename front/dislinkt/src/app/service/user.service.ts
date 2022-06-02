@@ -7,14 +7,11 @@ import { User } from '../model/user';
 import { Experience } from '../model/experience';
 import { Interest } from '../model/interest';
 import { JobOffer } from '../model/job-offer';
-/* import { Client } from '../model/client';
-import { CompanyOwner } from '../model/company-owner';
-import { Company } from '../model/company'; */
 
 @Injectable({
   providedIn: 'root'
 })
-export class UserService {  
+export class UserService {
   
   private _baseUrl = 'http://localhost:8000/';
   private _login = this._baseUrl + 'user/login';
@@ -132,13 +129,6 @@ export class UserService {
     console.log(body)
     return this._http.post(this._submitRegistration, body, {'headers':headers})
   }
-/*
-  approveCompany(id: number) : Observable<any> {
-    return this._http.put<any>(this._approveCompany + id, {})
-                  .pipe(tap(data =>  console.log('All: ' + JSON.stringify(data))),
-                  catchError(this.handleError)); 
-  }
-*/
 
   editUser(user: User) : Observable<any> {
     const body=JSON.stringify(user);

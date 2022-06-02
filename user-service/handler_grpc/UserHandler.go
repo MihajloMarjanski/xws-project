@@ -240,3 +240,11 @@ func (handler *UserHandler) ActivateAccount(ctx context.Context, request *pb.Act
 	response := &pb.ActivateAccountResponse{}
 	return response, nil
 }
+
+func (handler *UserHandler) GetPrivateStatusForUserId(ctx context.Context, request *pb.GetPrivateStatusForUserIdRequest) (*pb.GetPrivateStatusForUserIdResponse, error) {
+	status := handler.userService.GetPrivateStatusForUserId(request.Id)
+	response := &pb.GetPrivateStatusForUserIdResponse{
+		IsPrivate: status,
+	}
+	return response, nil
+}

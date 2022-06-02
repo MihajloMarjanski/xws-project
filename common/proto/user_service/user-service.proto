@@ -95,10 +95,21 @@ service UserService{
             get: "/user/blocked/{id}"
           };
         }
+        rpc GetPrivateStatusForUserId(GetPrivateStatusForUserIdRequest) returns(GetPrivateStatusForUserIdResponse) {
+          option (google.api.http) = {
+            get: "/user/status/{id}"
+          };
+        }
 }
 
+message GetPrivateStatusForUserIdRequest {
+  int64 id = 1;
+}
+message GetPrivateStatusForUserIdResponse {
+  bool isPrivate = 1;
+}
 message FindAllBlockedRequest {
-  string id = 1;
+  int64 id = 1;
 }
 message FindAllBlockedResponse {
   repeated User users = 1;
