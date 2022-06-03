@@ -1,7 +1,7 @@
 <mat-toolbar color="primary" class="navbar">
     <button mat-button style="font-size : 25px" [routerLink]="['']">CompanyIn</button>
     <button *ngIf="roles.includes('ROLE_ADMIN')" style="margin-left : 25px" mat-button [routerLink]="['companies']">Companies</button>
-    <button *ngIf="roles.includes('ROLE_POTENTIAL_OWNER')" style="margin-left : 25px" mat-button [routerLink]="['create-company']">Create company</button>
+    <button *ngIf="roles.includes('ROLE_USER')" style="margin-left : 25px" mat-button [routerLink]="['chat']">Chat</button>
     <button *ngIf="roles.includes('ROLE_USER')" style="margin-left : 25px" mat-button [routerLink]="['offers']">Job offers</button>
     <button *ngIf="!roles.includes('ROLE_ADMIN')" style="margin-left : 25px" mat-button [routerLink]="['users']">Users</button>
     <button *ngIf="roles.includes('ROLE_ADMIN') || roles.includes('ROLE_USER')" style="margin-left : 25px" mat-button [routerLink]="['create-job-offer']">Create job offer</button>

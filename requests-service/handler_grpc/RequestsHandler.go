@@ -128,3 +128,25 @@ func (handler *RequestsHandler) AreConnected(ctx context.Context, request *pb.Ar
 	}
 	return response, nil
 }
+
+func (handler *RequestsHandler) FindConnections(ctx context.Context, request *pb.FindConnectionsRequest) (*pb.FindConnectionsResponse, error) {
+	var users []*pb.User
+	for _, user := range handler.requestsService.FindConnections(request.Id) {
+		users = append(users, mapUserToProto(user))
+	}
+	response := &pb.FindConnectionsResponse{
+		Users: users,
+	}
+	return response, nil
+}
+
+func (handler *RequestsHandler) FindMessages(ctx context.Context, request *pb.FindMessagesRequest) (*pb.FindMessagesResponse, error) {
+	var messages []*pb.Message
+	for _, message := range handler.requestsService.FindMessages(request.Id1, request.Id2) {
+		messages = append(messages, mapMessageToProto(message))
+	}
+	response := &pb.FindMessagesResponse{
+		Messages: messages,
+	}
+	return response, nil
+}

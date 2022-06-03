@@ -28,6 +28,8 @@ type RequestsServiceClient interface {
 	SendRequest(ctx context.Context, in *SendRequestRequest, opts ...grpc.CallOption) (*SendRequestResponse, error)
 	SendMessage(ctx context.Context, in *SendMessageRequest, opts ...grpc.CallOption) (*SendMessageResponse, error)
 	AreConnected(ctx context.Context, in *AreConnectedRequest, opts ...grpc.CallOption) (*AreConnectedResponse, error)
+	FindConnections(ctx context.Context, in *FindConnectionsRequest, opts ...grpc.CallOption) (*FindConnectionsResponse, error)
+	FindMessages(ctx context.Context, in *FindMessagesRequest, opts ...grpc.CallOption) (*FindMessagesResponse, error)
 }
 
 type requestsServiceClient struct {
@@ -92,6 +94,24 @@ func (c *requestsServiceClient) AreConnected(ctx context.Context, in *AreConnect
 	return out, nil
 }
 
+func (c *requestsServiceClient) FindConnections(ctx context.Context, in *FindConnectionsRequest, opts ...grpc.CallOption) (*FindConnectionsResponse, error) {
+	out := new(FindConnectionsResponse)
+	err := c.cc.Invoke(ctx, "/requests.RequestsService/FindConnections", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *requestsServiceClient) FindMessages(ctx context.Context, in *FindMessagesRequest, opts ...grpc.CallOption) (*FindMessagesResponse, error) {
+	out := new(FindMessagesResponse)
+	err := c.cc.Invoke(ctx, "/requests.RequestsService/FindMessages", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // RequestsServiceServer is the server API for RequestsService service.
 // All implementations must embed UnimplementedRequestsServiceServer
 // for forward compatibility
@@ -102,6 +122,8 @@ type RequestsServiceServer interface {
 	SendRequest(context.Context, *SendRequestRequest) (*SendRequestResponse, error)
 	SendMessage(context.Context, *SendMessageRequest) (*SendMessageResponse, error)
 	AreConnected(context.Context, *AreConnectedRequest) (*AreConnectedResponse, error)
+	FindConnections(context.Context, *FindConnectionsRequest) (*FindConnectionsResponse, error)
+	FindMessages(context.Context, *FindMessagesRequest) (*FindMessagesResponse, error)
 	mustEmbedUnimplementedRequestsServiceServer()
 }
 
@@ -126,6 +148,12 @@ func (UnimplementedRequestsServiceServer) SendMessage(context.Context, *SendMess
 }
 func (UnimplementedRequestsServiceServer) AreConnected(context.Context, *AreConnectedRequest) (*AreConnectedResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method AreConnected not implemented")
+}
+func (UnimplementedRequestsServiceServer) FindConnections(context.Context, *FindConnectionsRequest) (*FindConnectionsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method FindConnections not implemented")
+}
+func (UnimplementedRequestsServiceServer) FindMessages(context.Context, *FindMessagesRequest) (*FindMessagesResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method FindMessages not implemented")
 }
 func (UnimplementedRequestsServiceServer) mustEmbedUnimplementedRequestsServiceServer() {}
 
@@ -248,6 +276,42 @@ func _RequestsService_AreConnected_Handler(srv interface{}, ctx context.Context,
 	return interceptor(ctx, in, info, handler)
 }
 
+func _RequestsService_FindConnections_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(FindConnectionsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RequestsServiceServer).FindConnections(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/requests.RequestsService/FindConnections",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RequestsServiceServer).FindConnections(ctx, req.(*FindConnectionsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _RequestsService_FindMessages_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(FindMessagesRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RequestsServiceServer).FindMessages(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/requests.RequestsService/FindMessages",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RequestsServiceServer).FindMessages(ctx, req.(*FindMessagesRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // RequestsService_ServiceDesc is the grpc.ServiceDesc for RequestsService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -278,6 +342,14 @@ var RequestsService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "AreConnected",
 			Handler:    _RequestsService_AreConnected_Handler,
+		},
+		{
+			MethodName: "FindConnections",
+			Handler:    _RequestsService_FindConnections_Handler,
+		},
+		{
+			MethodName: "FindMessages",
+			Handler:    _RequestsService_FindMessages_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

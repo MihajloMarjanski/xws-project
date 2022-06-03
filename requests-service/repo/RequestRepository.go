@@ -130,3 +130,19 @@ func (repo *RequestsRepository) AreRequested(u1 uint, u2 uint) bool {
 	}
 	return true
 }
+
+func (repo *RequestsRepository) GetAllConnections(id uint) ([]model.Connection, []model.Connection) {
+	var ids1 []model.Connection
+	repo.db.Model(&ids1).Where("user_two = ?", id).Find(&ids1)
+	var ids2 []model.Connection
+	repo.db.Model(&ids2).Where("user_one = ?", id).Find(&ids2)
+
+	return ids1, ids2
+}
+
+func (repo *RequestsRepository) FindMessages(id1 int64, id2 int64) []model.Message {
+	var messages []model.Message
+	repo.db.Model(&messages).Where("sender_id = ? AND receiver_id = ? OR sender_id = ? AND receiver_id = ?", id1, id2, id2, id1).Find(&messages)
+
+	return messages
+}

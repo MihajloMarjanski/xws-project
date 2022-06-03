@@ -41,8 +41,31 @@ service RequestsService{
             get: "/connection/{FirstId}/{SecondId}"
         };
     }
+    rpc FindConnections(FindConnectionsRequest) returns (FindConnectionsResponse){
+        option (google.api.http) = {
+            get: "/connections/{Id}"
+        };
+    }
+    rpc FindMessages(FindMessagesRequest) returns (FindMessagesResponse){
+        option (google.api.http) = {
+            get: "/messages/{Id1}/{Id2}"
+        };
+    }
 }
 
+message FindMessagesRequest{
+    int64 Id1 = 1;
+    int64 Id2 = 2;
+}
+message FindMessagesResponse{
+    repeated Message messages = 1;
+}
+message FindConnectionsRequest{
+    int64 Id = 1;
+}
+message FindConnectionsResponse{
+    repeated User users = 1;
+}
 message AreConnectedRequest{
     int64 FirstId = 1;
     int64 SecondId = 2;
@@ -100,4 +123,16 @@ message SendMessageResponse{
 
 message Message{
     string text = 1;
+    int64 SenderID = 2;
+    int64 ReceiverID = 3;
+}
+message User {
+    int64 id = 1;
+    string name = 2;
+    string username = 3;
+    string email = 4;
+    string gender = 5;
+    string phone = 6;
+    string date = 7;
+    string biography = 8;
 }

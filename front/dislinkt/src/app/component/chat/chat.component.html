@@ -1,0 +1,25 @@
+<div class="create_weekend_house" style="margin-bottom: 10%; margin-top: 2%; margin-left: 15%; margin-right: 15%;" >
+    <h1>Chat</h1>
+    <h3>Select your connection</h3> 
+    <mat-form-field appearance="fill">
+        <mat-label>Select user</mat-label>
+        <mat-select [(ngModel)]="selectedUser" (selectionChange)="getMessages()">
+          <mat-option *ngFor="let user of connections" [value]="user" >
+            {{user.username}}  {{user.name}}
+          </mat-option>
+        </mat-select>
+    </mat-form-field>
+
+    <div>
+        <div *ngFor="let message of messages" [ngClass]="message.senderId == logedUserId ? 'leftChat' : 'rightChat'">{{message.text}}</div>
+    </div>
+
+    <div>
+        <mat-form-field appearance="fill">
+            <mat-label>Enter new message</mat-label>
+            <input matInput type="text" name="newMessage" [(ngModel)]="newMessage.text" >
+        </mat-form-field>
+        <button mat-raised-button color="warn" *ngIf="newMessage.text != ''" (click)="sendMessage()">Send</button>
+    </div>
+
+</div>

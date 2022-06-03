@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
+import { ChatComponent } from './component/chat/chat.component';
 import { CreateJobOfferComponent } from './component/create-job-offer/create-job-offer.component';
 import { LandingPageComponent } from './component/landing-page/landing-page.component';
 import { LoginPageComponent } from './component/login-page/login-page.component';
@@ -17,6 +18,7 @@ const routes: Routes = [
   { path: 'create-job-offer', component: CreateJobOfferComponent, canActivate: [AuthGuard], data: { role: ['ROLE_USER']} },
   { path: 'users', component: UsersComponent},
   { path: 'offers', component: OffersComponent, canActivate: [AuthGuard], data: { role: ['ROLE_USER']} },
+  { path: 'chat', component: ChatComponent, canActivate: [AuthGuard], data: { role: ['ROLE_USER']} },
 ];
 
 @NgModule({
