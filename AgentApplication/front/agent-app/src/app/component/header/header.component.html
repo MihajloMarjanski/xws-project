@@ -5,6 +5,7 @@
     <button *ngIf="roles.includes('ROLE_CLIENT')" style="margin-left : 25px" mat-button [routerLink]="['client-companies']">Companies</button>
     <button *ngIf="roles.includes('ROLE_CLIENT')" style="margin-left : 25px" mat-button [routerLink]="['forum']">Forum</button>
     <button *ngIf="roles.includes('ROLE_COMPANY_OWNER')" style="margin-left : 25px" mat-button [routerLink]="['job-offer']">Create job offer</button>
+    <button style="margin-left : 25px" mat-button [routerLink]="['offers']">Job offers</button>
 
 
     <span class="example-spacer" ></span>

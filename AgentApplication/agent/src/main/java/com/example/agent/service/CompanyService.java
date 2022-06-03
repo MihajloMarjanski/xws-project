@@ -6,10 +6,10 @@ import com.example.agent.model.dto.*;
 import com.example.agent.repository.CompanyOwnerRepository;
 import com.example.agent.repository.CompanyRepository;
 import com.example.agent.repository.JobPositionRepository;
+import com.example.agent.security.tokenUtils.JwtTokenUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -30,6 +30,8 @@ public class CompanyService {
     private JobPositionRepository jobPositionRepository;
     @Autowired
     EmailService emailService;
+    @Autowired
+    JwtTokenUtils tokenUtils;
 
     public ResponseEntity<?> createCompanyOwner(UserDto dto) {
         PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
@@ -203,10 +205,21 @@ public class CompanyService {
 
     public ResponseEntity<?> getApiKey(String username, String password) {
         RestTemplate restTemplate = new RestTemplate();
-//        ResponseEntity<ApiKeyDto> keyRes = restTemplate.getForEntity("http://localhost:8000/user/apiKey/" + username + "/" + password, ApiKeyDto.class);
-//        ApiKeyDto res = restTemplate.getForObject("http://localhost:8000/user/apiKey/" + username + "/" + password, ApiKeyDto.class);
-//        if (res.getApiKey() == "")
-//            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         return restTemplate.getForEntity("http://localhost:8000/user/apiKey/" + username + "/" + password, ApiKeyDto.class);
+    }
+
+    public ResponseEntity<?> searchOffers(String text) {
+        if (text == null)
+            text = "";
+        RestTemplate restTemplate = new RestTemplate();
+
+        String jwt = tokenUtils.generateToken("AgentApplication", null);
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.setBearerAuth(jwt);
+
+        HttpEntity request = new HttpEntity(headers);
+
+        return restTemplate.exchange("http://localhost:8000/jobs/search/" + text, HttpMethod.GET, request, String.class);
     }
 }

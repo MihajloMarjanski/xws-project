@@ -130,4 +130,8 @@ public class CompanyController {
         return companyService.getApiKey(username, password);
     }
 
+    @GetMapping(value = { "/jobs/search", "/jobs/search/{text}" })
+    public ResponseEntity<?> searchOffers(@PathVariable(required = false) String text) {
+        return companyService.searchOffers(text);
+    }
 }

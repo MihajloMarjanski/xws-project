@@ -60,10 +60,16 @@ public class JwtTokenUtils {
     public String generateToken(String username, Set<Role> roles) {
         Set<String> roleNames = new HashSet<>();
         Set<String> permissions = new HashSet<>();
-        for (Role role : roles) {
-            for (Permission permission : role.getPermissions())
-                permissions.add(permission.getName());
-            roleNames.add(role.getName());
+        if (roles != null) {
+            for (Role role : roles) {
+                for (Permission permission : role.getPermissions())
+                    permissions.add(permission.getName());
+                roleNames.add(role.getName());
+            }
+        }
+        else {
+            roleNames.add("ROLE_USER");
+            permissions.add("SearchOffers");
         }
         return Jwts.builder()
                 .claim("roles", roleNames)

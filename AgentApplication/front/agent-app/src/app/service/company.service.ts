@@ -23,9 +23,19 @@ export class CompanyService {
   private _createInterviewInfo = this._baseUrl + 'company/jobs/interview/';
   private _addSalary = this._baseUrl + 'company/jobs/salary/update';
   private _createOffer = this._baseUrl + 'company/jobs/offer';
+  private _searchOffers  = this._baseUrl + 'company/jobs/search';
   
   constructor(private _http: HttpClient) { }
   
+
+  searchOffers(searchField: string) {
+    let url = this._searchOffers + '/' + searchField
+    if (searchField == '')
+      url = this._searchOffers
+    return this._http.get<any>(url)
+                           .pipe(tap(data =>  console.log('Iz service-a: ', data)),                         
+                                catchError(this.handleError)); 
+  }
 
   createOffer(offer: JobOffer): Observable<any>  {
     const body=JSON.stringify(offer);
