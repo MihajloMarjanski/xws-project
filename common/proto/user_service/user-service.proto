@@ -90,29 +90,29 @@ service UserService{
             get: "/user/apiKey/{username}"
           };
         }
-        rpc FindAllBlocked(FindAllBlockedRequest) returns(FindAllBlockedResponse) {
-          option (google.api.http) = {
-            get: "/user/blocked/{id}"
-          };
-        }
         rpc GetPrivateStatusForUserId(GetPrivateStatusForUserIdRequest) returns(GetPrivateStatusForUserIdResponse) {
           option (google.api.http) = {
             get: "/user/status/{id}"
           };
         }
+        rpc SearchOffers(SearchOffersRequest) returns(SearchOffersResponse) {
+          option (google.api.http) = {
+            get: "/jobs/search/{text}"
+          };
+        }
 }
 
+message SearchOffersRequest {
+  string text = 1;
+}
+message SearchOffersResponse {
+  repeated JobOffer offers = 1;
+}
 message GetPrivateStatusForUserIdRequest {
   int64 id = 1;
 }
 message GetPrivateStatusForUserIdResponse {
   bool isPrivate = 1;
-}
-message FindAllBlockedRequest {
-  int64 id = 1;
-}
-message FindAllBlockedResponse {
-  repeated User users = 1;
 }
 message ActivateAccountRequest {
   google.protobuf.StringValue token = 1;

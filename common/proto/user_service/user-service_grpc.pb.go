@@ -39,6 +39,7 @@ type UserServiceClient interface {
 	GetApiKeyForUsername(ctx context.Context, in *GetApiKeyForUsernameRequest, opts ...grpc.CallOption) (*GetApiKeyForUsernameResponse, error)
 	FindAllBlocked(ctx context.Context, in *FindAllBlockedRequest, opts ...grpc.CallOption) (*FindAllBlockedResponse, error)
 	GetPrivateStatusForUserId(ctx context.Context, in *GetPrivateStatusForUserIdRequest, opts ...grpc.CallOption) (*GetPrivateStatusForUserIdResponse, error)
+	SearchOffers(ctx context.Context, in *SearchOffersRequest, opts ...grpc.CallOption) (*SearchOffersResponse, error)
 }
 
 type userServiceClient struct {
@@ -202,6 +203,15 @@ func (c *userServiceClient) GetPrivateStatusForUserId(ctx context.Context, in *G
 	return out, nil
 }
 
+func (c *userServiceClient) SearchOffers(ctx context.Context, in *SearchOffersRequest, opts ...grpc.CallOption) (*SearchOffersResponse, error) {
+	out := new(SearchOffersResponse)
+	err := c.cc.Invoke(ctx, "/user.UserService/SearchOffers", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // UserServiceServer is the server API for UserService service.
 // All implementations must embed UnimplementedUserServiceServer
 // for forward compatibility
@@ -223,6 +233,7 @@ type UserServiceServer interface {
 	GetApiKeyForUsername(context.Context, *GetApiKeyForUsernameRequest) (*GetApiKeyForUsernameResponse, error)
 	FindAllBlocked(context.Context, *FindAllBlockedRequest) (*FindAllBlockedResponse, error)
 	GetPrivateStatusForUserId(context.Context, *GetPrivateStatusForUserIdRequest) (*GetPrivateStatusForUserIdResponse, error)
+	SearchOffers(context.Context, *SearchOffersRequest) (*SearchOffersResponse, error)
 	mustEmbedUnimplementedUserServiceServer()
 }
 
@@ -280,6 +291,9 @@ func (UnimplementedUserServiceServer) FindAllBlocked(context.Context, *FindAllBl
 }
 func (UnimplementedUserServiceServer) GetPrivateStatusForUserId(context.Context, *GetPrivateStatusForUserIdRequest) (*GetPrivateStatusForUserIdResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetPrivateStatusForUserId not implemented")
+}
+func (UnimplementedUserServiceServer) SearchOffers(context.Context, *SearchOffersRequest) (*SearchOffersResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SearchOffers not implemented")
 }
 func (UnimplementedUserServiceServer) mustEmbedUnimplementedUserServiceServer() {}
 
@@ -600,6 +614,24 @@ func _UserService_GetPrivateStatusForUserId_Handler(srv interface{}, ctx context
 	return interceptor(ctx, in, info, handler)
 }
 
+func _UserService_SearchOffers_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SearchOffersRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserServiceServer).SearchOffers(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/user.UserService/SearchOffers",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserServiceServer).SearchOffers(ctx, req.(*SearchOffersRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // UserService_ServiceDesc is the grpc.ServiceDesc for UserService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -674,6 +706,10 @@ var UserService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetPrivateStatusForUserId",
 			Handler:    _UserService_GetPrivateStatusForUserId_Handler,
+		},
+		{
+			MethodName: "SearchOffers",
+			Handler:    _UserService_SearchOffers_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

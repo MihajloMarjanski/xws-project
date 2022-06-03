@@ -44,6 +44,7 @@ import { LoginPageComponent } from './component/login-page/login-page.component'
 import { UserProfileComponent } from './component/user-profile/user-profile.component';
 import { CreateJobOfferComponent } from './component/create-job-offer/create-job-offer.component';
 import { UsersComponent } from './component/users/users.component';
+import { OffersComponent } from './component/offers/offers.component';
 
 const MaterialComponents = [
   MatSliderModule,
@@ -84,6 +85,7 @@ const MaterialComponents = [
     UserProfileComponent,
     CreateJobOfferComponent,
     UsersComponent,
+    OffersComponent,
   ],
   imports: [
     MaterialComponents,

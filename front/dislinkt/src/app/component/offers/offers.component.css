@@ -1,0 +1,26 @@
+table {
+    width: 100%;
+  }
+  
+  .mat-column-gender {
+    flex: 0 0 10%;
+  }
+  .mat-column-username {
+    flex: 0 0 30%;
+  }
+  
+  .tableView {
+    height: 400px;
+    /* width: 350%; */
+    overflow: auto;
+  }
+  
+  .mat-row:hover {
+    background-color: rgb(236, 234, 234);
+    cursor: pointer;
+  }
+  
+  .infoDiv{
+    margin-bottom: 8px;
+    position: sticky;
+  }

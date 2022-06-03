@@ -13,6 +13,7 @@ import { JobOffer } from '../model/job-offer';
 })
 export class UserService {
   
+  
   private _baseUrl = 'http://localhost:8000/';
   private _login = this._baseUrl + 'user/login';
   private _getAllUsernames = this._baseUrl + 'auth/getAllUsernames';
@@ -27,7 +28,8 @@ export class UserService {
   private _forgotPassword  = this._baseUrl + 'clients/newPassword/';
   private _createOffer  = this._baseUrl + 'jobs/offer';
   private _apiKey  = this._baseUrl + 'user/apiKey/';
-  private _search  = this._baseUrl + 'user/search/';
+  private _searchUsers  = this._baseUrl + 'user/search/';
+  private _searchOffers  = this._baseUrl + 'jobs/search/';
   private _blockUser  = this._baseUrl + 'user/block/';
   private _findAllBlocked  = this._baseUrl + 'user/blocked/';
   
@@ -47,10 +49,16 @@ export class UserService {
                   catchError(this.handleError)); 
   }
 
+  searchOffers(searchField: string) {
+    return this._http.get<any>(this._searchOffers + searchField)
+                           .pipe(tap(data =>  console.log('Iz service-a: ', data)),                         
+                                catchError(this.handleError)); 
+  }
+
   searchUsers(username: string, id: string|null|number) {
     if (id == null)
       id = 0
-    return this._http.get<any>(this._search + username + "/" + id)
+    return this._http.get<any>(this._searchUsers + username + "/" + id)
                            .pipe(tap(data =>  console.log('Iz service-a: ', data)),                         
                                 catchError(this.handleError)); 
   }

@@ -193,6 +193,13 @@ func (s *UserService) GetPrivateStatusForUserId(id int64) bool {
 	return s.GetByID(int(id)).IsPrivate
 }
 
+func (s *UserService) SearchOffers(text string) []model.JobOffer {
+	if text == "" {
+		return s.userRepo.GetAllOffers()
+	}
+	return s.userRepo.SearchOffers(text)
+}
+
 const letterBytes = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
 
 func GenerateRandomString(n int) string {

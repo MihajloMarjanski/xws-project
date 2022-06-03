@@ -1,0 +1,47 @@
+
+  <div style="margin-left: 15%; margin-right: 15%; margin-top: 2%;">
+    <h2>Job offers</h2>    
+    <mat-form-field appearance="fill" > 
+      <mat-label>Search</mat-label>
+      <input matInput type="text" name="searchField" [(ngModel)]="searchField" (keyup)="searchTable()">
+      </mat-form-field>
+    <div  class="tableView">
+    <table id="myTable" mat-table [dataSource]="offers" class="mat-elevation-z8"  >
+        <ng-container matColumnDef="companyName">
+            <mat-header-cell *matHeaderCellDef > Company name </mat-header-cell>
+            <mat-cell *matCellDef="let element"> {{element.companyName}} </mat-cell>
+          </ng-container>
+        
+        <ng-container matColumnDef="jobPosition">
+            <mat-header-cell *matHeaderCellDef > Job position </mat-header-cell>
+                <mat-cell *matCellDef="let element" >
+                  <ng-container >{{element.jobPosition}}</ng-container>
+                    </mat-cell>
+          </ng-container>
+    
+          <ng-container matColumnDef="jobInfo">
+            <mat-header-cell *matHeaderCellDef> Job info </mat-header-cell>
+                <mat-cell *matCellDef="let element" >
+                  <ng-container >{{element.jobInfo}}</ng-container>
+                    </mat-cell>
+          </ng-container>
+
+    
+          <mat-header-row *matHeaderRowDef="displayedColumns; sticky: true" ></mat-header-row>
+          <mat-row *matRowDef="let row; columns: displayedColumns;" (click)="showOffer(row)" [class.selected]="row.selected"></mat-row>
+      </table>
+    </div>
+    </div>
+
+
+   <!--  OFFER -->
+   <div  *ngIf="show" style="margin-top: 2%; margin-left: 20%; font-size: larger; position: static;">
+      <h2>Offer details</h2>
+      <div class="infoDiv"><label><b>Company name:  </b>   {{offer.companyName}}</label></div>
+      <div class="infoDiv"><label><b>Job position:  </b>   {{offer.jobPosition}}</label></div>
+      <div class="infoDiv"><label><b>Job info:  </b>   {{offer.jobInfo}}</label></div>
+      <div class="infoDiv"><label><b>Qualifications:  </b>   {{offer.qualifications}}</label></div>
+   </div>
+
+
+

@@ -41,6 +41,7 @@ func accessibleRoles() map[string][]string {
 		servicePath + "RemoveInterest":    {"ROLE_USER"},
 		servicePath + "BlockUser":         {"ROLE_USER"},
 		servicePath + "GetUserByUsername": {"ROLE_USER"},
+		servicePath + "SearchOffers":      {"ROLE_USER"},
 	}
 }
 

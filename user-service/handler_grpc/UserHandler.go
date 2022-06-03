@@ -130,17 +130,16 @@ func (handler *UserHandler) SearchUsers(ctx context.Context, request *pb.SearchU
 	return response, nil
 }
 
-//func (handler *UserHandler) FindAllBlocked(ctx context.Context, request *pb.FindAllBlockedRequest) (*pb.FindAllBlockedResponse, error) {
-//	id := request.Id
-//	var users []*pb.User
-//	for _, user := range handler.userService.FindAllBlocked(id) {
-//		users = append(users, mapUserDtoToProto(user))
-//	}
-//	response := &pb.FindAllBlockedResponse{
-//		Users: users,
-//	}
-//	return response, nil
-//}
+func (handler *UserHandler) SearchOffers(ctx context.Context, request *pb.SearchOffersRequest) (*pb.SearchOffersResponse, error) {
+	var offers []*pb.JobOffer
+	for _, offer := range handler.userService.SearchOffers(request.Text) {
+		offers = append(offers, mapUserOfferProto(offer))
+	}
+	response := &pb.SearchOffersResponse{
+		Offers: offers,
+	}
+	return response, nil
+}
 
 func (handler *UserHandler) CreateUser(ctx context.Context, request *pb.CreateUserRequest) (*pb.CreateUserResponse, error) {
 	user := mapProtoToUser(request.User)

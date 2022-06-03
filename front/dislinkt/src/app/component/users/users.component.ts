@@ -54,19 +54,12 @@ export class UsersComponent implements OnInit {
     this._userService.searchUsers(this.searchField, localStorage.getItem("id"))
           .subscribe(data => {
               this.users = data.users
-              // this.filterForBlocked()
+              this.show = false
             console.log('Dobio: ', data)},
           error => this.errorMessage = <any>error);  
     
   }
 
-  filterForBlocked() {
-    this._userService.findAllBlocked(localStorage.getItem("id"))
-          .subscribe(data => {
-            this.users = this.users.filter( ( el ) => !data.users.includes( el ) );
-            console.log('Dobio: ', data)},
-          error => this.errorMessage = <any>error);  
-  }
 
   areConnected() {
     this._requestService.areConnected(localStorage.getItem("id"), this.user.id)

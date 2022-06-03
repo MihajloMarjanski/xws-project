@@ -192,3 +192,16 @@ func (repo *UserRepository) Contains(elems []uint, v uint) bool {
 	}
 	return false
 }
+
+func (repo *UserRepository) SearchOffers(text string) []model.JobOffer {
+	var offers []model.JobOffer
+	repo.db.Model(&offers).Where("LOWER(job_position) LIKE ? OR LOWER(company_name) LIKE ? OR LOWER(job_info) LIKE ? OR LOWER(qualifications) LIKE ?",
+		"%"+strings.ToLower(text)+"%", "%"+strings.ToLower(text)+"%", "%"+strings.ToLower(text)+"%", "%"+strings.ToLower(text)+"%").Find(&offers)
+	return offers
+}
+
+func (repo *UserRepository) GetAllOffers() []model.JobOffer {
+	var offers []model.JobOffer
+	repo.db.Find(&offers)
+	return offers
+}

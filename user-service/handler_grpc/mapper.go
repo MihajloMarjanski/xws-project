@@ -41,6 +41,18 @@ func mapUserDtoToProto(user model.User) *pb.User {
 	return userPb
 }
 
+func mapUserOfferProto(offer model.JobOffer) *pb.JobOffer {
+	offerPb := &pb.JobOffer{
+		Id:             int64(offer.ID),
+		JobInfo:        offer.JobInfo,
+		ApiKey:         offer.ApiKey,
+		Qualifications: offer.Qualifications,
+		CompanyName:    offer.CompanyName,
+		JobPosition:    offer.JobPosition,
+	}
+	return offerPb
+}
+
 func mapUserToProto(user model.User) *pb.UserWithPass {
 	userPb := &pb.UserWithPass{
 		Id:        int64(user.ID),
