@@ -146,3 +146,8 @@ func (repo *RequestsRepository) FindMessages(id1 int64, id2 int64) []model.Messa
 
 	return messages
 }
+
+func (repo *RequestsRepository) DeleteConnection(id1 int64, id2 int64) {
+	repo.db.Where("user_one = ? AND user_two = ? OR user_one = ? AND user_two = ?", id1, id2, id2, id1).Delete(&model.Connection{})
+	return
+}

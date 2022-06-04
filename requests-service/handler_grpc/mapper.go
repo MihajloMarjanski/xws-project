@@ -8,8 +8,8 @@ import (
 
 func mapRequestToProto(request model.Request) *pb.Request {
 	requestPb := &pb.Request{
-		SenderID:   int64(request.SenderID),
-		RecieverID: int64(request.ReceiverID),
+		SenderId:   int64(request.SenderID),
+		ReceiverId: int64(request.ReceiverID),
 	}
 	return requestPb
 }
@@ -27,8 +27,8 @@ func mapUserToProto(user model.User) *pb.User {
 func mapMessageToProto(message model.Message) *pb.Message {
 	messagePb := &pb.Message{
 		Text:       message.Text,
-		ReceiverID: int64(message.ReceiverId),
-		SenderID:   int64(message.SenderId),
+		ReceiverId: int64(message.ReceiverId),
+		SenderId:   int64(message.SenderId),
 	}
 	return messagePb
 }

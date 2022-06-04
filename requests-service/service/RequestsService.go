@@ -87,6 +87,11 @@ func (s *RequestsService) FindMessages(id1 int64, id2 int64) []model.Message {
 	return s.reqRepo.FindMessages(id1, id2)
 }
 
+func (s *RequestsService) DeleteConnection(id1 int64, id2 int64) {
+	s.reqRepo.DeleteConnection(id1, id2)
+	return
+}
+
 func mapUser(user *pbUser.User) model.User {
 	res := model.User{
 		ID:        uint(user.Id),

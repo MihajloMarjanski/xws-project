@@ -42,14 +42,14 @@ func request_RequestsService_GetAllByRecieverId_0(ctx context.Context, marshaler
 		_   = err
 	)
 
-	val, ok = pathParams["RecieverID"]
+	val, ok = pathParams["receiverId"]
 	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "RecieverID")
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "receiverId")
 	}
 
-	protoReq.RecieverID, err = runtime.Int64(val)
+	protoReq.ReceiverId, err = runtime.Int64(val)
 	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "RecieverID", err)
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "receiverId", err)
 	}
 
 	msg, err := client.GetAllByRecieverId(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
@@ -68,14 +68,14 @@ func local_request_RequestsService_GetAllByRecieverId_0(ctx context.Context, mar
 		_   = err
 	)
 
-	val, ok = pathParams["RecieverID"]
+	val, ok = pathParams["receiverId"]
 	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "RecieverID")
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "receiverId")
 	}
 
-	protoReq.RecieverID, err = runtime.Int64(val)
+	protoReq.ReceiverId, err = runtime.Int64(val)
 	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "RecieverID", err)
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "receiverId", err)
 	}
 
 	msg, err := server.GetAllByRecieverId(ctx, &protoReq)
@@ -94,24 +94,24 @@ func request_RequestsService_AcceptRequest_0(ctx context.Context, marshaler runt
 		_   = err
 	)
 
-	val, ok = pathParams["SenderID"]
+	val, ok = pathParams["senderId"]
 	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "SenderID")
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "senderId")
 	}
 
-	protoReq.SenderID, err = runtime.Int64(val)
+	protoReq.SenderId, err = runtime.Int64(val)
 	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "SenderID", err)
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "senderId", err)
 	}
 
-	val, ok = pathParams["RecieverID"]
+	val, ok = pathParams["receiverId"]
 	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "RecieverID")
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "receiverId")
 	}
 
-	protoReq.RecieverID, err = runtime.Int64(val)
+	protoReq.ReceiverId, err = runtime.Int64(val)
 	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "RecieverID", err)
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "receiverId", err)
 	}
 
 	msg, err := client.AcceptRequest(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
@@ -130,24 +130,24 @@ func local_request_RequestsService_AcceptRequest_0(ctx context.Context, marshale
 		_   = err
 	)
 
-	val, ok = pathParams["SenderID"]
+	val, ok = pathParams["senderId"]
 	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "SenderID")
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "senderId")
 	}
 
-	protoReq.SenderID, err = runtime.Int64(val)
+	protoReq.SenderId, err = runtime.Int64(val)
 	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "SenderID", err)
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "senderId", err)
 	}
 
-	val, ok = pathParams["RecieverID"]
+	val, ok = pathParams["receiverId"]
 	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "RecieverID")
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "receiverId")
 	}
 
-	protoReq.RecieverID, err = runtime.Int64(val)
+	protoReq.ReceiverId, err = runtime.Int64(val)
 	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "RecieverID", err)
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "receiverId", err)
 	}
 
 	msg, err := server.AcceptRequest(ctx, &protoReq)
@@ -166,24 +166,24 @@ func request_RequestsService_DeclineRequest_0(ctx context.Context, marshaler run
 		_   = err
 	)
 
-	val, ok = pathParams["SenderID"]
+	val, ok = pathParams["senderId"]
 	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "SenderID")
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "senderId")
 	}
 
-	protoReq.SenderID, err = runtime.Int64(val)
+	protoReq.SenderId, err = runtime.Int64(val)
 	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "SenderID", err)
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "senderId", err)
 	}
 
-	val, ok = pathParams["RecieverID"]
+	val, ok = pathParams["receiverId"]
 	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "RecieverID")
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "receiverId")
 	}
 
-	protoReq.RecieverID, err = runtime.Int64(val)
+	protoReq.ReceiverId, err = runtime.Int64(val)
 	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "RecieverID", err)
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "receiverId", err)
 	}
 
 	msg, err := client.DeclineRequest(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
@@ -202,24 +202,24 @@ func local_request_RequestsService_DeclineRequest_0(ctx context.Context, marshal
 		_   = err
 	)
 
-	val, ok = pathParams["SenderID"]
+	val, ok = pathParams["senderId"]
 	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "SenderID")
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "senderId")
 	}
 
-	protoReq.SenderID, err = runtime.Int64(val)
+	protoReq.SenderId, err = runtime.Int64(val)
 	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "SenderID", err)
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "senderId", err)
 	}
 
-	val, ok = pathParams["RecieverID"]
+	val, ok = pathParams["receiverId"]
 	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "RecieverID")
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "receiverId")
 	}
 
-	protoReq.RecieverID, err = runtime.Int64(val)
+	protoReq.ReceiverId, err = runtime.Int64(val)
 	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "RecieverID", err)
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "receiverId", err)
 	}
 
 	msg, err := server.DeclineRequest(ctx, &protoReq)
@@ -238,24 +238,24 @@ func request_RequestsService_SendRequest_0(ctx context.Context, marshaler runtim
 		_   = err
 	)
 
-	val, ok = pathParams["SenderID"]
+	val, ok = pathParams["senderId"]
 	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "SenderID")
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "senderId")
 	}
 
-	protoReq.SenderID, err = runtime.Int64(val)
+	protoReq.SenderId, err = runtime.Int64(val)
 	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "SenderID", err)
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "senderId", err)
 	}
 
-	val, ok = pathParams["RecieverID"]
+	val, ok = pathParams["receiverId"]
 	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "RecieverID")
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "receiverId")
 	}
 
-	protoReq.RecieverID, err = runtime.Int64(val)
+	protoReq.ReceiverId, err = runtime.Int64(val)
 	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "RecieverID", err)
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "receiverId", err)
 	}
 
 	msg, err := client.SendRequest(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
@@ -274,24 +274,24 @@ func local_request_RequestsService_SendRequest_0(ctx context.Context, marshaler 
 		_   = err
 	)
 
-	val, ok = pathParams["SenderID"]
+	val, ok = pathParams["senderId"]
 	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "SenderID")
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "senderId")
 	}
 
-	protoReq.SenderID, err = runtime.Int64(val)
+	protoReq.SenderId, err = runtime.Int64(val)
 	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "SenderID", err)
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "senderId", err)
 	}
 
-	val, ok = pathParams["RecieverID"]
+	val, ok = pathParams["receiverId"]
 	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "RecieverID")
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "receiverId")
 	}
 
-	protoReq.RecieverID, err = runtime.Int64(val)
+	protoReq.ReceiverId, err = runtime.Int64(val)
 	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "RecieverID", err)
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "receiverId", err)
 	}
 
 	msg, err := server.SendRequest(ctx, &protoReq)
@@ -318,24 +318,24 @@ func request_RequestsService_SendMessage_0(ctx context.Context, marshaler runtim
 		_   = err
 	)
 
-	val, ok = pathParams["SenderID"]
+	val, ok = pathParams["senderId"]
 	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "SenderID")
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "senderId")
 	}
 
-	protoReq.SenderID, err = runtime.Int64(val)
+	protoReq.SenderId, err = runtime.Int64(val)
 	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "SenderID", err)
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "senderId", err)
 	}
 
-	val, ok = pathParams["RecieverID"]
+	val, ok = pathParams["receiverId"]
 	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "RecieverID")
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "receiverId")
 	}
 
-	protoReq.RecieverID, err = runtime.Int64(val)
+	protoReq.ReceiverId, err = runtime.Int64(val)
 	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "RecieverID", err)
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "receiverId", err)
 	}
 
 	msg, err := client.SendMessage(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
@@ -362,24 +362,24 @@ func local_request_RequestsService_SendMessage_0(ctx context.Context, marshaler 
 		_   = err
 	)
 
-	val, ok = pathParams["SenderID"]
+	val, ok = pathParams["senderId"]
 	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "SenderID")
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "senderId")
 	}
 
-	protoReq.SenderID, err = runtime.Int64(val)
+	protoReq.SenderId, err = runtime.Int64(val)
 	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "SenderID", err)
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "senderId", err)
 	}
 
-	val, ok = pathParams["RecieverID"]
+	val, ok = pathParams["receiverId"]
 	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "RecieverID")
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "receiverId")
 	}
 
-	protoReq.RecieverID, err = runtime.Int64(val)
+	protoReq.ReceiverId, err = runtime.Int64(val)
 	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "RecieverID", err)
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "receiverId", err)
 	}
 
 	msg, err := server.SendMessage(ctx, &protoReq)
@@ -398,24 +398,24 @@ func request_RequestsService_AreConnected_0(ctx context.Context, marshaler runti
 		_   = err
 	)
 
-	val, ok = pathParams["FirstId"]
+	val, ok = pathParams["firstId"]
 	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "FirstId")
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "firstId")
 	}
 
 	protoReq.FirstId, err = runtime.Int64(val)
 	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "FirstId", err)
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "firstId", err)
 	}
 
-	val, ok = pathParams["SecondId"]
+	val, ok = pathParams["secondId"]
 	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "SecondId")
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "secondId")
 	}
 
 	protoReq.SecondId, err = runtime.Int64(val)
 	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "SecondId", err)
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "secondId", err)
 	}
 
 	msg, err := client.AreConnected(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
@@ -434,24 +434,24 @@ func local_request_RequestsService_AreConnected_0(ctx context.Context, marshaler
 		_   = err
 	)
 
-	val, ok = pathParams["FirstId"]
+	val, ok = pathParams["firstId"]
 	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "FirstId")
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "firstId")
 	}
 
 	protoReq.FirstId, err = runtime.Int64(val)
 	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "FirstId", err)
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "firstId", err)
 	}
 
-	val, ok = pathParams["SecondId"]
+	val, ok = pathParams["secondId"]
 	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "SecondId")
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "secondId")
 	}
 
 	protoReq.SecondId, err = runtime.Int64(val)
 	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "SecondId", err)
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "secondId", err)
 	}
 
 	msg, err := server.AreConnected(ctx, &protoReq)
@@ -470,14 +470,14 @@ func request_RequestsService_FindConnections_0(ctx context.Context, marshaler ru
 		_   = err
 	)
 
-	val, ok = pathParams["Id"]
+	val, ok = pathParams["id"]
 	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "Id")
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "id")
 	}
 
 	protoReq.Id, err = runtime.Int64(val)
 	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "Id", err)
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "id", err)
 	}
 
 	msg, err := client.FindConnections(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
@@ -496,14 +496,14 @@ func local_request_RequestsService_FindConnections_0(ctx context.Context, marsha
 		_   = err
 	)
 
-	val, ok = pathParams["Id"]
+	val, ok = pathParams["id"]
 	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "Id")
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "id")
 	}
 
 	protoReq.Id, err = runtime.Int64(val)
 	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "Id", err)
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "id", err)
 	}
 
 	msg, err := server.FindConnections(ctx, &protoReq)
@@ -522,24 +522,24 @@ func request_RequestsService_FindMessages_0(ctx context.Context, marshaler runti
 		_   = err
 	)
 
-	val, ok = pathParams["Id1"]
+	val, ok = pathParams["id1"]
 	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "Id1")
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "id1")
 	}
 
 	protoReq.Id1, err = runtime.Int64(val)
 	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "Id1", err)
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "id1", err)
 	}
 
-	val, ok = pathParams["Id2"]
+	val, ok = pathParams["id2"]
 	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "Id2")
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "id2")
 	}
 
 	protoReq.Id2, err = runtime.Int64(val)
 	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "Id2", err)
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "id2", err)
 	}
 
 	msg, err := client.FindMessages(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
@@ -558,27 +558,99 @@ func local_request_RequestsService_FindMessages_0(ctx context.Context, marshaler
 		_   = err
 	)
 
-	val, ok = pathParams["Id1"]
+	val, ok = pathParams["id1"]
 	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "Id1")
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "id1")
 	}
 
 	protoReq.Id1, err = runtime.Int64(val)
 	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "Id1", err)
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "id1", err)
 	}
 
-	val, ok = pathParams["Id2"]
+	val, ok = pathParams["id2"]
 	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "Id2")
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "id2")
 	}
 
 	protoReq.Id2, err = runtime.Int64(val)
 	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "Id2", err)
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "id2", err)
 	}
 
 	msg, err := server.FindMessages(ctx, &protoReq)
+	return msg, metadata, err
+
+}
+
+func request_RequestsService_DeleteConnection_0(ctx context.Context, marshaler runtime.Marshaler, client RequestsServiceClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+	var protoReq DeleteConnectionRequest
+	var metadata runtime.ServerMetadata
+
+	var (
+		val string
+		ok  bool
+		err error
+		_   = err
+	)
+
+	val, ok = pathParams["id1"]
+	if !ok {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "id1")
+	}
+
+	protoReq.Id1, err = runtime.Int64(val)
+	if err != nil {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "id1", err)
+	}
+
+	val, ok = pathParams["id2"]
+	if !ok {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "id2")
+	}
+
+	protoReq.Id2, err = runtime.Int64(val)
+	if err != nil {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "id2", err)
+	}
+
+	msg, err := client.DeleteConnection(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
+	return msg, metadata, err
+
+}
+
+func local_request_RequestsService_DeleteConnection_0(ctx context.Context, marshaler runtime.Marshaler, server RequestsServiceServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+	var protoReq DeleteConnectionRequest
+	var metadata runtime.ServerMetadata
+
+	var (
+		val string
+		ok  bool
+		err error
+		_   = err
+	)
+
+	val, ok = pathParams["id1"]
+	if !ok {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "id1")
+	}
+
+	protoReq.Id1, err = runtime.Int64(val)
+	if err != nil {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "id1", err)
+	}
+
+	val, ok = pathParams["id2"]
+	if !ok {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "id2")
+	}
+
+	protoReq.Id2, err = runtime.Int64(val)
+	if err != nil {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "id2", err)
+	}
+
+	msg, err := server.DeleteConnection(ctx, &protoReq)
 	return msg, metadata, err
 
 }
@@ -596,7 +668,7 @@ func RegisterRequestsServiceHandlerServer(ctx context.Context, mux *runtime.Serv
 		ctx = grpc.NewContextWithServerTransportStream(ctx, &stream)
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
-		ctx, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/requests.RequestsService/GetAllByRecieverId", runtime.WithHTTPPathPattern("/requests/getAll/{RecieverID}"))
+		ctx, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/requests.RequestsService/GetAllByRecieverId", runtime.WithHTTPPathPattern("/requests/getAll/{receiverId}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -620,7 +692,7 @@ func RegisterRequestsServiceHandlerServer(ctx context.Context, mux *runtime.Serv
 		ctx = grpc.NewContextWithServerTransportStream(ctx, &stream)
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
-		ctx, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/requests.RequestsService/AcceptRequest", runtime.WithHTTPPathPattern("/requests/acceptRequest/{SenderID}/{RecieverID}"))
+		ctx, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/requests.RequestsService/AcceptRequest", runtime.WithHTTPPathPattern("/requests/acceptRequest/{senderId}/{receiverId}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -644,7 +716,7 @@ func RegisterRequestsServiceHandlerServer(ctx context.Context, mux *runtime.Serv
 		ctx = grpc.NewContextWithServerTransportStream(ctx, &stream)
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
-		ctx, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/requests.RequestsService/DeclineRequest", runtime.WithHTTPPathPattern("/requests/declineRequest/{SenderID}/{RecieverID}"))
+		ctx, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/requests.RequestsService/DeclineRequest", runtime.WithHTTPPathPattern("/requests/declineRequest/{senderId}/{receiverId}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -668,7 +740,7 @@ func RegisterRequestsServiceHandlerServer(ctx context.Context, mux *runtime.Serv
 		ctx = grpc.NewContextWithServerTransportStream(ctx, &stream)
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
-		ctx, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/requests.RequestsService/SendRequest", runtime.WithHTTPPathPattern("/requests/sendRequest/{SenderID}/{RecieverID}"))
+		ctx, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/requests.RequestsService/SendRequest", runtime.WithHTTPPathPattern("/requests/sendRequest/{senderId}/{receiverId}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -692,7 +764,7 @@ func RegisterRequestsServiceHandlerServer(ctx context.Context, mux *runtime.Serv
 		ctx = grpc.NewContextWithServerTransportStream(ctx, &stream)
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
-		ctx, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/requests.RequestsService/SendMessage", runtime.WithHTTPPathPattern("/message/send/{SenderID}/{RecieverID}"))
+		ctx, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/requests.RequestsService/SendMessage", runtime.WithHTTPPathPattern("/message/send/{senderId}/{receiverId}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -716,7 +788,7 @@ func RegisterRequestsServiceHandlerServer(ctx context.Context, mux *runtime.Serv
 		ctx = grpc.NewContextWithServerTransportStream(ctx, &stream)
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
-		ctx, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/requests.RequestsService/AreConnected", runtime.WithHTTPPathPattern("/connection/{FirstId}/{SecondId}"))
+		ctx, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/requests.RequestsService/AreConnected", runtime.WithHTTPPathPattern("/connection/{firstId}/{secondId}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -740,7 +812,7 @@ func RegisterRequestsServiceHandlerServer(ctx context.Context, mux *runtime.Serv
 		ctx = grpc.NewContextWithServerTransportStream(ctx, &stream)
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
-		ctx, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/requests.RequestsService/FindConnections", runtime.WithHTTPPathPattern("/connections/{Id}"))
+		ctx, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/requests.RequestsService/FindConnections", runtime.WithHTTPPathPattern("/connections/{id}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -764,7 +836,7 @@ func RegisterRequestsServiceHandlerServer(ctx context.Context, mux *runtime.Serv
 		ctx = grpc.NewContextWithServerTransportStream(ctx, &stream)
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
-		ctx, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/requests.RequestsService/FindMessages", runtime.WithHTTPPathPattern("/messages/{Id1}/{Id2}"))
+		ctx, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/requests.RequestsService/FindMessages", runtime.WithHTTPPathPattern("/messages/{id1}/{id2}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -778,6 +850,30 @@ func RegisterRequestsServiceHandlerServer(ctx context.Context, mux *runtime.Serv
 		}
 
 		forward_RequestsService_FindMessages_0(ctx, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+
+	})
+
+	mux.Handle("DELETE", pattern_RequestsService_DeleteConnection_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+		ctx, cancel := context.WithCancel(req.Context())
+		defer cancel()
+		var stream runtime.ServerTransportStream
+		ctx = grpc.NewContextWithServerTransportStream(ctx, &stream)
+		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
+		var err error
+		ctx, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/requests.RequestsService/DeleteConnection", runtime.WithHTTPPathPattern("/connection/{id1}/{id2}"))
+		if err != nil {
+			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
+			return
+		}
+		resp, md, err := local_request_RequestsService_DeleteConnection_0(ctx, inboundMarshaler, server, req, pathParams)
+		md.HeaderMD, md.TrailerMD = metadata.Join(md.HeaderMD, stream.Header()), metadata.Join(md.TrailerMD, stream.Trailer())
+		ctx = runtime.NewServerMetadataContext(ctx, md)
+		if err != nil {
+			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
+			return
+		}
+
+		forward_RequestsService_DeleteConnection_0(ctx, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
 
 	})
 
@@ -827,7 +923,7 @@ func RegisterRequestsServiceHandlerClient(ctx context.Context, mux *runtime.Serv
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
-		ctx, err = runtime.AnnotateContext(ctx, mux, req, "/requests.RequestsService/GetAllByRecieverId", runtime.WithHTTPPathPattern("/requests/getAll/{RecieverID}"))
+		ctx, err = runtime.AnnotateContext(ctx, mux, req, "/requests.RequestsService/GetAllByRecieverId", runtime.WithHTTPPathPattern("/requests/getAll/{receiverId}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -848,7 +944,7 @@ func RegisterRequestsServiceHandlerClient(ctx context.Context, mux *runtime.Serv
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
-		ctx, err = runtime.AnnotateContext(ctx, mux, req, "/requests.RequestsService/AcceptRequest", runtime.WithHTTPPathPattern("/requests/acceptRequest/{SenderID}/{RecieverID}"))
+		ctx, err = runtime.AnnotateContext(ctx, mux, req, "/requests.RequestsService/AcceptRequest", runtime.WithHTTPPathPattern("/requests/acceptRequest/{senderId}/{receiverId}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -869,7 +965,7 @@ func RegisterRequestsServiceHandlerClient(ctx context.Context, mux *runtime.Serv
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
-		ctx, err = runtime.AnnotateContext(ctx, mux, req, "/requests.RequestsService/DeclineRequest", runtime.WithHTTPPathPattern("/requests/declineRequest/{SenderID}/{RecieverID}"))
+		ctx, err = runtime.AnnotateContext(ctx, mux, req, "/requests.RequestsService/DeclineRequest", runtime.WithHTTPPathPattern("/requests/declineRequest/{senderId}/{receiverId}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -890,7 +986,7 @@ func RegisterRequestsServiceHandlerClient(ctx context.Context, mux *runtime.Serv
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
-		ctx, err = runtime.AnnotateContext(ctx, mux, req, "/requests.RequestsService/SendRequest", runtime.WithHTTPPathPattern("/requests/sendRequest/{SenderID}/{RecieverID}"))
+		ctx, err = runtime.AnnotateContext(ctx, mux, req, "/requests.RequestsService/SendRequest", runtime.WithHTTPPathPattern("/requests/sendRequest/{senderId}/{receiverId}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -911,7 +1007,7 @@ func RegisterRequestsServiceHandlerClient(ctx context.Context, mux *runtime.Serv
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
-		ctx, err = runtime.AnnotateContext(ctx, mux, req, "/requests.RequestsService/SendMessage", runtime.WithHTTPPathPattern("/message/send/{SenderID}/{RecieverID}"))
+		ctx, err = runtime.AnnotateContext(ctx, mux, req, "/requests.RequestsService/SendMessage", runtime.WithHTTPPathPattern("/message/send/{senderId}/{receiverId}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -932,7 +1028,7 @@ func RegisterRequestsServiceHandlerClient(ctx context.Context, mux *runtime.Serv
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
-		ctx, err = runtime.AnnotateContext(ctx, mux, req, "/requests.RequestsService/AreConnected", runtime.WithHTTPPathPattern("/connection/{FirstId}/{SecondId}"))
+		ctx, err = runtime.AnnotateContext(ctx, mux, req, "/requests.RequestsService/AreConnected", runtime.WithHTTPPathPattern("/connection/{firstId}/{secondId}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -953,7 +1049,7 @@ func RegisterRequestsServiceHandlerClient(ctx context.Context, mux *runtime.Serv
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
-		ctx, err = runtime.AnnotateContext(ctx, mux, req, "/requests.RequestsService/FindConnections", runtime.WithHTTPPathPattern("/connections/{Id}"))
+		ctx, err = runtime.AnnotateContext(ctx, mux, req, "/requests.RequestsService/FindConnections", runtime.WithHTTPPathPattern("/connections/{id}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -974,7 +1070,7 @@ func RegisterRequestsServiceHandlerClient(ctx context.Context, mux *runtime.Serv
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
-		ctx, err = runtime.AnnotateContext(ctx, mux, req, "/requests.RequestsService/FindMessages", runtime.WithHTTPPathPattern("/messages/{Id1}/{Id2}"))
+		ctx, err = runtime.AnnotateContext(ctx, mux, req, "/requests.RequestsService/FindMessages", runtime.WithHTTPPathPattern("/messages/{id1}/{id2}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -990,25 +1086,48 @@ func RegisterRequestsServiceHandlerClient(ctx context.Context, mux *runtime.Serv
 
 	})
 
+	mux.Handle("DELETE", pattern_RequestsService_DeleteConnection_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+		ctx, cancel := context.WithCancel(req.Context())
+		defer cancel()
+		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
+		var err error
+		ctx, err = runtime.AnnotateContext(ctx, mux, req, "/requests.RequestsService/DeleteConnection", runtime.WithHTTPPathPattern("/connection/{id1}/{id2}"))
+		if err != nil {
+			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
+			return
+		}
+		resp, md, err := request_RequestsService_DeleteConnection_0(ctx, inboundMarshaler, client, req, pathParams)
+		ctx = runtime.NewServerMetadataContext(ctx, md)
+		if err != nil {
+			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
+			return
+		}
+
+		forward_RequestsService_DeleteConnection_0(ctx, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+
+	})
+
 	return nil
 }
 
 var (
-	pattern_RequestsService_GetAllByRecieverId_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 1, 0, 4, 1, 5, 2}, []string{"requests", "getAll", "RecieverID"}, ""))
+	pattern_RequestsService_GetAllByRecieverId_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 1, 0, 4, 1, 5, 2}, []string{"requests", "getAll", "receiverId"}, ""))
 
-	pattern_RequestsService_AcceptRequest_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 1, 0, 4, 1, 5, 2, 1, 0, 4, 1, 5, 3}, []string{"requests", "acceptRequest", "SenderID", "RecieverID"}, ""))
+	pattern_RequestsService_AcceptRequest_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 1, 0, 4, 1, 5, 2, 1, 0, 4, 1, 5, 3}, []string{"requests", "acceptRequest", "senderId", "receiverId"}, ""))
 
-	pattern_RequestsService_DeclineRequest_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 1, 0, 4, 1, 5, 2, 1, 0, 4, 1, 5, 3}, []string{"requests", "declineRequest", "SenderID", "RecieverID"}, ""))
+	pattern_RequestsService_DeclineRequest_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 1, 0, 4, 1, 5, 2, 1, 0, 4, 1, 5, 3}, []string{"requests", "declineRequest", "senderId", "receiverId"}, ""))
 
-	pattern_RequestsService_SendRequest_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 1, 0, 4, 1, 5, 2, 1, 0, 4, 1, 5, 3}, []string{"requests", "sendRequest", "SenderID", "RecieverID"}, ""))
+	pattern_RequestsService_SendRequest_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 1, 0, 4, 1, 5, 2, 1, 0, 4, 1, 5, 3}, []string{"requests", "sendRequest", "senderId", "receiverId"}, ""))
 
-	pattern_RequestsService_SendMessage_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 1, 0, 4, 1, 5, 2, 1, 0, 4, 1, 5, 3}, []string{"message", "send", "SenderID", "RecieverID"}, ""))
+	pattern_RequestsService_SendMessage_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 1, 0, 4, 1, 5, 2, 1, 0, 4, 1, 5, 3}, []string{"message", "send", "senderId", "receiverId"}, ""))
 
-	pattern_RequestsService_AreConnected_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 1, 0, 4, 1, 5, 1, 1, 0, 4, 1, 5, 2}, []string{"connection", "FirstId", "SecondId"}, ""))
+	pattern_RequestsService_AreConnected_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 1, 0, 4, 1, 5, 1, 1, 0, 4, 1, 5, 2}, []string{"connection", "firstId", "secondId"}, ""))
 
-	pattern_RequestsService_FindConnections_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 1, 0, 4, 1, 5, 1}, []string{"connections", "Id"}, ""))
+	pattern_RequestsService_FindConnections_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 1, 0, 4, 1, 5, 1}, []string{"connections", "id"}, ""))
 
-	pattern_RequestsService_FindMessages_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 1, 0, 4, 1, 5, 1, 1, 0, 4, 1, 5, 2}, []string{"messages", "Id1", "Id2"}, ""))
+	pattern_RequestsService_FindMessages_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 1, 0, 4, 1, 5, 1, 1, 0, 4, 1, 5, 2}, []string{"messages", "id1", "id2"}, ""))
+
+	pattern_RequestsService_DeleteConnection_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 1, 0, 4, 1, 5, 1, 1, 0, 4, 1, 5, 2}, []string{"connection", "id1", "id2"}, ""))
 )
 
 var (
@@ -1027,4 +1146,6 @@ var (
 	forward_RequestsService_FindConnections_0 = runtime.ForwardResponseMessage
 
 	forward_RequestsService_FindMessages_0 = runtime.ForwardResponseMessage
+
+	forward_RequestsService_DeleteConnection_0 = runtime.ForwardResponseMessage
 )

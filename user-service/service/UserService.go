@@ -2,6 +2,9 @@ package service
 
 import (
 	"fmt"
+	pbReq "github.com/MihajloMarjanski/xws-project/common/proto/requests_service"
+	"golang.org/x/net/context"
+	"google.golang.org/grpc"
 	"io/ioutil"
 	"log"
 	"math/rand"
@@ -54,7 +57,7 @@ func (s *UserService) SearchUsers(username string, id uint) []model.User {
 	blockedIds := s.userRepo.FindBlockedForUserId(id)
 	i := 0
 	for _, user := range users {
-		if !s.userRepo.Contains(blockedIds, user.ID) {
+		if !s.userRepo.Contains(blockedIds, user.ID) && user.ID != id {
 			users[i] = user
 			i++
 		}
@@ -162,7 +165,21 @@ func (s *UserService) BlockUser(userId int, blockedUserId int) {
 		return
 	}
 	s.userRepo.BlockUser(userId, blockedUserId)
+	DeleteConnection(userId, blockedUserId)
 	return
+}
+
+func DeleteConnection(userId, id int) {
+	conn, err := grpc.Dial("localhost:8200", grpc.WithInsecure())
+	if err != nil {
+		panic(err)
+	}
+	defer conn.Close()
+	client := pbReq.NewRequestsServiceClient(conn)
+	_, err = client.DeleteConnection(context.Background(), &pbReq.DeleteConnectionRequest{Id1: int64(userId), Id2: int64(id)})
+	if err != nil {
+		panic(err)
+	}
 }
 
 func (s *UserService) GetApiKeyForUserCredentials(username string, password string) string {

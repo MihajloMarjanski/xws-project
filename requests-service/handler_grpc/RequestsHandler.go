@@ -72,7 +72,7 @@ func (requestsHandler *RequestsHandler) CloseDB() error {
 }
 
 func (handler *RequestsHandler) GetAllByRecieverId(ctx context.Context, request *pb.GetAllByRecieverIdRequest) (*pb.GetAllByRecieverIdResponse, error) {
-	id := request.RecieverID
+	id := request.ReceiverId
 	id = int64(GetUserID(ctx))
 	var requests []*pb.Request
 	for _, request := range handler.requestsService.GetAllByRecieverId(uint(id)) {
@@ -85,8 +85,8 @@ func (handler *RequestsHandler) GetAllByRecieverId(ctx context.Context, request 
 }
 
 func (handler *RequestsHandler) AcceptRequest(ctx context.Context, request *pb.AcceptRequestRequest) (*pb.AcceptRequestResponse, error) {
-	senderID := request.SenderID
-	recieverID := request.RecieverID
+	senderID := request.SenderId
+	recieverID := request.ReceiverId
 	senderID = int64(GetUserID(ctx))
 	handler.requestsService.AcceptRequest(uint(senderID), uint(recieverID))
 	response := &pb.AcceptRequestResponse{}
@@ -94,8 +94,8 @@ func (handler *RequestsHandler) AcceptRequest(ctx context.Context, request *pb.A
 }
 
 func (handler *RequestsHandler) DeclineRequest(ctx context.Context, request *pb.DeclineRequestRequest) (*pb.DeclineRequestResponse, error) {
-	senderID := request.SenderID
-	recieverID := request.RecieverID
+	senderID := request.SenderId
+	recieverID := request.ReceiverId
 	senderID = int64(GetUserID(ctx))
 	handler.requestsService.DeclineRequest(uint(senderID), uint(recieverID))
 	response := &pb.DeclineRequestResponse{}
@@ -103,8 +103,8 @@ func (handler *RequestsHandler) DeclineRequest(ctx context.Context, request *pb.
 }
 
 func (handler *RequestsHandler) SendRequest(ctx context.Context, request *pb.SendRequestRequest) (*pb.SendRequestResponse, error) {
-	senderID := request.SenderID
-	recieverID := request.RecieverID
+	senderID := request.SenderId
+	recieverID := request.ReceiverId
 	senderID = int64(GetUserID(ctx))
 	handler.requestsService.SendRequest(uint(senderID), uint(recieverID))
 	response := &pb.SendRequestResponse{}
@@ -112,8 +112,8 @@ func (handler *RequestsHandler) SendRequest(ctx context.Context, request *pb.Sen
 }
 
 func (handler *RequestsHandler) SendMessage(ctx context.Context, request *pb.SendMessageRequest) (*pb.SendMessageResponse, error) {
-	senderID := request.SenderID
-	receiverID := request.RecieverID
+	senderID := request.SenderId
+	receiverID := request.ReceiverId
 	senderID = int64(GetUserID(ctx))
 	message := request.Message.Text
 	handler.requestsService.SendMessage(uint(senderID), uint(receiverID), message)
@@ -148,5 +148,11 @@ func (handler *RequestsHandler) FindMessages(ctx context.Context, request *pb.Fi
 	response := &pb.FindMessagesResponse{
 		Messages: messages,
 	}
+	return response, nil
+}
+
+func (handler *RequestsHandler) DeleteConnection(ctx context.Context, request *pb.DeleteConnectionRequest) (*pb.DeleteConnectionResponse, error) {
+	handler.requestsService.DeleteConnection(request.Id1, request.Id2)
+	response := &pb.DeleteConnectionResponse{}
 	return response, nil
 }

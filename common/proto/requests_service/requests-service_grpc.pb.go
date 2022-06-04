@@ -30,6 +30,7 @@ type RequestsServiceClient interface {
 	AreConnected(ctx context.Context, in *AreConnectedRequest, opts ...grpc.CallOption) (*AreConnectedResponse, error)
 	FindConnections(ctx context.Context, in *FindConnectionsRequest, opts ...grpc.CallOption) (*FindConnectionsResponse, error)
 	FindMessages(ctx context.Context, in *FindMessagesRequest, opts ...grpc.CallOption) (*FindMessagesResponse, error)
+	DeleteConnection(ctx context.Context, in *DeleteConnectionRequest, opts ...grpc.CallOption) (*DeleteConnectionResponse, error)
 }
 
 type requestsServiceClient struct {
@@ -112,6 +113,15 @@ func (c *requestsServiceClient) FindMessages(ctx context.Context, in *FindMessag
 	return out, nil
 }
 
+func (c *requestsServiceClient) DeleteConnection(ctx context.Context, in *DeleteConnectionRequest, opts ...grpc.CallOption) (*DeleteConnectionResponse, error) {
+	out := new(DeleteConnectionResponse)
+	err := c.cc.Invoke(ctx, "/requests.RequestsService/DeleteConnection", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // RequestsServiceServer is the server API for RequestsService service.
 // All implementations must embed UnimplementedRequestsServiceServer
 // for forward compatibility
@@ -124,6 +134,7 @@ type RequestsServiceServer interface {
 	AreConnected(context.Context, *AreConnectedRequest) (*AreConnectedResponse, error)
 	FindConnections(context.Context, *FindConnectionsRequest) (*FindConnectionsResponse, error)
 	FindMessages(context.Context, *FindMessagesRequest) (*FindMessagesResponse, error)
+	DeleteConnection(context.Context, *DeleteConnectionRequest) (*DeleteConnectionResponse, error)
 	mustEmbedUnimplementedRequestsServiceServer()
 }
 
@@ -154,6 +165,9 @@ func (UnimplementedRequestsServiceServer) FindConnections(context.Context, *Find
 }
 func (UnimplementedRequestsServiceServer) FindMessages(context.Context, *FindMessagesRequest) (*FindMessagesResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method FindMessages not implemented")
+}
+func (UnimplementedRequestsServiceServer) DeleteConnection(context.Context, *DeleteConnectionRequest) (*DeleteConnectionResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DeleteConnection not implemented")
 }
 func (UnimplementedRequestsServiceServer) mustEmbedUnimplementedRequestsServiceServer() {}
 
@@ -312,6 +326,24 @@ func _RequestsService_FindMessages_Handler(srv interface{}, ctx context.Context,
 	return interceptor(ctx, in, info, handler)
 }
 
+func _RequestsService_DeleteConnection_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DeleteConnectionRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RequestsServiceServer).DeleteConnection(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/requests.RequestsService/DeleteConnection",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RequestsServiceServer).DeleteConnection(ctx, req.(*DeleteConnectionRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // RequestsService_ServiceDesc is the grpc.ServiceDesc for RequestsService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -350,6 +382,10 @@ var RequestsService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "FindMessages",
 			Handler:    _RequestsService_FindMessages_Handler,
+		},
+		{
+			MethodName: "DeleteConnection",
+			Handler:    _RequestsService_DeleteConnection_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
