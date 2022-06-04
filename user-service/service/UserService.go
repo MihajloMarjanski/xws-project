@@ -12,8 +12,14 @@ import (
 	"user-service/model"
 	"user-service/repo"
 
+	saga "github.com/MihajloMarjanski/xws-project/common/saga/messaging"
+	"github.com/MihajloMarjanski/xws-project/common/saga/messaging/nats"
 	"github.com/dgrijalva/jwt-go"
 	"golang.org/x/crypto/bcrypt"
+)
+
+const (
+	QueueGroup = "user_service"
 )
 
 type Credentials struct {
@@ -31,7 +37,31 @@ type Claims struct {
 var jwtKey = []byte("tajni_kljuc_za_jwt_hash")
 
 type UserService struct {
-	userRepo *repo.UserRepository
+	userRepo     *repo.UserRepository
+	orchestrator *BlockUserOrchestrator
+}
+
+func initPublisher(subject string) saga.Publisher {
+	publisher, err := nats.NewNATSPublisher(subject)
+	if err != nil {
+		log.Fatal(err)
+	}
+	return publisher
+}
+
+func initSubscriber(subject, queueGroup string) saga.Subscriber {
+	subscriber, err := nats.NewNATSSubscriber(subject, queueGroup)
+	if err != nil {
+		log.Fatal(err)
+	}
+	return subscriber
+}
+func initCreateOrderOrchestrator(publisher saga.Publisher, subscriber saga.Subscriber) *BlockUserOrchestrator {
+	orchestrator, err := NewBlockUserOrchestrator(publisher, subscriber)
+	if err != nil {
+		log.Fatal(err)
+	}
+	return orchestrator
 }
 
 func New() (*UserService, error) {
@@ -41,8 +71,13 @@ func New() (*UserService, error) {
 		return nil, err
 	}
 
+	commandPublisher := initPublisher("block.user.command")
+	replySubscriber := initSubscriber("block.user.reply", QueueGroup)
+	blockUserOrchestrator := initCreateOrderOrchestrator(commandPublisher, replySubscriber)
+
 	return &UserService{
-		userRepo: userRepo,
+		userRepo:     userRepo,
+		orchestrator: blockUserOrchestrator,
 	}, nil
 }
 
@@ -162,7 +197,14 @@ func (s *UserService) BlockUser(userId int, blockedUserId int) {
 		return
 	}
 	s.userRepo.BlockUser(userId, blockedUserId)
+
+	err := s.orchestrator.Start(uint(userId), uint(blockedUserId))
+	if err != nil {
+		s.userRepo.UnblockUser(userId, blockedUserId)
+		return
+	}
 	return
+
 }
 
 func (s *UserService) GetApiKeyForUserCredentials(username string, password string) string {

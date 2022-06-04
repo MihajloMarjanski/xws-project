@@ -83,6 +83,13 @@ services:
     networks:
       - backend
 
+  nats:
+    image: nats
+    container_name: nats
+    restart: on-failure
+    networks:
+      - network
+
 networks:
   backend:
     name: dislinkt

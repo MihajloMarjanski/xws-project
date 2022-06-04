@@ -6,11 +6,18 @@ import (
 	"net"
 	"os"
 	"requests-service/handler_grpc"
+	"requests-service/service"
 	config "requests-service/startup/config"
 
 	requestProto "github.com/MihajloMarjanski/xws-project/common/proto/requests_service"
+	saga "github.com/MihajloMarjanski/xws-project/common/saga/messaging"
+	"github.com/MihajloMarjanski/xws-project/common/saga/messaging/nats"
 
 	"google.golang.org/grpc"
+)
+
+const (
+	QueueGroup = "request_service"
 )
 
 type Server struct {
@@ -29,7 +36,35 @@ func (server *Server) Start() {
 	if err != nil {
 		log.Fatal(err.Error())
 	}
+	requestService, _ := service.New()
+	commandSubscriber := server.initSubscriber("block.user.command", QueueGroup)
+	replyPublisher := server.initPublisher("block.user.reply")
+	server.initBlockUserHandler(requestService, replyPublisher, commandSubscriber)
+
 	server.startGrpcServer(requestHandler)
+}
+
+func (server *Server) initBlockUserHandler(service *service.RequestsService, publisher saga.Publisher, subscriber saga.Subscriber) {
+	_, err := handler_grpc.NewBlockUserCommandHandler(service, publisher, subscriber)
+	if err != nil {
+		log.Fatal(err)
+	}
+}
+
+func (server *Server) initPublisher(subject string) saga.Publisher {
+	publisher, err := nats.NewNATSPublisher(subject)
+	if err != nil {
+		log.Fatal(err)
+	}
+	return publisher
+}
+
+func (server *Server) initSubscriber(subject, queueGroup string) saga.Subscriber {
+	subscriber, err := nats.NewNATSSubscriber(subject, queueGroup)
+	if err != nil {
+		log.Fatal(err)
+	}
+	return subscriber
 }
 
 func accessibleRoles() map[string][]string {

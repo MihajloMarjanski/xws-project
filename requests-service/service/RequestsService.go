@@ -1,11 +1,12 @@
 package service
 
 import (
+	"requests-service/model"
+	"requests-service/repo"
+
 	pbUser "github.com/MihajloMarjanski/xws-project/common/proto/user_service"
 	"golang.org/x/net/context"
 	"google.golang.org/grpc"
-	"requests-service/model"
-	"requests-service/repo"
 )
 
 type RequestsService struct {
@@ -41,6 +42,11 @@ func (s *RequestsService) DeclineRequest(sid, rid uint) {
 
 func (s *RequestsService) SendRequest(sid, rid uint) {
 	s.reqRepo.SendRequest(sid, rid)
+}
+
+func (s *RequestsService) RemoveConnection(sid, rid uint) bool {
+	s.reqRepo.RemoveConnection(sid, rid)
+	return true
 }
 
 func (s *RequestsService) SendMessage(senderID, receiverID uint, message string) {
