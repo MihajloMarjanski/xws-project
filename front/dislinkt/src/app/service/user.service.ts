@@ -14,7 +14,7 @@ import { JobOffer } from '../model/job-offer';
 export class UserService {
   
   
-  private _baseUrl = 'http://localhost:8000/';
+  private _baseUrl = 'https://localhost:8000/';
   private _login = this._baseUrl + 'user/login';
   private _getAllUsernames = this._baseUrl + 'auth/getAllUsernames';
   private _removeExperience = this._baseUrl + 'user/experience/';
