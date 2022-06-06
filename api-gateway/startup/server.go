@@ -57,6 +57,6 @@ func (server *Server) Start() {
 
 	log.Println("gateway started")
 	//log.Fatal(http.ListenAndServe(fmt.Sprintf(":%s", server.config.Port), handlers.CORS(headers, methods, origins)(server.mux)))
-	log.Fatal(http.ListenAndServeTLS(fmt.Sprintf(":%s", server.config.Port), cert,
-		key, handlers.CORS(headers, methods, origins)(server.mux)))
+	log.Fatal(http.ListenAndServeTLS(fmt.Sprintf(":%s", server.config.Port), "github.com/MihajloMarjanski/xws-project/api-gateway/startup/cert/server.crt",
+		"github.com/MihajloMarjanski/xws-project/api-gateway/startup/cert/server.key", handlers.CORS(headers, methods, origins)(server.mux)))
 }
