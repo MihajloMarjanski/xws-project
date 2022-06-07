@@ -32,6 +32,7 @@ type RequestsServiceClient interface {
 	FindMessages(ctx context.Context, in *FindMessagesRequest, opts ...grpc.CallOption) (*FindMessagesResponse, error)
 	DeleteConnection(ctx context.Context, in *DeleteConnectionRequest, opts ...grpc.CallOption) (*DeleteConnectionResponse, error)
 	GetNotifications(ctx context.Context, in *GetNotificationsRequest, opts ...grpc.CallOption) (*GetNotificationsResponse, error)
+	SendNotification(ctx context.Context, in *SendNotificationRequest, opts ...grpc.CallOption) (*SendNotificationResponse, error)
 }
 
 type requestsServiceClient struct {
@@ -132,6 +133,15 @@ func (c *requestsServiceClient) GetNotifications(ctx context.Context, in *GetNot
 	return out, nil
 }
 
+func (c *requestsServiceClient) SendNotification(ctx context.Context, in *SendNotificationRequest, opts ...grpc.CallOption) (*SendNotificationResponse, error) {
+	out := new(SendNotificationResponse)
+	err := c.cc.Invoke(ctx, "/requests.RequestsService/SendNotification", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // RequestsServiceServer is the server API for RequestsService service.
 // All implementations must embed UnimplementedRequestsServiceServer
 // for forward compatibility
@@ -146,6 +156,7 @@ type RequestsServiceServer interface {
 	FindMessages(context.Context, *FindMessagesRequest) (*FindMessagesResponse, error)
 	DeleteConnection(context.Context, *DeleteConnectionRequest) (*DeleteConnectionResponse, error)
 	GetNotifications(context.Context, *GetNotificationsRequest) (*GetNotificationsResponse, error)
+	SendNotification(context.Context, *SendNotificationRequest) (*SendNotificationResponse, error)
 	mustEmbedUnimplementedRequestsServiceServer()
 }
 
@@ -182,6 +193,9 @@ func (UnimplementedRequestsServiceServer) DeleteConnection(context.Context, *Del
 }
 func (UnimplementedRequestsServiceServer) GetNotifications(context.Context, *GetNotificationsRequest) (*GetNotificationsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetNotifications not implemented")
+}
+func (UnimplementedRequestsServiceServer) SendNotification(context.Context, *SendNotificationRequest) (*SendNotificationResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SendNotification not implemented")
 }
 func (UnimplementedRequestsServiceServer) mustEmbedUnimplementedRequestsServiceServer() {}
 
@@ -376,6 +390,24 @@ func _RequestsService_GetNotifications_Handler(srv interface{}, ctx context.Cont
 	return interceptor(ctx, in, info, handler)
 }
 
+func _RequestsService_SendNotification_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SendNotificationRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RequestsServiceServer).SendNotification(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/requests.RequestsService/SendNotification",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RequestsServiceServer).SendNotification(ctx, req.(*SendNotificationRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // RequestsService_ServiceDesc is the grpc.ServiceDesc for RequestsService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -422,6 +454,10 @@ var RequestsService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetNotifications",
 			Handler:    _RequestsService_GetNotifications_Handler,
+		},
+		{
+			MethodName: "SendNotification",
+			Handler:    _RequestsService_SendNotification_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

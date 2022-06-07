@@ -167,3 +167,12 @@ func (handler *RequestsHandler) GetNotifications(ctx context.Context, request *p
 	}
 	return response, nil
 }
+
+func (handler *RequestsHandler) SendNotification(ctx context.Context, request *pb.SendNotificationRequest) (*pb.SendNotificationResponse, error) {
+	senderID := request.SenderId
+	receiverID := request.ReceiverId
+	message := request.Message
+	handler.requestsService.SendNotification(uint(senderID), uint(receiverID), message)
+	response := &pb.SendNotificationResponse{}
+	return response, nil
+}

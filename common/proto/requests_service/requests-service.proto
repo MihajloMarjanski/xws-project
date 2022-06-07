@@ -61,8 +61,21 @@ service RequestsService{
             get: "/notifications/{id}"
         };
     }
+    rpc SendNotification(SendNotificationRequest) returns (SendNotificationResponse){
+        option (google.api.http) = {
+            post: "/notifications/{senderId}/{receiverId}/{message}"
+            body: ""
+        };
+    }
 }
 
+message SendNotificationRequest{
+    int64 senderId = 1;
+    int64 receiverId = 2;
+    string message = 3;
+}
+message SendNotificationResponse{
+}
 message GetNotificationsRequest{
     int64 id = 1;
 }
