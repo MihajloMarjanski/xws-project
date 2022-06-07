@@ -19,3 +19,13 @@
       </table>
     </div>
 </div>
+
+<div style="margin-left: 15%; margin-right: 15%; margin-top: 2%;">
+  <h2>Requests</h2>    
+  <div *ngFor="let s of requests" style="width: 1000px;">
+    <p>{{s.username}}   
+      <button mat-icon-button  (click)="accept(s)"  ><mat-icon>done</mat-icon></button> 
+      <button mat-icon-button color="accent" (click)="decline(s)"  ><mat-icon>clear</mat-icon></button> 
+    </p>   
+  </div>
+</div>

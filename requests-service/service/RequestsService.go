@@ -1,6 +1,7 @@
 package service
 
 import (
+	pb "github.com/MihajloMarjanski/xws-project/common/proto/requests_service"
 	pbUser "github.com/MihajloMarjanski/xws-project/common/proto/user_service"
 	"golang.org/x/net/context"
 	"google.golang.org/grpc"
@@ -27,8 +28,25 @@ func (s *RequestsService) CloseDB() error {
 	return s.reqRepo.Close()
 }
 
-func (s *RequestsService) GetAllByRecieverId(rid uint) []model.Request {
-	return s.reqRepo.GetAllByRecieverId(rid)
+func (s *RequestsService) GetAllByRecieverId(rid uint) []*pb.UsernameWithRequestId {
+	var users []*pb.UsernameWithRequestId
+
+	conn, err := grpc.Dial("localhost:8100", grpc.WithInsecure())
+	if err != nil {
+		panic(err)
+	}
+	defer conn.Close()
+	client := pbUser.NewUserServiceClient(conn)
+
+	for _, request := range s.reqRepo.GetAllByRecieverId(rid) {
+		response, err := client.GetUser(context.Background(), &pbUser.GetUserRequest{Id: int64(request.SenderID)})
+		if err != nil {
+			panic(err)
+		}
+		users = append(users, mapUserToUsernameReq(response.User, request.ReceiverID, request.SenderID))
+	}
+
+	return users
 }
 
 func (s *RequestsService) AcceptRequest(sid, rid uint) {
@@ -119,6 +137,15 @@ func mapUser(user *pbUser.User) model.User {
 		UserName:  user.Username,
 		Biography: user.Biography,
 		Name:      user.Name,
+	}
+	return res
+}
+
+func mapUserToUsernameReq(user *pbUser.User, receiverId, senderId uint) *pb.UsernameWithRequestId {
+	res := &pb.UsernameWithRequestId{
+		ReceiverId: int64(receiverId),
+		SenderId:   int64(senderId),
+		Username:   user.Username,
 	}
 	return res
 }

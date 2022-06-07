@@ -14,6 +14,7 @@ import { Message } from '../model/message';
 })
 export class RequestService {
   
+  
   private _baseUrl = 'https://localhost:8000/';
   private _sendConnectRequest = this._baseUrl + 'requests/sendRequest/'
   private _areConnected = this._baseUrl + 'connection/'
@@ -21,9 +22,31 @@ export class RequestService {
   private _sendMessage = this._baseUrl + 'message/send/'
   private _findMessages = this._baseUrl + 'messages/'
   private _getNotifications = this._baseUrl + 'notifications/'
+  private _getRequests = this._baseUrl + 'requests/getAll/'
+  private _acceptRequest = this._baseUrl + 'requests/acceptRequest/'
+  private _declineRequest = this._baseUrl + 'requests/declineRequest/'
+  
   
   constructor(private _http: HttpClient) { }
   
+
+  declineRequest(senderId: number, receiverId: number) : Observable<any> {
+    return this._http.put<any>(this._declineRequest + senderId + "/" + receiverId, {})
+                  .pipe(tap(data =>  console.log('All: ' + JSON.stringify(data))),
+                  catchError(this.handleError)); 
+  }
+
+  acceptRequest(senderId: number, receiverId: number) : Observable<any> {
+    return this._http.put<any>(this._acceptRequest + senderId + "/" + receiverId, {})
+                  .pipe(tap(data =>  console.log('All: ' + JSON.stringify(data))),
+                  catchError(this.handleError)); 
+  }
+
+  getRequests(logedUserId: string | null) {
+    return this._http.get<any>(this._getRequests + logedUserId)
+            .pipe(tap(data =>  console.log('Iz service-a: ', data)),                         
+                catchError(this.handleError));
+  }
 
   getNotifications(logedUserId: string | null) {
     return this._http.get<any>(this._getNotifications + logedUserId)
