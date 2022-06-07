@@ -46,6 +46,7 @@ import { CreateJobOfferComponent } from './component/create-job-offer/create-job
 import { UsersComponent } from './component/users/users.component';
 import { OffersComponent } from './component/offers/offers.component';
 import { ChatComponent } from './component/chat/chat.component';
+import { NotificationsComponent } from './component/notifications/notifications.component';
 
 const MaterialComponents = [
   MatSliderModule,
@@ -88,6 +89,7 @@ const MaterialComponents = [
     UsersComponent,
     OffersComponent,
     ChatComponent,
+    NotificationsComponent,
   ],
   imports: [
     MaterialComponents,

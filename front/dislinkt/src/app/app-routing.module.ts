@@ -4,6 +4,7 @@ import { ChatComponent } from './component/chat/chat.component';
 import { CreateJobOfferComponent } from './component/create-job-offer/create-job-offer.component';
 import { LandingPageComponent } from './component/landing-page/landing-page.component';
 import { LoginPageComponent } from './component/login-page/login-page.component';
+import { NotificationsComponent } from './component/notifications/notifications.component';
 import { OffersComponent } from './component/offers/offers.component';
 import { RegistrationPageComponent } from './component/registration-page/registration-page.component';
 import { UserProfileComponent } from './component/user-profile/user-profile.component';
@@ -19,6 +20,7 @@ const routes: Routes = [
   { path: 'users', component: UsersComponent},
   { path: 'offers', component: OffersComponent, canActivate: [AuthGuard], data: { role: ['ROLE_USER']} },
   { path: 'chat', component: ChatComponent, canActivate: [AuthGuard], data: { role: ['ROLE_USER']} },
+  { path: 'notifications', component: NotificationsComponent, canActivate: [AuthGuard], data: { role: ['ROLE_USER']} },
 ];
 
 @NgModule({

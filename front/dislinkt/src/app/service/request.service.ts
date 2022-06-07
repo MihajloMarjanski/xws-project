@@ -20,9 +20,16 @@ export class RequestService {
   private _findConnections = this._baseUrl + 'connections/'
   private _sendMessage = this._baseUrl + 'message/send/'
   private _findMessages = this._baseUrl + 'messages/'
+  private _getNotifications = this._baseUrl + 'notifications/'
   
   constructor(private _http: HttpClient) { }
   
+
+  getNotifications(logedUserId: string | null) {
+    return this._http.get<any>(this._getNotifications + logedUserId)
+            .pipe(tap(data =>  console.log('Iz service-a: ', data)),                         
+                catchError(this.handleError));
+  }
 
   sendMessage(newMessage: Message) : Observable<any>  {
     const body=JSON.stringify(newMessage);

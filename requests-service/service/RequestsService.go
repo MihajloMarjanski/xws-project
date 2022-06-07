@@ -41,13 +41,30 @@ func (s *RequestsService) DeclineRequest(sid, rid uint) {
 
 func (s *RequestsService) SendRequest(sid, rid uint) {
 	s.reqRepo.SendRequest(sid, rid)
+	s.SendNotification(sid, rid, "You have received a new connection request from user '")
 }
 
 func (s *RequestsService) SendMessage(senderID, receiverID uint, message string) {
 	if s.reqRepo.AreConnected(senderID, receiverID) == true {
 		s.reqRepo.SendMessage(senderID, receiverID, message)
+		s.SendNotification(senderID, receiverID, "You have received a new message from user '")
 	}
 	return
+}
+
+func (s *RequestsService) SendNotification(senderID, receiverID uint, message string) {
+	conn, err := grpc.Dial("localhost:8100", grpc.WithInsecure())
+	if err != nil {
+		panic(err)
+	}
+	defer conn.Close()
+	client := pbUser.NewUserServiceClient(conn)
+	response, err := client.GetUser(context.Background(), &pbUser.GetUserRequest{Id: int64(senderID)})
+	if err != nil {
+		panic(err)
+	}
+
+	s.reqRepo.SendNotification(receiverID, message+response.User.Username+"'")
 }
 
 func (s *RequestsService) AreConnected(id1 int64, id2 int64) bool {
@@ -90,6 +107,10 @@ func (s *RequestsService) FindMessages(id1 int64, id2 int64) []model.Message {
 func (s *RequestsService) DeleteConnection(id1 int64, id2 int64) {
 	s.reqRepo.DeleteConnection(id1, id2)
 	return
+}
+
+func (s *RequestsService) GetNotifications(id int64) []model.Notification {
+	return s.reqRepo.GetNotifications(id)
 }
 
 func mapUser(user *pbUser.User) model.User {

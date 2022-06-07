@@ -156,3 +156,14 @@ func (handler *RequestsHandler) DeleteConnection(ctx context.Context, request *p
 	response := &pb.DeleteConnectionResponse{}
 	return response, nil
 }
+
+func (handler *RequestsHandler) GetNotifications(ctx context.Context, request *pb.GetNotificationsRequest) (*pb.GetNotificationsResponse, error) {
+	var notifications []*pb.Notification
+	for _, notification := range handler.requestsService.GetNotifications(request.Id) {
+		notifications = append(notifications, mapNotificationToProto(notification))
+	}
+	response := &pb.GetNotificationsResponse{
+		Notifications: notifications,
+	}
+	return response, nil
+}
