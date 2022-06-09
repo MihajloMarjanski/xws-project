@@ -52,7 +52,7 @@ func mapPostsToProto(posts []model.Post) []*pb.PostResp {
 			Title:     post.Title,
 			Text:      post.Text,
 			Img:       post.Img,
-			Link:      post.Img,
+			Link:      post.Link,
 			CreatedAt: timestamppb.New(post.CreatedAt),
 		}
 		for _, comment := range post.Commnets {

@@ -51,6 +51,7 @@
         <div class="infoDiv"><label><b>Biography:  </b>   {{user.biography}}</label></div>
         <div>
             <button style="margin-right: 3%;" mat-raised-button color="accent" [disabled]="isConnected" (click)="connect()"  >Connect</button>
+            <button style="margin-right: 3%;" mat-raised-button color="accent" (click)="viewPosts()"  >Posts</button>
             <button mat-raised-button color="warn"  (click)="block()"  >Block</button>
           </div>
         </div>

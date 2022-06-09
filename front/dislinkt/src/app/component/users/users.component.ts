@@ -78,6 +78,10 @@ export class UsersComponent implements OnInit {
           error => this.errorMessage = <any>error); 
   }
 
+  viewPosts() {
+    this.router.navigate(["/posts"],{state: {data: this.user.id}})
+  }
+
   block() {
     this._userService.blockUser(localStorage.getItem("id"), this.user.id)
     .subscribe(data => {

@@ -46,6 +46,8 @@ import { CreateJobOfferComponent } from './component/create-job-offer/create-job
 import { UsersComponent } from './component/users/users.component';
 import { OffersComponent } from './component/offers/offers.component';
 import { ChatComponent } from './component/chat/chat.component';
+import { PostsComponent } from './component/posts/posts.component';
+import { ViewPostComponent } from './component/view-post/view-post.component';
 import { NotificationsComponent } from './component/notifications/notifications.component';
 
 const MaterialComponents = [
@@ -89,6 +91,8 @@ const MaterialComponents = [
     UsersComponent,
     OffersComponent,
     ChatComponent,
+    PostsComponent,
+    ViewPostComponent,
     NotificationsComponent,
   ],
   imports: [

@@ -1,0 +1,14 @@
+<div style="margin-left: 15%; margin-right: 15%; margin-top: 2%;">
+    <h2>Posts</h2>    
+    <div  class="tableView">
+    <table id="myTable" mat-table [dataSource]="posts" class="mat-elevation-z8"  >
+        <ng-container matColumnDef="title">
+            <mat-header-cell *matHeaderCellDef > Title </mat-header-cell>
+            <mat-cell *matCellDef="let element"> {{element.title}} </mat-cell>
+          </ng-container>
+
+          <mat-header-row *matHeaderRowDef="displayedColumns; sticky: true" ></mat-header-row>
+          <mat-row *matRowDef="let row; columns: displayedColumns;" (click)="viewPost(row)"></mat-row>
+      </table>
+    </div>
+</div>
