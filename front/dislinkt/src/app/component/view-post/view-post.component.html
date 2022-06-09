@@ -1,0 +1,20 @@
+<p>Title: {{post.title}}</p>
+<p>Text: {{post.text}}</p>
+<p>Link: <a href="{{post.link}}">{{post.link}}</a></p>
+<p>Img:</p>
+<img src="{{post.img}}" alt="No image" />
+<p>
+    Likes: {{likeCount}}
+    <button style="margin-right: 3%;" mat-raised-button color="primary" (click)="like()"  >Like</button>
+    Dislikes: {{dislikeCount}}
+    <button style="margin-right: 3%;" mat-raised-button color="accent" (click)="dislike()"  >Dislike</button>
+</p>
+<p> 
+    <input matInput type="text" name="comment" [(ngModel)]="comment.text" required>
+    <button style="margin-right: 3%;" mat-raised-button color="primary" (click)="makeComment()">Comment</button>
+</p>
+<p>Comments:</p>
+<div *ngFor="let comment of post.comments;">
+    {{comment.user}}: {{comment.text}}
+</div>
+

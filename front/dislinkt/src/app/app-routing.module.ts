@@ -5,9 +5,11 @@ import { CreateJobOfferComponent } from './component/create-job-offer/create-job
 import { LandingPageComponent } from './component/landing-page/landing-page.component';
 import { LoginPageComponent } from './component/login-page/login-page.component';
 import { OffersComponent } from './component/offers/offers.component';
+import { PostsComponent } from './component/posts/posts.component';
 import { RegistrationPageComponent } from './component/registration-page/registration-page.component';
 import { UserProfileComponent } from './component/user-profile/user-profile.component';
 import { UsersComponent } from './component/users/users.component';
+import { ViewPostComponent } from './component/view-post/view-post.component';
 import { AuthGuard } from './service/auth.guard';
 
 const routes: Routes = [
@@ -19,6 +21,8 @@ const routes: Routes = [
   { path: 'users', component: UsersComponent},
   { path: 'offers', component: OffersComponent, canActivate: [AuthGuard], data: { role: ['ROLE_USER']} },
   { path: 'chat', component: ChatComponent, canActivate: [AuthGuard], data: { role: ['ROLE_USER']} },
+  { path: 'posts', component: PostsComponent},
+  { path: 'view-post', component: ViewPostComponent},
 ];
 
 @NgModule({

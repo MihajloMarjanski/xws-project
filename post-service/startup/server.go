@@ -33,10 +33,10 @@ func (server *Server) Start() {
 func accessibleRoles() map[string][]string {
 	const servicePath = "/post.PostService/"
 	return map[string][]string{
-		servicePath + "CreatePost": {"user"},
-		servicePath + "AddComment": {"user"},
-		servicePath + "AddLike":    {"user"},
-		servicePath + "AddDislike": {"user"},
+		servicePath + "CreatePost": {"ROLE_USER"},
+		servicePath + "AddComment": {"ROLE_USER"},
+		servicePath + "AddLike":    {"ROLE_USER"},
+		servicePath + "AddDislike": {"ROLE_USER"},
 	}
 }
 
