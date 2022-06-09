@@ -50,6 +50,7 @@ import { PostsComponent } from './component/posts/posts.component';
 import { ViewPostComponent } from './component/view-post/view-post.component';
 import { NotificationsComponent } from './component/notifications/notifications.component';
 
+
 const MaterialComponents = [
   MatSliderModule,
   MatCarouselModule,
@@ -94,6 +95,7 @@ const MaterialComponents = [
     PostsComponent,
     ViewPostComponent,
     NotificationsComponent,
+
   ],
   imports: [
     MaterialComponents,

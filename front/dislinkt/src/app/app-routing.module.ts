@@ -25,6 +25,7 @@ const routes: Routes = [
   { path: 'posts', component: PostsComponent},
   { path: 'view-post', component: ViewPostComponent},
   { path: 'notifications', component: NotificationsComponent, canActivate: [AuthGuard], data: { role: ['ROLE_USER']} },
+
 ];
 
 @NgModule({

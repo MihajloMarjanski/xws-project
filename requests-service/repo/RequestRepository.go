@@ -1,12 +1,11 @@
 package repo
 
 import (
-	"requests-service/model"
-
 	"golang.org/x/net/context"
 	"google.golang.org/grpc"
 	"requests-service/model"
 	"time"
+
 
 	pb "github.com/MihajloMarjanski/xws-project/common/proto/user_service"
 	"gorm.io/driver/postgres"
