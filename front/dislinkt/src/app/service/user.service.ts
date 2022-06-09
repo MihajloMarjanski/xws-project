@@ -1,12 +1,12 @@
-import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
+import { Injectable } from '@angular/core';
+import { Observable } from 'rxjs';
+import { catchError, tap } from 'rxjs/operators';
 import { Credentials } from '../model/credentials';
-import { Observable, throwError } from 'rxjs';
-import { map, catchError, tap } from 'rxjs/operators';
-import { User } from '../model/user';
 import { Experience } from '../model/experience';
 import { Interest } from '../model/interest';
 import { JobOffer } from '../model/job-offer';
+import { User } from '../model/user';
 
 @Injectable({
   providedIn: 'root'
@@ -14,7 +14,7 @@ import { JobOffer } from '../model/job-offer';
 export class UserService {
   
   
-  private _baseUrl = 'https://localhost:8000/';
+  private _baseUrl = 'http://localhost:8000/';
   private _login = this._baseUrl + 'user/login';
   private _getAllUsernames = this._baseUrl + 'auth/getAllUsernames';
   private _removeExperience = this._baseUrl + 'user/experience/';

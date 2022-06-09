@@ -58,7 +58,7 @@ func (service *PostService) CreatePost(title string, text string, img string, li
 func (service *PostService) SendNotification(id uint, message string) []model.User {
 	var res []model.User
 
-	conn, err := grpc.Dial("localhost:8200", grpc.WithInsecure())
+	conn, err := grpc.Dial("request-service:8200", grpc.WithInsecure())
 	if err != nil {
 		panic(err)
 	}

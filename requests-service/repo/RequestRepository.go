@@ -6,7 +6,6 @@ import (
 	"requests-service/model"
 	"time"
 
-
 	pb "github.com/MihajloMarjanski/xws-project/common/proto/user_service"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
@@ -77,7 +76,7 @@ func (repo *RequestsRepository) DeclineRequest(sid, rid uint) {
 }
 
 func (repo *RequestsRepository) SendRequest(sid, rid uint) {
-	conn, err := grpc.Dial("localhost:8100", grpc.WithInsecure())
+	conn, err := grpc.Dial("user-service:8100", grpc.WithInsecure())
 	if err != nil {
 		panic(err)
 	}

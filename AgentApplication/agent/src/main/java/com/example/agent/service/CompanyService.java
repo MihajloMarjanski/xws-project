@@ -41,7 +41,7 @@ public class CompanyService {
             companyOwner.setPassword(passwordEncoder.encode(companyOwner.getPassword().concat(companyOwner.getSalt())));
             String pin = RandomStringInitializer.generatePin();
             companyOwner.setPin(passwordEncoder.encode(pin.concat(companyOwner.getSalt())));
-            companyOwner.setActivated(false);
+            companyOwner.setActivated(true);
             companyOwner.setForgotten(0);
             companyOwner.setMissedPasswordCounter(0);
             Role role = roleService.findByName("ROLE_POTENTIAL_OWNER");

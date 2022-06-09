@@ -1,12 +1,7 @@
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
-import { Credentials } from '../model/credentials';
-import { Observable, throwError } from 'rxjs';
-import { map, catchError, tap } from 'rxjs/operators';
-import { User } from '../model/user';
-import { Experience } from '../model/experience';
-import { Interest } from '../model/interest';
-import { JobOffer } from '../model/job-offer';
+import { Observable } from 'rxjs';
+import { catchError, tap } from 'rxjs/operators';
 import { Message } from '../model/message';
 
 @Injectable({
@@ -15,7 +10,7 @@ import { Message } from '../model/message';
 export class RequestService {
   
   
-  private _baseUrl = 'https://localhost:8000/';
+  private _baseUrl = 'http://localhost:8000/';
   private _sendConnectRequest = this._baseUrl + 'requests/sendRequest/'
   private _areConnected = this._baseUrl + 'connection/'
   private _findConnections = this._baseUrl + 'connections/'
