@@ -48,6 +48,7 @@ import { OffersComponent } from './component/offers/offers.component';
 import { ChatComponent } from './component/chat/chat.component';
 import { PostsComponent } from './component/posts/posts.component';
 import { ViewPostComponent } from './component/view-post/view-post.component';
+import { NotificationsComponent } from './component/notifications/notifications.component';
 
 const MaterialComponents = [
   MatSliderModule,
@@ -92,6 +93,7 @@ const MaterialComponents = [
     ChatComponent,
     PostsComponent,
     ViewPostComponent,
+    NotificationsComponent,
   ],
   imports: [
     MaterialComponents,

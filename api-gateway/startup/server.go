@@ -4,9 +4,6 @@ import (
 	cfg "api-gateway/startup/config"
 	"context"
 	"fmt"
-	"log"
-	"net/http"
-
 	postGw "github.com/MihajloMarjanski/xws-project/common/proto/post_service"
 	requestGw "github.com/MihajloMarjanski/xws-project/common/proto/requests_service"
 	userGw "github.com/MihajloMarjanski/xws-project/common/proto/user_service"
@@ -14,6 +11,8 @@ import (
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
+	"log"
+	"net/http"
 )
 
 type Server struct {
@@ -51,10 +50,12 @@ func (server *Server) initHandlers() {
 }
 
 func (server *Server) Start() {
-	origins := handlers.AllowedOrigins([]string{"https://localhost:4300", "https://localhost:4300/**", "http://localhost:4300", "http://localhost:4300/**"})
+	origins := handlers.AllowedOrigins([]string{"https://localhost:4300", "https://localhost:4300/**", "https://localhost:4300", "https://localhost:4300/**"})
 	methods := handlers.AllowedMethods([]string{"GET", "POST", "PUT", "DELETE"})
 	headers := handlers.AllowedHeaders([]string{"Accept", "Accept-Language", "Content-Type", "Content-Language", "Origin", "Authorization", "Access-Control-Allow-Origin", "*"})
 
 	log.Println("gateway started")
-	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%s", server.config.Port), handlers.CORS(headers, methods, origins)(server.mux)))
+	//log.Fatal(http.ListenAndServe(fmt.Sprintf(":%s", server.config.Port), handlers.CORS(headers, methods, origins)(server.mux)))
+	log.Fatal(http.ListenAndServeTLS(fmt.Sprintf(":%s", server.config.Port), "startup/cert/server.crt",
+		"startup/cert/server.key", handlers.CORS(headers, methods, origins)(server.mux)))
 }

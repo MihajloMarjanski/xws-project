@@ -56,8 +56,32 @@ service RequestsService{
             delete: "/connection/{id1}/{id2}"
         };
     }
+    rpc GetNotifications(GetNotificationsRequest) returns (GetNotificationsResponse){
+        option (google.api.http) = {
+            get: "/notifications/{id}"
+        };
+    }
+    rpc SendNotification(SendNotificationRequest) returns (SendNotificationResponse){
+        option (google.api.http) = {
+            post: "/notifications/{senderId}/{receiverId}/{message}"
+            body: ""
+        };
+    }
 }
 
+message SendNotificationRequest{
+    int64 senderId = 1;
+    int64 receiverId = 2;
+    string message = 3;
+}
+message SendNotificationResponse{
+}
+message GetNotificationsRequest{
+    int64 id = 1;
+}
+message GetNotificationsResponse{
+    repeated Notification notifications = 1;
+}
 message DeleteConnectionRequest{
     int64 id1 = 1;
     int64 id2 = 2;
@@ -89,7 +113,7 @@ message GetAllByRecieverIdRequest{
 }
 
 message GetAllByRecieverIdResponse{
-    repeated Request requests = 1;
+    repeated UsernameWithRequestId users = 1;
 }
 
 message Request {
@@ -146,4 +170,14 @@ message User {
     string phone = 6;
     string date = 7;
     string biography = 8;
+}
+message Notification{
+    string text = 1;
+    int64 receiverId = 2;
+    string date = 3;
+}
+message UsernameWithRequestId {
+    int64 receiverId = 1;
+    int64 senderId = 2;
+    string username = 3;
 }

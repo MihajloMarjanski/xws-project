@@ -74,12 +74,10 @@ func (requestsHandler *RequestsHandler) CloseDB() error {
 func (handler *RequestsHandler) GetAllByRecieverId(ctx context.Context, request *pb.GetAllByRecieverIdRequest) (*pb.GetAllByRecieverIdResponse, error) {
 	id := request.ReceiverId
 	id = int64(GetUserID(ctx))
-	var requests []*pb.Request
-	for _, request := range handler.requestsService.GetAllByRecieverId(uint(id)) {
-		requests = append(requests, mapRequestToProto(request))
-	}
+	users := handler.requestsService.GetAllByRecieverId(uint(id))
+
 	response := &pb.GetAllByRecieverIdResponse{
-		Requests: requests,
+		Users: users,
 	}
 	return response, nil
 }
@@ -87,7 +85,7 @@ func (handler *RequestsHandler) GetAllByRecieverId(ctx context.Context, request 
 func (handler *RequestsHandler) AcceptRequest(ctx context.Context, request *pb.AcceptRequestRequest) (*pb.AcceptRequestResponse, error) {
 	senderID := request.SenderId
 	recieverID := request.ReceiverId
-	senderID = int64(GetUserID(ctx))
+	recieverID = int64(GetUserID(ctx))
 	handler.requestsService.AcceptRequest(uint(senderID), uint(recieverID))
 	response := &pb.AcceptRequestResponse{}
 	return response, nil
@@ -96,7 +94,7 @@ func (handler *RequestsHandler) AcceptRequest(ctx context.Context, request *pb.A
 func (handler *RequestsHandler) DeclineRequest(ctx context.Context, request *pb.DeclineRequestRequest) (*pb.DeclineRequestResponse, error) {
 	senderID := request.SenderId
 	recieverID := request.ReceiverId
-	senderID = int64(GetUserID(ctx))
+	recieverID = int64(GetUserID(ctx))
 	handler.requestsService.DeclineRequest(uint(senderID), uint(recieverID))
 	response := &pb.DeclineRequestResponse{}
 	return response, nil
@@ -154,5 +152,25 @@ func (handler *RequestsHandler) FindMessages(ctx context.Context, request *pb.Fi
 func (handler *RequestsHandler) DeleteConnection(ctx context.Context, request *pb.DeleteConnectionRequest) (*pb.DeleteConnectionResponse, error) {
 	handler.requestsService.DeleteConnection(request.Id1, request.Id2)
 	response := &pb.DeleteConnectionResponse{}
+	return response, nil
+}
+
+func (handler *RequestsHandler) GetNotifications(ctx context.Context, request *pb.GetNotificationsRequest) (*pb.GetNotificationsResponse, error) {
+	var notifications []*pb.Notification
+	for _, notification := range handler.requestsService.GetNotifications(request.Id) {
+		notifications = append(notifications, mapNotificationToProto(notification))
+	}
+	response := &pb.GetNotificationsResponse{
+		Notifications: notifications,
+	}
+	return response, nil
+}
+
+func (handler *RequestsHandler) SendNotification(ctx context.Context, request *pb.SendNotificationRequest) (*pb.SendNotificationResponse, error) {
+	senderID := request.SenderId
+	receiverID := request.ReceiverId
+	message := request.Message
+	handler.requestsService.SendNotification(uint(senderID), uint(receiverID), message)
+	response := &pb.SendNotificationResponse{}
 	return response, nil
 }

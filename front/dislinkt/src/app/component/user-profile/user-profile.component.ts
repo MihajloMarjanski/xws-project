@@ -67,6 +67,7 @@ export class UserProfileComponent implements OnInit {
         .subscribe(data => {
                 this.getUserByUsername()
                 this.newInterest.interest = ''
+                this._snackBar.open('Successfully added', 'Close', {duration: 3000});
               },
           error => this.errorMessage = <any>error);
   }
@@ -89,6 +90,7 @@ export class UserProfileComponent implements OnInit {
                this.newExperience.from = new Date(),
                this.newExperience.until = new Date(),
                this.newExperience.position = ''
+               this._snackBar.open('Successfully added', 'Close', {duration: 3000});
               },
           error => this.errorMessage = <any>error);
   }

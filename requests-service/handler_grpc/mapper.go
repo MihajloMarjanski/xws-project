@@ -32,3 +32,12 @@ func mapMessageToProto(message model.Message) *pb.Message {
 	}
 	return messagePb
 }
+
+func mapNotificationToProto(message model.Notification) *pb.Notification {
+	messagePb := &pb.Notification{
+		Text:       message.Text,
+		ReceiverId: int64(message.ReceiverId),
+		Date:       message.Date.Format("02-Jan-2006"),
+	}
+	return messagePb
+}
