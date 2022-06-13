@@ -1,7 +1,13 @@
 .rightChat {
-    margin-left: 300px;
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
+    margin-right: 10px;
 }
 
 .leftChat {
-    /* float: left; */
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    margin-left: 10px;
 }

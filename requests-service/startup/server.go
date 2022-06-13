@@ -41,7 +41,7 @@ func accessibleRoles() map[string][]string {
 		servicePath + "SendRequest":        {"ROLE_USER"},
 		servicePath + "SendMessage":        {"ROLE_USER"},
 		servicePath + "FindMessages":       {"ROLE_USER"},
-		servicePath + "FindConnections":    {"ROLE_USER"},
+		//servicePath + "FindConnections":    {"ROLE_USER"},
 		servicePath + "GetNotifications":   {"ROLE_USER"},
 	}
 }

@@ -111,5 +111,8 @@
       }
     }
   },
-  "defaultProject": "dislinkt"
+  "defaultProject": "dislinkt",
+  "cli": {
+    "analytics": false
+  }
 }

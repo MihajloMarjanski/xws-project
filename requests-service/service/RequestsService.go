@@ -31,7 +31,7 @@ func (s *RequestsService) CloseDB() error {
 func (s *RequestsService) GetAllByRecieverId(rid uint) []*pb.UsernameWithRequestId {
 	var users []*pb.UsernameWithRequestId
 
-	conn, err := grpc.Dial("localhost:8100", grpc.WithInsecure())
+	conn, err := grpc.Dial("user-service:8100", grpc.WithInsecure())
 	if err != nil {
 		panic(err)
 	}
@@ -71,7 +71,7 @@ func (s *RequestsService) SendMessage(senderID, receiverID uint, message string)
 }
 
 func (s *RequestsService) SendNotification(senderID, receiverID uint, message string) {
-	conn, err := grpc.Dial("localhost:8100", grpc.WithInsecure())
+	conn, err := grpc.Dial("user-service:8100", grpc.WithInsecure())
 	if err != nil {
 		panic(err)
 	}
@@ -93,7 +93,7 @@ func (s *RequestsService) FindConnections(id int64) []model.User {
 	ids1, ids2 := s.reqRepo.GetAllConnections(uint(id))
 	var res []model.User
 
-	conn, err := grpc.Dial("localhost:8100", grpc.WithInsecure())
+	conn, err := grpc.Dial("user-service:8100", grpc.WithInsecure())
 	if err != nil {
 		panic(err)
 	}
