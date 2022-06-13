@@ -1,15 +1,17 @@
 package service
 
 import (
+	"bytes"
 	"crypto/tls"
-	"crypto/x509"
+	"encoding/json"
+	"fmt"
 	pbReq "github.com/MihajloMarjanski/xws-project/common/proto/requests_service"
 	"golang.org/x/net/context"
 	"google.golang.org/grpc"
-	"io/ioutil"
 	"log"
 	"math/rand"
 	"net/http"
+	"os"
 	"strconv"
 	"time"
 	"user-service/model"
@@ -93,46 +95,27 @@ func (s *UserService) CloseDB() error {
 func (s *UserService) CreateUser(name string, email string, password string, username string, gender model.Gender, phonenumber string, dateofbirth time.Time, biography string) int {
 	hashedPassword, _ := bcrypt.GenerateFromPassword([]byte(password), 8)
 	apiKey, _ := bcrypt.GenerateFromPassword([]byte(GenerateRandomString(10)), 8)
-	//SendActivationMail(email, name, string(apiKey))
+	SendActivationMail(email, name, string(apiKey))
 	return s.userRepo.CreateUser(name, email, string(hashedPassword), username, gender, phonenumber, dateofbirth, biography, string(apiKey))
 }
 
 func SendActivationMail(email string, name string, key string) {
-	caCert, err := ioutil.ReadFile("../api-gateway/startup/cert/server.crt")
+	data := map[string]string{
+		"email":  email,
+		"name":   name,
+		"apiKey": key,
+	}
+	json_data, err := json.Marshal(data)
 	if err != nil {
 		log.Fatal(err)
 	}
-	caCertPool := x509.NewCertPool()
-	caCertPool.AppendCertsFromPEM(caCert)
 
-	client := &http.Client{
-		Transport: &http.Transport{
-			TLSClientConfig: &tls.Config{
-				RootCAs: caCertPool,
-			},
-		},
-	}
-
-	response1, err := client.Get("https://localhost:8600/email/activation/" + email + "/" + name + "/" + key)
+	http.DefaultTransport.(*http.Transport).TLSClientConfig = &tls.Config{InsecureSkipVerify: true}
+	_, err = http.Post("https://localhost:8600/email/activation", "application/json", bytes.NewBuffer(json_data))
 	if err != nil {
-		log.Println(err.Error())
-		panic(err)
+		fmt.Print(err.Error())
+		os.Exit(1)
 	}
-
-	//response1, err := http.Get("https://localhost:8600/email/activation/" + email + "/" + name + "/" + key)
-	//response1, err := http.Get("https://localhost:8600/email/activation/" + email + "/" + name + "/" + key)
-	//if err != nil {
-	//	fmt.Print(err.Error())
-	//	//log.Println(err.Error())
-	//	os.Exit(1)
-	//}
-
-	responseData, err := ioutil.ReadAll(response1.Body)
-	if err != nil {
-		log.Fatal(err)
-	}
-	log.Println("dobio: ", string(responseData))
-	log.Println("dobio pre: ", response1)
 }
 
 func (s *UserService) AddInterest(interest string, userId uint) int {

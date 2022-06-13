@@ -208,7 +208,6 @@ public class CompanyService {
     }
 
     public ResponseEntity<?> getApiKey(String username, String password) {
-
         RestTemplate restTemplate = new RestTemplate();
         return restTemplate.getForEntity("https://localhost:8000/user/apiKey/" + username + "/" + password, ApiKeyDto.class);
     }
