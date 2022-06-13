@@ -1,7 +1,8 @@
 package service
 
 import (
-	"fmt"
+	"crypto/tls"
+	"crypto/x509"
 	pbReq "github.com/MihajloMarjanski/xws-project/common/proto/requests_service"
 	"golang.org/x/net/context"
 	"google.golang.org/grpc"
@@ -9,7 +10,6 @@ import (
 	"log"
 	"math/rand"
 	"net/http"
-	"os"
 	"strconv"
 	"time"
 	"user-service/model"
@@ -93,16 +93,39 @@ func (s *UserService) CloseDB() error {
 func (s *UserService) CreateUser(name string, email string, password string, username string, gender model.Gender, phonenumber string, dateofbirth time.Time, biography string) int {
 	hashedPassword, _ := bcrypt.GenerateFromPassword([]byte(password), 8)
 	apiKey, _ := bcrypt.GenerateFromPassword([]byte(GenerateRandomString(10)), 8)
-	//SendActivationMail(email, name, string(apiKey))
+	SendActivationMail(email, name, string(apiKey))
 	return s.userRepo.CreateUser(name, email, string(hashedPassword), username, gender, phonenumber, dateofbirth, biography, string(apiKey))
 }
 
 func SendActivationMail(email string, name string, key string) {
-	response1, err := http.Get("https://localhost:8600/email/activation/" + email + "/" + name + "/" + key)
+	caCert, err := ioutil.ReadFile("../api-gateway/startup/cert/server.crt")
 	if err != nil {
-		fmt.Print(err.Error())
-		os.Exit(1)
+		log.Fatal(err)
 	}
+	caCertPool := x509.NewCertPool()
+	caCertPool.AppendCertsFromPEM(caCert)
+
+	client := &http.Client{
+		Transport: &http.Transport{
+			TLSClientConfig: &tls.Config{
+				RootCAs: caCertPool,
+			},
+		},
+	}
+
+	response1, err := client.Get("https://localhost:8600/email/activation/" + email + "/" + name + "/" + key)
+	if err != nil {
+		log.Println(err.Error())
+		panic(err)
+	}
+
+	//response1, err := http.Get("https://localhost:8600/email/activation/" + email + "/" + name + "/" + key)
+	//response1, err := http.Get("https://localhost:8600/email/activation/" + email + "/" + name + "/" + key)
+	//if err != nil {
+	//	fmt.Print(err.Error())
+	//	//log.Println(err.Error())
+	//	os.Exit(1)
+	//}
 
 	responseData, err := ioutil.ReadAll(response1.Body)
 	if err != nil {
