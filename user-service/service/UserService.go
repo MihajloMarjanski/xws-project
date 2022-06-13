@@ -93,7 +93,7 @@ func (s *UserService) CloseDB() error {
 func (s *UserService) CreateUser(name string, email string, password string, username string, gender model.Gender, phonenumber string, dateofbirth time.Time, biography string) int {
 	hashedPassword, _ := bcrypt.GenerateFromPassword([]byte(password), 8)
 	apiKey, _ := bcrypt.GenerateFromPassword([]byte(GenerateRandomString(10)), 8)
-	SendActivationMail(email, name, string(apiKey))
+	//SendActivationMail(email, name, string(apiKey))
 	return s.userRepo.CreateUser(name, email, string(hashedPassword), username, gender, phonenumber, dateofbirth, biography, string(apiKey))
 }
 

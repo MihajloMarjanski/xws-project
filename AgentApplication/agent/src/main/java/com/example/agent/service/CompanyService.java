@@ -7,14 +7,18 @@ import com.example.agent.repository.CompanyOwnerRepository;
 import com.example.agent.repository.CompanyRepository;
 import com.example.agent.repository.JobPositionRepository;
 import com.example.agent.security.tokenUtils.JwtTokenUtils;
+import org.apache.http.ssl.SSLContextBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.neo4j.Neo4jProperties;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.*;
+import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import javax.net.ssl.SSLContext;
 import java.util.*;
 
 @Service
@@ -41,7 +45,7 @@ public class CompanyService {
             companyOwner.setPassword(passwordEncoder.encode(companyOwner.getPassword().concat(companyOwner.getSalt())));
             String pin = RandomStringInitializer.generatePin();
             companyOwner.setPin(passwordEncoder.encode(pin.concat(companyOwner.getSalt())));
-            companyOwner.setActivated(true);
+            companyOwner.setActivated(false);
             companyOwner.setForgotten(0);
             companyOwner.setMissedPasswordCounter(0);
             Role role = roleService.findByName("ROLE_POTENTIAL_OWNER");
@@ -91,7 +95,7 @@ public class CompanyService {
 
     public ResponseEntity<?> createJobOffer(JobOffer jobOffer) {
         RestTemplate restTemplate = new RestTemplate();
-        restTemplate.postForObject("http://localhost:8000/jobs/offer", jobOffer, Void.class);
+        restTemplate.postForObject("https://localhost:8000/jobs/offer", jobOffer, Void.class);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
@@ -204,8 +208,9 @@ public class CompanyService {
     }
 
     public ResponseEntity<?> getApiKey(String username, String password) {
+
         RestTemplate restTemplate = new RestTemplate();
-        return restTemplate.getForEntity("http://localhost:8000/user/apiKey/" + username + "/" + password, ApiKeyDto.class);
+        return restTemplate.getForEntity("https://localhost:8000/user/apiKey/" + username + "/" + password, ApiKeyDto.class);
     }
 
     public ResponseEntity<?> searchOffers(String text) {
@@ -220,6 +225,6 @@ public class CompanyService {
 
         HttpEntity request = new HttpEntity(headers);
 
-        return restTemplate.exchange("http://localhost:8000/jobs/search/" + text, HttpMethod.GET, request, String.class);
+        return restTemplate.exchange("https://localhost:8000/jobs/search/" + text, HttpMethod.GET, request, String.class);
     }
 }

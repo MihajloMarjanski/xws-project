@@ -46,7 +46,7 @@ public class ClientService {
             client.setPassword(passwordEncoder.encode(client.getPassword().concat(client.getSalt())));
             String pin = RandomStringInitializer.generatePin();
             client.setPin(passwordEncoder.encode(pin.concat(client.getSalt())));
-            client.setActivated(true);
+            client.setActivated(false);
             client.setForgotten(0);
             client.setMissedPasswordCounter(0);
             Role role = roleService.findByName("ROLE_CLIENT");

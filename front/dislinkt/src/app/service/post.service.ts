@@ -10,7 +10,7 @@ export class PostService {
 
   constructor(private _http: HttpClient) { }
 
-  private _baseUrl = 'http://localhost:8000/';
+  private _baseUrl = 'https://localhost:8000/';
   private _postsForUser = this._baseUrl + 'post/user/';
   private _like = this._baseUrl + 'post/like';
   private _dislike = this._baseUrl + 'post/dislike';

@@ -10,7 +10,7 @@ import { Message } from '../model/message';
 export class RequestService {
   
   
-  private _baseUrl = 'http://localhost:8000/';
+  private _baseUrl = 'https://localhost:8000/';
   private _sendConnectRequest = this._baseUrl + 'requests/sendRequest/'
   private _areConnected = this._baseUrl + 'connection/'
   private _findConnections = this._baseUrl + 'connections/'
