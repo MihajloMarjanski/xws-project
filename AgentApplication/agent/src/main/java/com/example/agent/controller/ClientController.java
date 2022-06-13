@@ -38,7 +38,7 @@ public class ClientController {
         return clientService.create(client);
     }
 
-    @PreAuthorize("hasRole('CLIENT')")
+    @PreAuthorize("hasAuthority('updateClient')")
     @PostMapping(path = "/update")
     public ResponseEntity<?> updateClient(@RequestBody Client client) {
         return clientService.updateClient(client);
@@ -70,7 +70,7 @@ public class ClientController {
         return new ResponseEntity<String>(HttpStatus.BAD_REQUEST);
     }
 
-    @PreAuthorize("hasRole('CLIENT')")
+    @PreAuthorize("hasAuthority('clientByUsername')")
     @GetMapping(path = "/username/{username}")
     public ResponseEntity<?> clientByUsername(@PathVariable String username) {
         return clientService.getByUsername(username);

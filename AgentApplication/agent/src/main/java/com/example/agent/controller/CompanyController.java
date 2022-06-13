@@ -40,37 +40,37 @@ public class CompanyController {
         return companyService.createCompanyOwner(companyOwner);
     }
 
-    @PreAuthorize("hasAnyRole('COMPANY_OWNER', 'POTENTIAL_OWNER')")
+    @PreAuthorize("hasAuthority('updateCompanyOwner')")
     @PostMapping(path = "/owner/update")
     public ResponseEntity<?> updateCompanyOwner(@RequestBody OwnerWithCompany companyOwner) {
         return companyService.updateCompanyOwner(companyOwner);
     }
 
-    @PreAuthorize("hasRole('POTENTIAL_OWNER')")
+    @PreAuthorize("hasAuthority('createCompany')")
     @PostMapping(path = "/create/{ownerUsername}")
     public ResponseEntity<?> createCompany(@RequestBody Company company, @PathVariable String ownerUsername) {
         return companyService.sendCompanyRegistrationRequest(company, ownerUsername);
     }
 
-    @PreAuthorize("hasRole('COMPANY_OWNER')")
+    @PreAuthorize("hasAuthority('getOwner')")
     @GetMapping(path = "/owner/{id}")
     public ResponseEntity<?> getOwner(@PathVariable Integer id) {
         return companyService.getOwner(id);
     }
 
-    @PreAuthorize("hasRole('CLIENT')")
+    @PreAuthorize("hasAuthority('createComment')")
     @PostMapping(path = "/comments/create/{companyId}")
     public ResponseEntity<?> createComment(@RequestBody Comment comment, @PathVariable Integer companyId) {
         return clientService.createComment(comment, companyId);
     }
 
-    @PreAuthorize("hasRole('CLIENT')")
+    @PreAuthorize("hasAuthority('updateSalary')")
     @PostMapping(path = "/jobs/salary/update")
     public ResponseEntity<?> updateSalary(@RequestBody JobPosition jobSalary) {
         return clientService.updateSalary(jobSalary);
     }
 
-    @PreAuthorize("hasRole('CLIENT')")
+    @PreAuthorize("hasAuthority('addInformation')")
     @PostMapping(path = "/jobs/interview/{jobId}")
     public ResponseEntity<?> addInformation(@RequestBody InterviewInformation interviewInformation, @PathVariable Integer jobId) {
         return clientService.addInterviewInformation(interviewInformation, jobId);
@@ -81,7 +81,7 @@ public class CompanyController {
         return companyService.getAllJobs(companyId);
     }
 
-    @PreAuthorize("hasRole('COMPANY_OWNER')")
+    @PreAuthorize("hasAuthority('createJobOffer')")
     @PostMapping(path = "/jobs/offer")
     public ResponseEntity<?> createJobOffer(@RequestBody JobOffer jobOffer) {
         return companyService.createJobOffer(jobOffer);
@@ -113,7 +113,7 @@ public class CompanyController {
         return companyService.getAllApproved();
     }
 
-    @PreAuthorize("hasAnyRole('COMPANY_OWNER', 'POTENTIAL_OWNER')")
+    @PreAuthorize("hasAuthority('ownerByUsername')")
     @GetMapping(path = "/owner/username/{username}")
     public ResponseEntity<?> ownerByUsername(@PathVariable String username) {
         return companyService.getOwnerByUsername(username);
@@ -124,7 +124,7 @@ public class CompanyController {
         return companyService.getByOwner(username);
     }
 
-    @PreAuthorize("hasRole('COMPANY_OWNER')")
+    @PreAuthorize("hasAuthority('apiKey')")
     @GetMapping(path = "/owner/apiKey/{username}/{password}")
     public ResponseEntity<?> apiKey(@PathVariable String username, @PathVariable String password) {
         return companyService.getApiKey(username, password);

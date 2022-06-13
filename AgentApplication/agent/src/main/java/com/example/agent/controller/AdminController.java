@@ -21,7 +21,7 @@ public class AdminController {
     private AdminService adminService;
 
 
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAuthority('approveCompany')")
     @PutMapping(path = "/approve/company/{id}")
     public ResponseEntity<?> approveCompany(@PathVariable Integer id) {
         return adminService.approveCompany(id);
@@ -33,7 +33,7 @@ public class AdminController {
         return adminService.getByUsername(username);
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAuthority('updateAdmin')")
     @PostMapping(path = "/update")
     public ResponseEntity<?> updateAdmin(@RequestBody Admin client) {
         return adminService.updateAdmin(client);
