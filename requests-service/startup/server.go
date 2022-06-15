@@ -35,14 +35,14 @@ func (server *Server) Start() {
 func accessibleRoles() map[string][]string {
 	const servicePath = "/requests.RequestsService/"
 	return map[string][]string{
-		servicePath + "GetAllByRecieverId": {"ROLE_USER"},
-		servicePath + "AcceptRequest":      {"ROLE_USER"},
-		servicePath + "DeclineRequest":     {"ROLE_USER"},
-		servicePath + "SendRequest":        {"ROLE_USER"},
-		servicePath + "SendMessage":        {"ROLE_USER"},
-		servicePath + "FindMessages":       {"ROLE_USER"},
+		servicePath + "GetAllByRecieverId": {"GetAllByRecieverId"},
+		servicePath + "AcceptRequest":      {"AcceptRequest"},
+		servicePath + "DeclineRequest":     {"DeclineRequest"},
+		servicePath + "SendRequest":        {"SendRequest"},
+		servicePath + "SendMessage":        {"SendMessage"},
+		servicePath + "FindMessages":       {"FindMessages"},
 		//servicePath + "FindConnections":    {"ROLE_USER"},
-		servicePath + "GetNotifications":   {"ROLE_USER"},
+		servicePath + "GetNotifications": {"ROLE_USER"},
 	}
 }
 

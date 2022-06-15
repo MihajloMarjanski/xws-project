@@ -27,9 +27,10 @@ type Credentials struct {
 }
 
 type Claims struct {
-	Username string `json:"username"`
-	Id       string `json:"id"`
-	Role     string `json:"role"`
+	Username    string   `json:"username"`
+	Id          string   `json:"id"`
+	Role        string   `json:"role"`
+	Permissions []string `json:"permissions"`
 	jwt.StandardClaims
 }
 
@@ -159,10 +160,15 @@ func (s *UserService) Login(username string, password string) (string, bool) {
 	}
 	expirationTime := time.Now().Add(60 * time.Minute)
 
+	permissions := []string{"GetAllByRecieverId", "AcceptRequest", "DeclineRequest", "SendRequest", "SendMessage",
+		"FindMessages", "GetNotifications", "UpdateUser", "AddExperience", "RemoveExperience", "AddInterest", "RemoveInterest",
+		"BlockUser", "GetUserByUsername"}
+
 	claims := &Claims{
-		Username: username,
-		Id:       id,
-		Role:     "ROLE_USER",
+		Username:    username,
+		Id:          id,
+		Role:        "ROLE_USER",
+		Permissions: permissions,
 		StandardClaims: jwt.StandardClaims{
 			ExpiresAt: expirationTime.Unix(),
 		},
@@ -204,7 +210,8 @@ func (s *UserService) BlockUser(userId int, blockedUserId int) {
 }
 
 func DeleteConnection(userId, id int) {
-	conn, err := grpc.Dial("request-service:8200", grpc.WithInsecure())
+	//conn, err := grpc.Dial("localhost:8200", grpc.WithInsecure())
+	conn, err := grpc.Dial("localhost:8200", grpc.WithInsecure())
 	if err != nil {
 		panic(err)
 	}
