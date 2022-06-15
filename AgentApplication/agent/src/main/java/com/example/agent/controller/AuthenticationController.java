@@ -8,6 +8,7 @@ import com.example.agent.security.tokenUtils.JwtTokenUtils;
 import com.example.agent.service.AdminService;
 import com.example.agent.service.ClientService;
 import com.example.agent.service.CompanyService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -18,6 +19,7 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -28,6 +30,7 @@ import java.util.Set;
 
 
 //Kontroler zaduzen za autentifikaciju korisnika
+@Slf4j
 @RestController
 @RequestMapping(value = "/auth", produces = MediaType.APPLICATION_JSON_VALUE)
 public class AuthenticationController {
@@ -51,9 +54,10 @@ public class AuthenticationController {
     // Prvi endpoint koji pogadja korisnik kada se loguje.
     // Tada zna samo svoje korisnicko ime i lozinku i to prosledjuje na backend.
     @PostMapping("/login")
-    public String createAuthenticationToken(@RequestBody UserCredentials authenticationRequest, HttpServletResponse response) {
-        if(isUserBlocked(authenticationRequest.getUsername()))
-            return "Your account is currently blocked. Try next day again.";
+    public String createAuthenticationToken(@RequestBody UserCredentials authenticationRequest, HttpServletRequest request) {
+        if(isUserBlocked(authenticationRequest.getUsername())){
+            log.warn("Your account is currently blocked. Try next day again.");
+            return "Your account is currently blocked. Try next day again.";}
         String salt = findSaltForUsername(authenticationRequest.getUsername());
         Authentication authentication = null;
         try {
@@ -69,6 +73,7 @@ public class AuthenticationController {
                 SecurityContextHolder.getContext().setAuthentication(null);
             else {
                 increaseMissedPasswordCounter(authenticationRequest.getUsername());
+                log.warn("Ip: {}, username: {}, Invalid username, password or pin.",request.getRemoteAddr(), authenticationRequest.getUsername() );
                 return "Invalid username, password or pin.";
             }
         }

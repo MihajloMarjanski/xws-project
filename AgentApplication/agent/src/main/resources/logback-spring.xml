@@ -7,7 +7,7 @@
               class="ch.qos.logback.core.ConsoleAppender">
         <layout class="ch.qos.logback.classic.PatternLayout">
             <Pattern>
-                %black(%d{ISO8601}) %highlight(%-5level) [%blue(%t)] %yellow(%C{1.}): %msg%n%throwable
+                %black(%date{ISO8601}) %highlight(%-5level) [%blue(%thread)] %yellow(%C{1.}): %message%n%throwable
             </Pattern>
         </layout>
     </appender>
@@ -17,7 +17,7 @@
         <file>${LOGS}/spring-boot-logger.log</file>
         <encoder
                 class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
-            <Pattern>%d %p %C{1.} [%t] %m%n</Pattern>
+            <Pattern>%date %p %C{1.} [%thread] %message%n</Pattern>
         </encoder>
 
         <rollingPolicy
@@ -27,13 +27,13 @@
             </fileNamePattern>
             <timeBasedFileNamingAndTriggeringPolicy
                     class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
-                <maxFileSize>1MB</maxFileSize>
+                <maxFileSize>10MB</maxFileSize>
             </timeBasedFileNamingAndTriggeringPolicy>
         </rollingPolicy>
     </appender>
 
     <!-- LOG everything at INFO level -->
-    <root level="info">
+    <root level="error">
         <appender-ref ref="RollingFile" />
         <appender-ref ref="Console" />
     </root>

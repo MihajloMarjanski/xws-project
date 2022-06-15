@@ -1,11 +1,13 @@
 package com.example.agent.controller;
 
-import com.example.agent.model.*;
+import com.example.agent.model.Client;
+import com.example.agent.model.ConfirmationToken;
 import com.example.agent.model.dto.UserDto;
-import com.example.agent.repository.CompanyOwnerRepository;
 import com.example.agent.repository.ConfirmationTokenRepository;
 import com.example.agent.service.ClientService;
 import com.example.agent.service.CompanyService;
+import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -16,9 +18,9 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.WebRequest;
 
 import javax.validation.Valid;
-import java.time.Period;
 import java.util.Date;
 
+@Slf4j
 @RestController
 @RequestMapping(value = "/clients")
 public class ClientController {
