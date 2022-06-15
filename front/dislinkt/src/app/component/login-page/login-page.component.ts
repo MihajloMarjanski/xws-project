@@ -48,7 +48,7 @@ export class LoginPageComponent implements OnInit {
       },
       error => {
         console.log('Error!', error)
-        this._snackBar.open('Invalid username or password', 'Close', {duration: 3000});
+        this._snackBar.open(error.error.message, 'Close', {duration: 3000});
       }
     )
   }

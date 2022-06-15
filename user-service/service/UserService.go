@@ -131,9 +131,9 @@ func (s *UserService) AddExperience(company string, position string, from time.T
 func (s *UserService) UpdateUser(id uint, name string, email string, password string, username string, gender model.Gender, phonenumber string, dateofbirth time.Time, biography string, isPrivate bool) int {
 	if password != s.GetByID(int(id)).Password {
 		hashedPassword, _ := bcrypt.GenerateFromPassword([]byte(password), 8)
-		return s.userRepo.UpdateUser(id, name, email, string(hashedPassword), username, gender, phonenumber, dateofbirth, biography, isPrivate)
+		return s.userRepo.UpdateUser(id, name, email, string(hashedPassword), username, gender, phonenumber, dateofbirth, biography, isPrivate, true)
 	}
-	return s.userRepo.UpdateUser(id, name, email, password, username, gender, phonenumber, dateofbirth, biography, isPrivate)
+	return s.userRepo.UpdateUser(id, name, email, password, username, gender, phonenumber, dateofbirth, biography, isPrivate, false)
 }
 
 func (s *UserService) Login(username string, password string) (string, bool) {
@@ -154,7 +154,8 @@ func (s *UserService) Login(username string, password string) (string, bool) {
 	id := strconv.FormatUint(uint64(user.ID), 10)
 	err := bcrypt.CompareHashAndPassword([]byte(expectedPassword), []byte(password))
 	if err != nil {
-		return "", false
+		s.IncreaseMissedPasswordCounter(user)
+		return "Wrong password", false
 	}
 	expirationTime := time.Now().Add(60 * time.Minute)
 
@@ -180,9 +181,9 @@ func (s *UserService) IsBlocked(user model.User) bool {
 	if user.BlockedDate.IsZero() {
 		return false
 	}
-	if user.IsBlocked && time.Now().Before(user.BlockedDate) {
+	if user.IsBlocked && time.Now().Before(user.BlockedDate.AddDate(0, 0, 1)) {
 		return true
-	} else if user.IsBlocked && time.Now().After(user.BlockedDate) {
+	} else if user.IsBlocked && time.Now().After(user.BlockedDate.AddDate(0, 0, 1)) {
 		user.IsBlocked = false
 		user.MissedPasswordCounter = 0
 		s.userRepo.Save(user)
@@ -263,6 +264,15 @@ func (s *UserService) ForgotPassword(username string) int {
 
 	SendActivationMail(user.Email, newPass, "")
 	return 1
+}
+
+func (s *UserService) IncreaseMissedPasswordCounter(user model.User) {
+	user.MissedPasswordCounter++
+	if user.MissedPasswordCounter > 5 {
+		user.IsBlocked = true
+		user.BlockedDate = time.Now()
+	}
+	s.userRepo.Save(user)
 }
 
 const letterBytes = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"

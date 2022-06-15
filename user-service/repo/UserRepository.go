@@ -93,8 +93,11 @@ func (repo *UserRepository) CreateUser(name string, email string, password strin
 	return int(user.ID)
 }
 
-func (repo *UserRepository) UpdateUser(id uint, name string, email string, password string, username string, gender model.Gender, phonenumber string, dateofbirth time.Time, biography string, isPrivate bool) int {
+func (repo *UserRepository) UpdateUser(id uint, name string, email string, password string, username string, gender model.Gender, phonenumber string, dateofbirth time.Time, biography string, isPrivate, changedPass bool) int {
 	user := repo.GetByID(int(id))
+	if changedPass {
+		user.Forgotten = 0
+	}
 	user.Name = name
 	user.Password = password
 	user.Gender = gender
