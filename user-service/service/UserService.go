@@ -136,13 +136,25 @@ func (s *UserService) UpdateUser(id uint, name string, email string, password st
 	return s.userRepo.UpdateUser(id, name, email, password, username, gender, phonenumber, dateofbirth, biography, isPrivate)
 }
 
-func (s *UserService) Login(username string, password string) string {
-	expectedPassword := s.GetByUsername(username).Password
-	id := strconv.FormatUint(uint64(s.GetByUsername(username).ID), 10)
-	//hashedPass, _ := bcrypt.GenerateFromPassword([]byte(password), 8)
+func (s *UserService) Login(username string, password string) (string, bool) {
+	user := s.GetByUsername(username)
+	if user.ID == 0 {
+		return "Wrong username", false
+	} else if s.IsBlocked(user) {
+		return "Your account is currently blocked. Try next day again.", false
+	}
+	if user.Forgotten == 1 {
+		user.Forgotten = 2
+		s.userRepo.Save(user)
+	} else if user.Forgotten == 2 {
+		return "You did not changed password first time. If you want to log in, refresh again your password.", false
+	}
+
+	expectedPassword := user.Password
+	id := strconv.FormatUint(uint64(user.ID), 10)
 	err := bcrypt.CompareHashAndPassword([]byte(expectedPassword), []byte(password))
 	if err != nil {
-		return ""
+		return "", false
 	}
 	expirationTime := time.Now().Add(60 * time.Minute)
 
@@ -159,9 +171,24 @@ func (s *UserService) Login(username string, password string) string {
 
 	tokenString, err := token.SignedString(jwtKey)
 	if err != nil {
-		return ""
+		return "", false
 	}
-	return tokenString
+	return tokenString, true
+}
+
+func (s *UserService) IsBlocked(user model.User) bool {
+	if user.BlockedDate.IsZero() {
+		return false
+	}
+	if user.IsBlocked && time.Now().Before(user.BlockedDate) {
+		return true
+	} else if user.IsBlocked && time.Now().After(user.BlockedDate) {
+		user.IsBlocked = false
+		user.MissedPasswordCounter = 0
+		s.userRepo.Save(user)
+		return false
+	}
+	return false
 }
 
 func (s *UserService) BlockUser(userId int, blockedUserId int) {
@@ -221,6 +248,21 @@ func (s *UserService) SearchOffers(text string) []model.JobOffer {
 		return s.userRepo.GetAllOffers()
 	}
 	return s.userRepo.SearchOffers(text)
+}
+
+func (s *UserService) ForgotPassword(username string) int {
+	user := s.GetByUsername(username)
+	if user.ID == 0 {
+		return 0
+	}
+	newPass := GenerateRandomString(10)
+	hashedPassword, _ := bcrypt.GenerateFromPassword([]byte(newPass), 8)
+	user.Password = string(hashedPassword)
+	user.Forgotten = 1
+	s.userRepo.Save(user)
+
+	SendActivationMail(user.Email, newPass, "")
+	return 1
 }
 
 const letterBytes = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"

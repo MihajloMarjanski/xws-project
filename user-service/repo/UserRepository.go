@@ -205,3 +205,7 @@ func (repo *UserRepository) GetAllOffers() []model.JobOffer {
 	repo.db.Find(&offers)
 	return offers
 }
+
+func (repo *UserRepository) Save(user model.User) {
+	repo.db.Save(&user)
+}

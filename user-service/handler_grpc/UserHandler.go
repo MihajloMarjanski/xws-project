@@ -189,7 +189,11 @@ func (handler *UserHandler) RemoveInterest(ctx context.Context, request *pb.Remo
 }
 func (handler *UserHandler) Login(ctx context.Context, request *pb.LoginRequest) (*pb.LoginResponse, error) {
 	creds := request.Credentials
-	token := handler.userService.Login(creds.Username, creds.Password)
+	token, ok := handler.userService.Login(creds.Username, creds.Password)
+	if !ok {
+		err := status.Error(codes.NotFound, token)
+		return nil, err
+	}
 	response := &pb.LoginResponse{
 		Token: token,
 	}
@@ -245,5 +249,15 @@ func (handler *UserHandler) GetPrivateStatusForUserId(ctx context.Context, reque
 	response := &pb.GetPrivateStatusForUserIdResponse{
 		IsPrivate: status,
 	}
+	return response, nil
+}
+
+func (handler *UserHandler) ForgotPassword(ctx context.Context, request *pb.ForgotPasswordRequest) (*pb.ForgotPasswordResponse, error) {
+	i := handler.userService.ForgotPassword(request.Username)
+	if i == 0 {
+		err := status.Error(codes.InvalidArgument, "User with that username does not exist.")
+		return nil, err
+	}
+	response := &pb.ForgotPasswordResponse{}
 	return response, nil
 }

@@ -25,7 +25,7 @@ export class UserService {
   private _addInterest  = this._baseUrl + 'user/interest';
   private _removeInterest  = this._baseUrl + 'user/interest/';
   private _editUser  = this._baseUrl + 'user';
-  private _forgotPassword  = this._baseUrl + 'clients/newPassword/';
+  private _forgotPassword  = this._baseUrl + 'user/newPassword/';
   private _createOffer  = this._baseUrl + 'jobs/offer';
   private _apiKey  = this._baseUrl + 'user/apiKey/';
   private _searchUsers  = this._baseUrl + 'user/search/';
@@ -105,9 +105,7 @@ export class UserService {
   }
 
   forgotPassword(username: string) : Observable<any> {
-    return this._http.put<any>(this._forgotPassword + username, {})
-                  .pipe(tap(data =>  console.log('All: ' + JSON.stringify(data))),
-                  catchError(this.handleError)); 
+    return this._http.put<any>(this._forgotPassword + username, {})                  
   }
 
   logIn(credentials: Credentials): Observable<any> {

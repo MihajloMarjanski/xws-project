@@ -100,8 +100,19 @@ service UserService{
             get: "/jobs/search/{text}"
           };
         }
+        rpc ForgotPassword(ForgotPasswordRequest) returns(ForgotPasswordResponse) {
+          option (google.api.http) = {
+            put: "/user/newPassword/{username}"
+            body: ""
+          };
+        }
 }
 
+message ForgotPasswordRequest {
+  string username = 1;
+}
+message ForgotPasswordResponse {
+}
 message SearchOffersRequest {
   string text = 1;
 }
@@ -252,6 +263,7 @@ message Interest {
 message Credentials {
   string username = 1;
   string password = 2;
+  string pin = 3;
 }
 
 message JobOffer {
