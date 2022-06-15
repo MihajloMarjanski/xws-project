@@ -226,4 +226,8 @@ public class CompanyService {
 
         return restTemplate.exchange("https://localhost:8000/jobs/search/" + text, HttpMethod.GET, request, String.class);
     }
+
+    public ResponseEntity<?> sendPinFor2Auth(String username) {
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
 }

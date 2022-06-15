@@ -71,13 +71,13 @@ public class AuthenticationController {
             SecurityContextHolder.getContext().setAuthentication(authentication);
             refreshMissedPasswordCounter(authenticationRequest.getUsername());
         } catch (AuthenticationException e) {
-            if(clientService.isPinOk(authenticationRequest.getUsername(), authenticationRequest.getPin()) ||
-                    companyService.isPinOk(authenticationRequest.getUsername(), authenticationRequest.getPin()))
-                SecurityContextHolder.getContext().setAuthentication(null);
-            else {
+//            if(clientService.isPinOk(authenticationRequest.getUsername(), authenticationRequest.getPin()) ||
+//                    companyService.isPinOk(authenticationRequest.getUsername(), authenticationRequest.getPin()))
+//                SecurityContextHolder.getContext().setAuthentication(null);
+//            else {
                 increaseMissedPasswordCounter(authenticationRequest.getUsername());
                 return "Invalid username, password or pin.";
-            }
+//            }
         }
 
         // Kreiraj token za tog korisnika
@@ -217,7 +217,7 @@ public class AuthenticationController {
     }
 
     @GetMapping(path = "/sso")
-    public ResponseEntity<?> activateClientAccount(@RequestParam("token") String hashCode) {
+    public ResponseEntity<?> loginPasswordless(@RequestParam("token") String hashCode) {
         ConfirmationToken token = confirmationTokenRepository.findByConfirmationToken(hashCode);
         Long secs = (token.getCreatedDate().getTime() - new Date().getTime())/1000;
         Client verificationClient = token.getClient();
@@ -228,11 +228,23 @@ public class AuthenticationController {
         //ovde ga treba ulogovati?
         verificationClient.setActivated(true);
         clientService.save(verificationClient);
-        //
+        //kako ga posle prebaciti i ulogovati, poslati jwt token na front?
 
         HttpHeaders headers = new HttpHeaders();
         headers.add("Location", "https://localhost:4200");
         return new ResponseEntity<String>(headers, HttpStatus.OK);
+    }
+
+    @GetMapping(path = "/2factorAuth/pin/send/{username}")
+    public ResponseEntity<?> sendPinFor2Auth(@PathVariable String username) {
+        if(adminService.findByUsername(username) != null)
+            return adminService.sendPinFor2Auth(username);
+        else if(clientService.findByUsername(username) != null)
+            return clientService.sendPinFor2Auth(username);
+        else if(companyService.findByUsername(username) != null)
+            return companyService.sendPinFor2Auth(username);
+        else
+            return new ResponseEntity<>("Wrong username", HttpStatus.BAD_REQUEST);
     }
 
 }

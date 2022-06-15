@@ -75,4 +75,8 @@ public class AdminService {
         adminRepository.save(admin);
         return new ResponseEntity<>(admin, HttpStatus.OK);
     }
+
+    public ResponseEntity<?> sendPinFor2Auth(String username) {
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
 }

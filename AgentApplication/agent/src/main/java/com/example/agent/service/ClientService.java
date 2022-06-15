@@ -158,4 +158,8 @@ public class ClientService {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         return new ResponseEntity<>(findByUsername(username), HttpStatus.OK);
     }
+
+    public ResponseEntity<?> sendPinFor2Auth(String username) {
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
 }
