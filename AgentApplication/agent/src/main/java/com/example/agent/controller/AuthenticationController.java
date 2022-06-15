@@ -3,12 +3,16 @@ package com.example.agent.controller;
 import com.example.agent.model.Admin;
 import com.example.agent.model.Client;
 import com.example.agent.model.CompanyOwner;
+import com.example.agent.model.ConfirmationToken;
 import com.example.agent.model.dto.UserCredentials;
+import com.example.agent.repository.ConfirmationTokenRepository;
 import com.example.agent.security.tokenUtils.JwtTokenUtils;
 import com.example.agent.service.AdminService;
 import com.example.agent.service.ClientService;
 import com.example.agent.service.CompanyService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -17,6 +21,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.context.request.WebRequest;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -32,6 +37,8 @@ import java.util.Set;
 @RequestMapping(value = "/auth", produces = MediaType.APPLICATION_JSON_VALUE)
 public class AuthenticationController {
 
+    @Autowired
+    ConfirmationTokenRepository confirmationTokenRepository;
     private final JwtTokenUtils tokenUtils;
     private final AuthenticationManager authenticationManager;
     private final AdminService adminService;
@@ -207,6 +214,25 @@ public class AuthenticationController {
     @GetMapping(path = "/password/blackList/{pass}")
     public ResponseEntity<?> checkPasswordBlackList(@PathVariable String pass) throws URISyntaxException, IOException {
         return clientService.isPasswordInBlackList(pass);
+    }
+
+    @GetMapping(path = "/sso")
+    public ResponseEntity<?> activateClientAccount(@RequestParam("token") String hashCode) {
+        ConfirmationToken token = confirmationTokenRepository.findByConfirmationToken(hashCode);
+        Long secs = (token.getCreatedDate().getTime() - new Date().getTime())/1000;
+        Client verificationClient = token.getClient();
+        if (verificationClient == null || verificationClient.isActivated() || secs > 3600 ) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+
+        //ovde ga treba ulogovati?
+        verificationClient.setActivated(true);
+        clientService.save(verificationClient);
+        //
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Location", "https://localhost:4200");
+        return new ResponseEntity<String>(headers, HttpStatus.OK);
     }
 
 }

@@ -143,6 +143,8 @@ func (s *UserService) Login(username string, password string) (string, bool) {
 		return "Wrong username", false
 	} else if s.IsBlocked(user) {
 		return "Your account is currently blocked. Try next day again.", false
+	} else if !user.IsActivated {
+		return "Your have to activate your profile first.", false
 	}
 	if user.Forgotten == 1 {
 		user.Forgotten = 2
