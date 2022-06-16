@@ -1,10 +1,11 @@
 package repo
 
 import (
-	"golang.org/x/net/context"
-	"google.golang.org/grpc"
 	"requests-service/model"
 	"time"
+
+	"golang.org/x/net/context"
+	"google.golang.org/grpc"
 
 	pb "github.com/MihajloMarjanski/xws-project/common/proto/user_service"
 	"gorm.io/driver/postgres"
@@ -23,8 +24,8 @@ func New() (*RequestsRepository, error) {
 
 	repo := &RequestsRepository{}
 
-	//dsn := "host=requestdb user=XML password=ftn dbname=XML_REQUESTS port=5432 sslmode=disable"
-	dsn := "host=localhost user=XML password=ftn dbname=XML_REQUESTS port=5432 sslmode=disable"
+	dsn := "host=requestdb user=XML password=ftn dbname=XML_REQUESTS port=5432 sslmode=disable"
+	//dsn := "host=localhost user=XML password=ftn dbname=XML_REQUESTS port=5432 sslmode=disable"
 	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
 	if err != nil {
 		return nil, err

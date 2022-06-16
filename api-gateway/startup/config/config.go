@@ -14,11 +14,11 @@ type Config struct {
 
 func NewConfig() *Config {
 	os.Setenv("GATEWAY_PORT", "8000")
-	//os.Setenv("USER_SERVICE_HOST", "user-service")
-	os.Setenv("USER_SERVICE_HOST", "DESKTOP-NJH4ABT")
+	os.Setenv("USER_SERVICE_HOST", "user-service")
+	//os.Setenv("USER_SERVICE_HOST", "DESKTOP-NJH4ABT")
 	os.Setenv("USER_SERVICE_PORT", "8100")
-	//os.Setenv("REQUEST_SERVICE_HOST", "request-service")
-	os.Setenv("REQUEST_SERVICE_HOST", "DESKTOP-NJH4ABT")
+	os.Setenv("REQUEST_SERVICE_HOST", "request-service")
+	//os.Setenv("REQUEST_SERVICE_HOST", "DESKTOP-NJH4ABT")
 	os.Setenv("REQUEST_SERVICE_PORT", "8200")
 	os.Setenv("POST_SERVICE_HOST", "post-service")
 	os.Setenv("POST_SERVICE_PORT", "8300")

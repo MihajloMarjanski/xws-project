@@ -8,6 +8,7 @@ require (
 	github.com/MihajloMarjanski/xws-project/common v1.0.0
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible
 	golang.org/x/crypto v0.0.0-20210921155107-089bfa567519
+	golang.org/x/net v0.0.0-20220127200216-cd36cc0744dd
 	google.golang.org/grpc v1.45.0
 	gorm.io/driver/postgres v1.3.5
 	gorm.io/gorm v1.23.5
@@ -26,7 +27,7 @@ require (
 	github.com/jackc/pgx/v4 v4.16.0 // indirect
 	github.com/jinzhu/inflection v1.0.0 // indirect
 	github.com/jinzhu/now v1.1.4 // indirect
-	golang.org/x/net v0.0.0-20220127200216-cd36cc0744dd // indirect
+	github.com/sirupsen/logrus v1.8.1
 	golang.org/x/sys v0.0.0-20220111092808-5a964db01320 // indirect
 	golang.org/x/text v0.3.7 // indirect
 	google.golang.org/genproto v0.0.0-20220314164441-57ef72a4c106 // indirect

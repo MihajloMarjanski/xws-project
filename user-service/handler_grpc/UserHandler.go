@@ -3,6 +3,8 @@ package handler_grpc
 import (
 	"context"
 	"fmt"
+	"io"
+	"os"
 	"strconv"
 	"strings"
 	"user-service/service"
@@ -13,11 +15,28 @@ import (
 
 	pb "github.com/MihajloMarjanski/xws-project/common/proto/user_service"
 	"github.com/dgrijalva/jwt-go"
+	log "github.com/sirupsen/logrus"
 )
 
 type UserHandler struct {
 	pb.UnimplementedUserServiceServer
 	userService *service.UserService
+}
+
+func init() {
+
+	// open a file
+	f, err := os.OpenFile("testlogrus.log", os.O_APPEND|os.O_CREATE|os.O_RDWR, 0666)
+	if err != nil {
+		fmt.Printf("error opening file: %v", err)
+	}
+
+	// don't forget to close it
+	defer f.Close()
+
+	// Output to stderr instead of stdout, could also be a file.
+	mw := io.MultiWriter(os.Stdout, f)
+	log.SetOutput(mw)
 }
 
 func Verify(accessToken string) (*service.Claims, error) {
@@ -27,19 +46,23 @@ func Verify(accessToken string) (*service.Claims, error) {
 		func(token *jwt.Token) (interface{}, error) {
 			_, ok := token.Method.(*jwt.SigningMethodHMAC)
 			if !ok {
+				log.Error("Unexpected token signing method.")
 				return nil, fmt.Errorf("unexpected token signing method")
 			}
 
+			log.Info("Token successfully verified.")
 			return []byte("tajni_kljuc_za_jwt_hash"), nil
 		},
 	)
 
 	if err != nil {
+		log.Error("Invalid token.")
 		return nil, fmt.Errorf("invalid token: %w", err)
 	}
 
 	claims, ok := token.Claims.(*service.Claims)
 	if !ok {
+		log.Error("Invalid token claims.")
 		return nil, fmt.Errorf("invalid token claims")
 	}
 
@@ -61,6 +84,7 @@ func New() (*UserHandler, error) {
 
 	userService, err := service.New()
 	if err != nil {
+		log.Error("Error creating User Handler.")
 		return nil, err
 	}
 
@@ -79,6 +103,7 @@ func (handler *UserHandler) GetUser(ctx context.Context, request *pb.GetUserRequ
 	user := handler.userService.GetByID(int(id))
 	if user.ID == 0 {
 		err := status.Error(codes.NotFound, "User with that id does not exist.")
+		log.Warn("User with that id does not exist.")
 		return nil, err
 	}
 	userPb := mapUserDtoToProto(user)
@@ -93,6 +118,7 @@ func (handler *UserHandler) GetUserByUsername(ctx context.Context, request *pb.G
 	user := handler.userService.GetByUsername(username)
 	if user.ID == 0 {
 		err := status.Error(codes.NotFound, "User with that username does not exist.")
+		log.Error("User with that username does not exist.")
 		return nil, err
 	}
 	userPb := mapUserToProto(user)
@@ -108,6 +134,7 @@ func (handler *UserHandler) UpdateUser(ctx context.Context, request *pb.UpdateUs
 	user.ID = GetUserID(ctx)
 	if handler.userService.GetByID(int(user.ID)).ID == 0 {
 		err := status.Error(codes.NotFound, "User with that id does not exist.")
+		log.Error("User with that username does not exist.")
 		return nil, err
 	}
 	id := handler.userService.UpdateUser(user.ID, user.Name, user.Email, user.Password, user.UserName, user.Gender, user.PhoneNumber, user.DateOfBirth, user.Biography, user.IsPrivate)
@@ -146,6 +173,7 @@ func (handler *UserHandler) CreateUser(ctx context.Context, request *pb.CreateUs
 	id := handler.userService.CreateUser(user.Name, user.Email, user.Password, user.UserName, user.Gender, user.PhoneNumber, user.DateOfBirth, user.Biography)
 	if id == 0 {
 		err := status.Error(codes.AlreadyExists, "User with same username or email already exists.")
+		log.Error("User with same username or email already exists.")
 		return nil, err
 	}
 	response := &pb.CreateUserResponse{
@@ -200,6 +228,7 @@ func (handler *UserHandler) BlockUser(ctx context.Context, request *pb.BlockUser
 	blockedUserId := request.BlockedUserId
 	if handler.userService.GetByID(int(userId)).ID == 0 || handler.userService.GetByID(int(blockedUserId)).ID == 0 {
 		err := status.Error(codes.NotFound, "User with that id does not exist.")
+		log.Error("User with that id does not exist.")
 		return nil, err
 	}
 	handler.userService.BlockUser(int(userId), int(blockedUserId))
@@ -210,6 +239,7 @@ func (handler *UserHandler) GetApiKey(ctx context.Context, request *pb.ApiKeyReq
 	key := handler.userService.GetApiKeyForUserCredentials(request.Username, request.Password)
 	if key == "" {
 		err := status.Error(codes.NotFound, "User with that username and password does not exist.")
+		log.Error("User with that username and password does not exist.")
 		return nil, err
 	}
 	response := &pb.ApiKeyResponse{
@@ -221,6 +251,7 @@ func (handler *UserHandler) GetApiKeyForUsername(ctx context.Context, request *p
 	key := handler.userService.GetApiKeyForUsername(request.Username)
 	if key == "" {
 		err := status.Error(codes.NotFound, "User with that username does not exist.")
+		log.Error("User with that username does not exist.")
 		return nil, err
 	}
 	response := &pb.GetApiKeyForUsernameResponse{
