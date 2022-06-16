@@ -32,7 +32,7 @@ func init() {
 	}
 
 	// don't forget to close it
-	defer f.Close()
+	//defer f.Close()
 
 	// Output to stderr instead of stdout, could also be a file.
 	mw := io.MultiWriter(os.Stdout, f)
