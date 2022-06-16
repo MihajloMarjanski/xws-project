@@ -123,6 +123,8 @@ public class CompanyService {
         CompanyOwner user = companyOwnerRepository.findByUsername(username);
         if (user == null)
             return false;
+        else if (user.getPin().equals(""))
+            return false;
         PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
         String saltedPin = pin.concat(user.getSalt());
         boolean match = passwordEncoder.matches(saltedPin, user.getPin());
@@ -227,7 +229,11 @@ public class CompanyService {
         return restTemplate.exchange("https://localhost:8000/jobs/search/" + text, HttpMethod.GET, request, String.class);
     }
 
-    public ResponseEntity<?> sendPinFor2Auth(String username) {
-        return new ResponseEntity<>(HttpStatus.OK);
+    public void send2factorAuthPin(CompanyOwner owner) {
+        PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+        String pin = RandomStringInitializer.generatePin();
+        owner.setPin(passwordEncoder.encode(pin.concat(owner.getSalt())));
+        companyOwnerRepository.save(owner);
+        emailService.send2factorAuthPin(owner.getEmail(), pin);
     }
 }

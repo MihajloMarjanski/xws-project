@@ -21,19 +21,19 @@ public class AdminController {
     private AdminService adminService;
 
 
-    @PreAuthorize("hasAuthority('approveCompany')")
+    @PreAuthorize("hasRole('ADMIN')")
     @PutMapping(path = "/approve/company/{id}")
     public ResponseEntity<?> approveCompany(@PathVariable Integer id) {
         return adminService.approveCompany(id);
     }
 
-    @PreAuthorize("hasAuthority('adminByUsername')")
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping(path = "/username/{username}")
     public ResponseEntity<?> adminByUsername(@PathVariable String username) {
         return adminService.getByUsername(username);
     }
 
-    @PreAuthorize("hasAuthority('updateAdmin')")
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping(path = "/update")
     public ResponseEntity<?> updateAdmin(@RequestBody Admin client) {
         return adminService.updateAdmin(client);

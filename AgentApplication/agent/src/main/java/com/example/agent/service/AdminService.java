@@ -24,6 +24,8 @@ public class AdminService {
     private CompanyRepository companyRepository;
     @Autowired
     private CompanyOwnerRepository companyOwnerRepository;
+    @Autowired
+    EmailService emailService;
 
 
     public ResponseEntity<?> approveCompany(Integer id) {
@@ -47,11 +49,16 @@ public class AdminService {
         return adminRepository.findAllUsernames();
     }
 
-    public boolean isPinOk(String username, Integer pin) {
+    public boolean isPinOk(String username, String pin) {
         Admin user = adminRepository.findByUsername(username);
         if (user == null)
             return false;
-        return user.getPin().equals(pin);
+        else if (user.getPin().equals(""))
+            return false;
+        PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+        String saltedPin = pin.concat(user.getSalt());
+        boolean match = passwordEncoder.matches(saltedPin, user.getPin());
+        return match;
     }
 
     public Admin findByUsername(String username) {
@@ -76,7 +83,11 @@ public class AdminService {
         return new ResponseEntity<>(admin, HttpStatus.OK);
     }
 
-    public ResponseEntity<?> sendPinFor2Auth(String username) {
-        return new ResponseEntity<>(HttpStatus.OK);
+    public void send2factorAuthPin(Admin admin) {
+        PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+        String pin = RandomStringInitializer.generatePin();
+        admin.setPin(passwordEncoder.encode(pin.concat(admin.getSalt())));
+        adminRepository.save(admin);
+        emailService.send2factorAuthPin(admin.getEmail(), pin);
     }
 }

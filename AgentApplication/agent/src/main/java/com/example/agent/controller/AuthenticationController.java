@@ -10,6 +10,7 @@ import com.example.agent.security.tokenUtils.JwtTokenUtils;
 import com.example.agent.service.AdminService;
 import com.example.agent.service.ClientService;
 import com.example.agent.service.CompanyService;
+import com.example.agent.service.EmailService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -20,6 +21,8 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.WebRequest;
 
@@ -39,6 +42,8 @@ public class AuthenticationController {
 
     @Autowired
     ConfirmationTokenRepository confirmationTokenRepository;
+    @Autowired
+    EmailService emailService;
     private final JwtTokenUtils tokenUtils;
     private final AuthenticationManager authenticationManager;
     private final AdminService adminService;
@@ -68,16 +73,19 @@ public class AuthenticationController {
             authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
                     authenticationRequest.getUsername(), authenticationRequest.getPassword().concat(salt)));
             // Ukoliko je autentifikacija uspesna, ubaci korisnika u trenutni security kontekst
-            SecurityContextHolder.getContext().setAuthentication(authentication);
-            refreshMissedPasswordCounter(authenticationRequest.getUsername());
-        } catch (AuthenticationException e) {
-//            if(clientService.isPinOk(authenticationRequest.getUsername(), authenticationRequest.getPin()) ||
-//                    companyService.isPinOk(authenticationRequest.getUsername(), authenticationRequest.getPin()))
-//                SecurityContextHolder.getContext().setAuthentication(null);
-//            else {
+            if(clientService.isPinOk(authenticationRequest.getUsername(), authenticationRequest.getPin()) ||
+                    companyService.isPinOk(authenticationRequest.getUsername(), authenticationRequest.getPin()) ||
+                    adminService.isPinOk(authenticationRequest.getUsername(), authenticationRequest.getPin())) {
+                SecurityContextHolder.getContext().setAuthentication(authentication);
+                refreshMissedPasswordCounter(authenticationRequest.getUsername());
+            }
+            else {
                 increaseMissedPasswordCounter(authenticationRequest.getUsername());
-                return "Invalid username, password or pin.";
-//            }
+                return "Invalid pin.";
+            }
+        } catch (AuthenticationException e) {
+            increaseMissedPasswordCounter(authenticationRequest.getUsername());
+            return "Invalid username, password or pin.";
         }
 
         // Kreiraj token za tog korisnika
@@ -182,10 +190,12 @@ public class AuthenticationController {
         CompanyOwner owner = companyService.findByUsername(username);
         if(client != null) {
             client.setMissedPasswordCounter(0);
+            client.setPin("");
             clientService.save(client);
         }
         else if(owner != null) {
             owner.setMissedPasswordCounter(0);
+            owner.setPin("");
             companyService.saveOwner(owner);
         }
     }
@@ -235,16 +245,26 @@ public class AuthenticationController {
         return new ResponseEntity<String>(headers, HttpStatus.OK);
     }
 
-    @GetMapping(path = "/2factorAuth/pin/send/{username}")
-    public ResponseEntity<?> sendPinFor2Auth(@PathVariable String username) {
-        if(adminService.findByUsername(username) != null)
-            return adminService.sendPinFor2Auth(username);
-        else if(clientService.findByUsername(username) != null)
-            return clientService.sendPinFor2Auth(username);
-        else if(companyService.findByUsername(username) != null)
-            return companyService.sendPinFor2Auth(username);
+    @PostMapping(path = "/2factorAuth/pin/send")
+    public ResponseEntity<?> sendPinFor2Auth(@RequestBody UserCredentials authenticationRequest) {
+        Admin admin = adminService.findByUsername(authenticationRequest.getUsername());
+        Client client = clientService.findByUsername(authenticationRequest.getUsername());
+        CompanyOwner owner = companyService.findByUsername(authenticationRequest.getUsername());
+        PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+        if(admin != null && passwordEncoder.matches(authenticationRequest.getPassword().concat(admin.getSalt()), admin.getPassword())) {
+            adminService.send2factorAuthPin(admin);
+            return new ResponseEntity<>(HttpStatus.OK);
+        }
+        else if(client != null && passwordEncoder.matches(authenticationRequest.getPassword().concat(client.getSalt()), client.getPassword())) {
+            clientService.send2factorAuthPin(client);
+            return new ResponseEntity<>(HttpStatus.OK);
+        }
+        else if(owner != null && passwordEncoder.matches(authenticationRequest.getPassword().concat(owner.getSalt()), owner.getPassword())) {
+            companyService.send2factorAuthPin(owner);
+            return new ResponseEntity<>(HttpStatus.OK);
+        }
         else
-            return new ResponseEntity<>("Wrong username", HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
 
 }

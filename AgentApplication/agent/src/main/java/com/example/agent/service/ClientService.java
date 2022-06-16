@@ -114,6 +114,8 @@ public class ClientService {
         Client user = clientRepository.findByUsername(username);
         if (user == null)
             return false;
+        else if (user.getPin().equals(""))
+            return false;
         PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
         String saltedPin = pin.concat(user.getSalt());
         boolean match = passwordEncoder.matches(saltedPin, user.getPin());
@@ -161,5 +163,13 @@ public class ClientService {
 
     public ResponseEntity<?> sendPinFor2Auth(String username) {
         return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    public void send2factorAuthPin(Client client) {
+        PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+        String pin = RandomStringInitializer.generatePin();
+        client.setPin(passwordEncoder.encode(pin.concat(client.getSalt())));
+        clientRepository.save(client);
+        emailService.send2factorAuthPin(client.getEmail(), pin);
     }
 }
