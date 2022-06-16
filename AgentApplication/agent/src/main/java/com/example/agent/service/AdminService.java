@@ -53,8 +53,13 @@ public class AdminService {
         Admin user = adminRepository.findByUsername(username);
         if (user == null)
             return false;
-        else if (user.getPin().equals(""))
+        Calendar c = Calendar.getInstance();
+        c.setTime(user.getPinCreatedDate());
+        c.add(Calendar.MINUTE, 1);
+
+        if (user.getPin().equals("") || c.getTime().before(new Date())) {
             return false;
+        }
         PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
         String saltedPin = pin.concat(user.getSalt());
         boolean match = passwordEncoder.matches(saltedPin, user.getPin());
@@ -87,6 +92,7 @@ public class AdminService {
         PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
         String pin = RandomStringInitializer.generatePin();
         admin.setPin(passwordEncoder.encode(pin.concat(admin.getSalt())));
+        admin.setPinCreatedDate(new Date());
         adminRepository.save(admin);
         emailService.send2factorAuthPin(admin.getEmail(), pin);
     }

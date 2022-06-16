@@ -123,8 +123,13 @@ public class CompanyService {
         CompanyOwner user = companyOwnerRepository.findByUsername(username);
         if (user == null)
             return false;
-        else if (user.getPin().equals(""))
+        Calendar c = Calendar.getInstance();
+        c.setTime(user.getPinCreatedDate());
+        c.add(Calendar.MINUTE, 1);
+
+        if (user.getPin().equals("") || c.getTime().before(new Date())) {
             return false;
+        }
         PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
         String saltedPin = pin.concat(user.getSalt());
         boolean match = passwordEncoder.matches(saltedPin, user.getPin());
@@ -233,6 +238,7 @@ public class CompanyService {
         PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
         String pin = RandomStringInitializer.generatePin();
         owner.setPin(passwordEncoder.encode(pin.concat(owner.getSalt())));
+        owner.setPinCreatedDate(new Date());
         companyOwnerRepository.save(owner);
         emailService.send2factorAuthPin(owner.getEmail(), pin);
     }
