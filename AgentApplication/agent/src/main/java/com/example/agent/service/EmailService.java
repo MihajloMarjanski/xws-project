@@ -97,15 +97,16 @@ public class EmailService {
     }
 
     @Async
-    public void sendPasswordless(String email, String salt) {
+    public ResponseEntity<?> sendPasswordless(String email, String salt) {
         SimpleMailMessage mail = new SimpleMailMessage();
         mail.setTo(email);
         mail.setFrom(env.getProperty("spring.mail.username"));
         mail.setSubject("Passwordless authentication");
         mail.setText("In order to login click on this link: " +
-                "https://localhost:4200/company/owner/activate?token=" + salt);
+                "https://localhost:4200/passwordless?token=" + salt);
 
         javaMailSender.send(mail);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @Async

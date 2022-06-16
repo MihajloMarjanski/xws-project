@@ -73,15 +73,18 @@ export class LoginPageComponent implements OnInit {
   }
 
   sendPasswordless() {
-    this._userService.sendPasswordless(this.credentials.username).subscribe(
-      data => {
-      },
-      error => {
-        console.log('Error!', error)
-        this._snackBar.open('You have to valid insert username first.', 'Close', {duration: 3000});
-      }
-      )
-      this._snackBar.open('Your new password has been sent to your email. You have to change it when you login for the first time!', 'Close', {duration: 7000});
+    if(this.credentials.username == '')
+      this._snackBar.open('You have to insert username first.', 'Close', {duration: 3000});
+    else
+      this._userService.sendPasswordless(this.credentials.username).subscribe(
+        data => {
+          this._snackBar.open('Your login link has been successfully sent to your email.', 'Close', {duration: 3000});
+        },
+        error => {
+          console.log('Error!', error)
+          this._snackBar.open(error.error.message, 'Close', {duration: 3000});
+        }
+        )
   }
 
   send2factor() {

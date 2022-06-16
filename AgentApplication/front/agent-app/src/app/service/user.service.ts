@@ -10,7 +10,7 @@ import { Company } from '../model/company';
 @Injectable({
   providedIn: 'root'
 })
-export class UserService {  
+export class UserService { 
   
   private _baseUrl = 'https://localhost:8600/';
   private _login = this._baseUrl + 'auth/login';
@@ -29,16 +29,21 @@ export class UserService {
   private _forgotPassword  = this._baseUrl + 'clients/newPassword/';
   private _companyByOwnerUsername  = this._baseUrl + 'company/';
   private _apiKey  = this._baseUrl + 'company/owner/apiKey/';
-  private _sendPasswordless = this._baseUrl + 'auth/login';
+  private _sendPasswordless = this._baseUrl + 'auth/sso/';
   private _send2factor = this._baseUrl + 'auth/2factorAuth/pin/send';
+  private _loginPaswordless = this._baseUrl + 'auth/login/passwordless?token=';
   
   constructor(private _http: HttpClient) { }
   
 
+  loginPasswordless(token: any): Observable<any> {
+    return this._http.post(this._loginPaswordless + token, {},{responseType: 'text'})
+  } 
+
   sendPasswordless(username: string): Observable<any> {
-    const body=JSON.stringify(username);
-    console.log(body)
-    return this._http.post(this._sendPasswordless, body)
+    return this._http.get<any>(this._sendPasswordless + username)
+                           .pipe(tap(data =>  console.log('Iz service-a: ', data)),                         
+                                catchError(this.handleError)); 
   }
 
   send2factor(credentials: Credentials): Observable<any> {

@@ -1,9 +1,6 @@
 package com.example.agent.controller;
 
-import com.example.agent.model.Admin;
-import com.example.agent.model.Client;
-import com.example.agent.model.CompanyOwner;
-import com.example.agent.model.ConfirmationToken;
+import com.example.agent.model.*;
 import com.example.agent.model.dto.UserCredentials;
 import com.example.agent.repository.ConfirmationTokenRepository;
 import com.example.agent.security.tokenUtils.JwtTokenUtils;
@@ -16,6 +13,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -226,23 +224,41 @@ public class AuthenticationController {
         return clientService.isPasswordInBlackList(pass);
     }
 
-    @GetMapping(path = "/sso")
-    public ResponseEntity<?> loginPasswordless(@RequestParam("token") String hashCode) {
-        ConfirmationToken token = confirmationTokenRepository.findByConfirmationToken(hashCode);
-        Long secs = (token.getCreatedDate().getTime() - new Date().getTime())/1000;
-        Client verificationClient = token.getClient();
-        if (verificationClient == null || verificationClient.isActivated() || secs > 3600 ) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        }
+    @GetMapping(path = "/sso/{username}")
+    public ResponseEntity<?> sendPasswordlessToken(@PathVariable String username) {
+        Set<Role> roles = new HashSet<>();
+        Admin admin = adminService.findByUsername(username);
+        Client client = clientService.findByUsername(username);
+        CompanyOwner owner = companyService.findByUsername(username);
+        if(admin != null)
+            return emailService.sendPasswordless(admin.getEmail(), tokenUtils.generateToken(username, roles));
+        else if(client != null)
+            return emailService.sendPasswordless(client.getEmail(), tokenUtils.generateToken(username, roles));
+        else if(owner != null)
+            return emailService.sendPasswordless(owner.getEmail(), tokenUtils.generateToken(username, roles));
 
-        //ovde ga treba ulogovati?
-        verificationClient.setActivated(true);
-        clientService.save(verificationClient);
-        //kako ga posle prebaciti i ulogovati, poslati jwt token na front?
+        return new ResponseEntity<>("User with that username does not exist.", HttpStatus.BAD_REQUEST);
+    }
 
-        HttpHeaders headers = new HttpHeaders();
-        headers.add("Location", "https://localhost:4200");
-        return new ResponseEntity<String>(headers, HttpStatus.OK);
+    @PostMapping(path = "/login/passwordless")
+    public String loginPaswordless(@RequestParam("token") String token) {
+        String username = tokenUtils.getUsernameFromToken(token);
+
+        Authentication authentication = new UsernamePasswordAuthenticationToken(username, null);
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+
+        String jwt = "";
+        Admin admin = adminService.findByUsername(username);
+        CompanyOwner owner = companyService.findByUsername(username);
+        Client client = clientService.findByUsername(username);
+        if(admin != null)
+            jwt = tokenUtils.generateToken(admin.getUsername(), admin.getRoles());
+        if(client != null)
+            jwt = tokenUtils.generateToken(client.getUsername(), client.getRoles());
+        if(owner != null)
+            jwt = tokenUtils.generateToken(owner.getUsername(), owner.getRoles());
+
+        return jwt;
     }
 
     @PostMapping(path = "/2factorAuth/pin/send")
