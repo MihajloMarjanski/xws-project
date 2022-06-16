@@ -4,16 +4,21 @@ import com.example.agent.model.*;
 import com.example.agent.repository.AdminRepository;
 import com.example.agent.repository.CompanyOwnerRepository;
 import com.example.agent.repository.CompanyRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.*;
 
 @Service
+@Slf4j
 public class AdminService {
 
     @Autowired
@@ -26,10 +31,13 @@ public class AdminService {
     private CompanyOwnerRepository companyOwnerRepository;
 
 
-    public ResponseEntity<?> approveCompany(Integer id) {
+    public ResponseEntity<?> approveCompany(Integer id, HttpServletRequest request) {
         Optional<Company> company = companyRepository.findById(id);
-        if (!company.isPresent())
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (!company.isPresent()) {
+            log.warn("Ip: {}, username: {}, Company doesn't exist!", request.getRemoteAddr(), authentication.getPrincipal().toString());
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
 
         Role role = roleService.findByName("ROLE_COMPANY_OWNER");
         CompanyOwner owner = company.get().getCompanyOwner();
@@ -40,6 +48,7 @@ public class AdminService {
 
         company.get().setApproved(true);
         companyRepository.save(company.get());
+        log.info("Ip: {}, username: {}, Company created successfully!", request.getRemoteAddr(), authentication.getPrincipal().toString());
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
@@ -58,13 +67,17 @@ public class AdminService {
         return adminRepository.findByUsername(username);
     }
 
-    public ResponseEntity<?> getByUsername(String username) {
-        if (findByUsername(username) == null)
+    public ResponseEntity<?> getByUsername(String username, HttpServletRequest request) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (findByUsername(username) == null){
+            log.warn("Ip: {}, username: {}, User doesn't exist!", request.getRemoteAddr(), authentication.getPrincipal().toString());
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
         return new ResponseEntity<>(findByUsername(username), HttpStatus.OK);
     }
 
-    public ResponseEntity<?> updateAdmin(Admin client) {
+    public ResponseEntity<?> updateAdmin(Admin client, HttpServletRequest request) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Admin admin = findByUsername(client.getUsername());
         admin.setFirstName(client.getFirstName());
         admin.setLastName(client.getLastName());
@@ -73,6 +86,7 @@ public class AdminService {
             admin.setPassword(passwordEncoder.encode(client.getPassword().concat(admin.getSalt())));
         }
         adminRepository.save(admin);
+        log.info("Ip: {}, username: {}, User updated successfully!", request.getRemoteAddr(), authentication.getPrincipal().toString());
         return new ResponseEntity<>(admin, HttpStatus.OK);
     }
 }
