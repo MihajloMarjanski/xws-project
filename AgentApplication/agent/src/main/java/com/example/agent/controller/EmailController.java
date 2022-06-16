@@ -1,8 +1,6 @@
 package com.example.agent.controller;
 
-import com.example.agent.model.Client;
 import com.example.agent.model.dto.ActivationLinkDto;
-import com.example.agent.service.ClientService;
 import com.example.agent.service.EmailService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
