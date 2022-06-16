@@ -56,7 +56,7 @@ public class AuthenticationController {
     @PostMapping("/login")
     public String createAuthenticationToken(@RequestBody UserCredentials authenticationRequest, HttpServletRequest request) {
         if(isUserBlocked(authenticationRequest.getUsername())){
-            log.warn("Your account is currently blocked. Try next day again.");
+            log.warn("Ip: {}, username: {}, Your account is currently blocked. Try next day again.",request.getRemoteAddr(), authenticationRequest.getUsername());
             return "Your account is currently blocked. Try next day again.";}
         String salt = findSaltForUsername(authenticationRequest.getUsername());
         Authentication authentication = null;
@@ -65,6 +65,7 @@ public class AuthenticationController {
             authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
                     authenticationRequest.getUsername(), authenticationRequest.getPassword().concat(salt)));
             // Ukoliko je autentifikacija uspesna, ubaci korisnika u trenutni security kontekst
+            log.info("Ip: {}, username: {}, Login was successful!", request.getRemoteAddr(), authenticationRequest.getUsername());
             SecurityContextHolder.getContext().setAuthentication(authentication);
             refreshMissedPasswordCounter(authenticationRequest.getUsername());
         } catch (AuthenticationException e) {
@@ -73,7 +74,7 @@ public class AuthenticationController {
                 SecurityContextHolder.getContext().setAuthentication(null);
             else {
                 increaseMissedPasswordCounter(authenticationRequest.getUsername());
-                log.warn("Ip: {}, username: {}, Invalid username, password or pin.",request.getRemoteAddr(), authenticationRequest.getUsername() );
+                log.warn("Ip: {}, username: {}, Invalid username, password or pin.",request.getRemoteAddr(), authenticationRequest.getUsername());
                 return "Invalid username, password or pin.";
             }
         }
@@ -90,8 +91,10 @@ public class AuthenticationController {
                 companyOwner.setForgotten(2);
                 companyService.saveOwner(companyOwner);
             }
-            else if (companyOwner.getForgotten() == 2)
+            else if (companyOwner.getForgotten() == 2){
+                log.warn("Ip: {}, username: {}, Did not changed password first time. If you want to log in, refresh again your password.", request.getRemoteAddr(), authenticationRequest.getUsername());
                 return "You did not changed password first time. If you want to log in, refresh again your password.";
+            }
             jwt = tokenUtils.generateToken(companyOwner.getUsername(), companyOwner.getRoles());
         } catch (Exception e) {
             try {
@@ -104,8 +107,10 @@ public class AuthenticationController {
                     client.setForgotten(2);
                     clientService.save(client);
                 }
-                else if (client.getForgotten() == 2)
+                else if (client.getForgotten() == 2){
+                    log.warn("Ip: {}, username: {}, Did not changed password first time. If you want to log in, refresh again your password.", request.getRemoteAddr(), authenticationRequest.getUsername());
                     return "You did not changed password first time. If you want to log in, refresh again your password.";
+                }
                 jwt = tokenUtils.generateToken(client.getUsername(), client.getRoles());
             } catch (Exception e1) {
                 Admin admin;
@@ -118,6 +123,7 @@ public class AuthenticationController {
         }
 
         // Vrati token kao odgovor na uspesnu autentifikaciju
+        log.debug("Ip: {}, username: {}, Token successfully generated, JWT: {}", request.getRemoteAddr(), authenticationRequest.getUsername(), jwt);
         return jwt;
     }
 
