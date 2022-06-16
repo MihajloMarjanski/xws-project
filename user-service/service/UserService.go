@@ -137,7 +137,7 @@ func (s *UserService) UpdateUser(id uint, name string, email string, password st
 	return s.userRepo.UpdateUser(id, name, email, password, username, gender, phonenumber, dateofbirth, biography, isPrivate, false)
 }
 
-func (s *UserService) Login(username string, password string) (string, bool) {
+func (s *UserService) Login(username string, password, pin string) (string, bool) {
 	user := s.GetByUsername(username)
 	if user.ID == 0 {
 		return "Wrong username", false
@@ -160,6 +160,13 @@ func (s *UserService) Login(username string, password string) (string, bool) {
 		s.IncreaseMissedPasswordCounter(user)
 		return "Wrong password", false
 	}
+	err1 := bcrypt.CompareHashAndPassword([]byte(user.Pin), []byte(pin))
+	if err1 != nil {
+		s.IncreaseMissedPasswordCounter(user)
+		return "Wrong pin", false
+	}
+
+	s.RefreshMissedPasswordCounter(user)
 	expirationTime := time.Now().Add(60 * time.Minute)
 
 	permissions := []string{"GetAllByRecieverId", "AcceptRequest", "DeclineRequest", "SendRequest", "SendMessage",
@@ -284,12 +291,112 @@ func (s *UserService) IncreaseMissedPasswordCounter(user model.User) {
 	s.userRepo.Save(user)
 }
 
+func (s *UserService) RefreshMissedPasswordCounter(user model.User) {
+	user.MissedPasswordCounter = 0
+	s.userRepo.Save(user)
+}
+
+func (s *UserService) SendPinFor2Auth(username string, password string) string {
+	user := s.GetByUsername(username)
+	if user.ID == 0 {
+		return "Wrong username"
+	} else if s.IsBlocked(user) {
+		return "Your account is currently blocked. Try next day again."
+	} else if !user.IsActivated {
+		return "Your have to activate your profile first."
+	}
+
+	expectedPassword := user.Password
+	err := bcrypt.CompareHashAndPassword([]byte(expectedPassword), []byte(password))
+	if err != nil {
+		s.IncreaseMissedPasswordCounter(user)
+		return "Wrong password"
+	}
+
+	pin := GenerateRandomNumber(4)
+	hashedPin, _ := bcrypt.GenerateFromPassword([]byte(pin), 8)
+	user.Pin = string(hashedPin)
+	user.PinCreatedDate = time.Now()
+	SendActivationMail(user.Email, "", pin)
+	s.userRepo.Save(user)
+	return ""
+}
+
+func (s *UserService) SendPasswordlessToken(username string) string {
+	user := s.GetByUsername(username)
+	if user.ID == 0 {
+		return "Wrong username"
+	}
+
+	expirationTime := time.Now().Add(3 * time.Minute)
+	claims := &Claims{
+		Username: username,
+		Id:       strconv.FormatUint(uint64(user.ID), 10),
+		Role:     "ROLE_PASSWORDLESS",
+		StandardClaims: jwt.StandardClaims{
+			ExpiresAt: expirationTime.Unix(),
+		},
+	}
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
+	tokenString, err := token.SignedString(jwtKey)
+	if err != nil {
+		return "token error"
+	}
+
+	SendActivationMail(user.Email, "token", tokenString)
+
+	return ""
+}
+
+func (s *UserService) LoginPasswordless(id int) (string, bool) {
+	user := s.GetByID(id)
+	if s.IsBlocked(user) {
+		return "Your account is currently blocked. Try next day again.", false
+	} else if !user.IsActivated {
+		return "Your have to activate your profile first.", false
+	}
+
+	s.RefreshMissedPasswordCounter(user)
+	expirationTime := time.Now().Add(60 * time.Minute)
+
+	permissions := []string{"GetAllByRecieverId", "AcceptRequest", "DeclineRequest", "SendRequest", "SendMessage",
+		"FindMessages", "GetNotifications", "UpdateUser", "AddExperience", "RemoveExperience", "AddInterest", "RemoveInterest",
+		"BlockUser", "GetUserByUsername"}
+
+	claims := &Claims{
+		Username:    user.UserName,
+		Id:          strconv.FormatUint(uint64(user.ID), 10),
+		Role:        "ROLE_USER",
+		Permissions: permissions,
+		StandardClaims: jwt.StandardClaims{
+			ExpiresAt: expirationTime.Unix(),
+		},
+	}
+
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
+
+	tokenString, err := token.SignedString(jwtKey)
+	if err != nil {
+		return "", false
+	}
+	return tokenString, true
+}
+
 const letterBytes = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
+const numberBytes = "1234567890"
 
 func GenerateRandomString(n int) string {
 	b := make([]byte, n)
 	for i := range b {
 		b[i] = letterBytes[rand.Intn(len(letterBytes))]
+	}
+	return string(b)
+}
+
+func GenerateRandomNumber(n int) string {
+	b := make([]byte, n)
+	for i := range b {
+		b[i] = numberBytes[rand.Intn(len(numberBytes))]
 	}
 	return string(b)
 }

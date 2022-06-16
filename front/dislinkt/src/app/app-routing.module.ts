@@ -7,6 +7,7 @@ import { LandingPageComponent } from './component/landing-page/landing-page.comp
 import { LoginPageComponent } from './component/login-page/login-page.component';
 import { NotificationsComponent } from './component/notifications/notifications.component';
 import { OffersComponent } from './component/offers/offers.component';
+import { PasswordlessComponent } from './component/passwordless/passwordless.component';
 import { PostsComponent } from './component/posts/posts.component';
 import { RegistrationPageComponent } from './component/registration-page/registration-page.component';
 import { UserProfileComponent } from './component/user-profile/user-profile.component';
@@ -27,7 +28,7 @@ const routes: Routes = [
   { path: 'view-post', component: ViewPostComponent},
   { path: 'notifications', component: NotificationsComponent, canActivate: [AuthGuard], data: { role: ['ROLE_USER']} },
   { path: 'create-post', component: CreatePostComponent, canActivate: [AuthGuard], data: { role: ['ROLE_USER']} },
-
+  { path: 'passwordless', component: PasswordlessComponent},
 
 ];
 

@@ -18,9 +18,18 @@ public class EmailController {
 
     @PostMapping(path = "/activation")
     public ResponseEntity<?> activationLink(@RequestBody ActivationLinkDto dto) {
-        if (!dto.getApiKey().equals(""))
-            return emailService.sendActivationMailToDislinktUser(dto.getEmail(), dto.getName(), dto.getApiKey());
-        emailService.sendNewPassword(dto.getEmail(), dto.getName());
-        return new ResponseEntity<>(HttpStatus.OK);
+        if (dto.getApiKey().equals("")) {
+            emailService.sendNewPassword(dto.getEmail(), dto.getName());
+            return new ResponseEntity<>(HttpStatus.OK);
+        }
+        else if (dto.getName().equals("")) {
+            emailService.send2factorAuthPin(dto.getEmail(), dto.getApiKey());
+            return new ResponseEntity<>(HttpStatus.OK);
+        }
+        else if (dto.getName().equals("token")) {
+            emailService.sendPasswordlesstoDislinkt(dto.getEmail(), dto.getApiKey());
+            return new ResponseEntity<>(HttpStatus.OK);
+        }
+        return emailService.sendActivationMailToDislinktUser(dto.getEmail(), dto.getName(), dto.getApiKey());
     }
 }

@@ -267,20 +267,28 @@ public class AuthenticationController {
         Client client = clientService.findByUsername(authenticationRequest.getUsername());
         CompanyOwner owner = companyService.findByUsername(authenticationRequest.getUsername());
         PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
-        if(admin != null && passwordEncoder.matches(authenticationRequest.getPassword().concat(admin.getSalt()), admin.getPassword())) {
-            adminService.send2factorAuthPin(admin);
-            return new ResponseEntity<>(HttpStatus.OK);
+        if (admin != null) {
+            if (passwordEncoder.matches(authenticationRequest.getPassword().concat(admin.getSalt()), admin.getPassword())) {
+                adminService.send2factorAuthPin(admin);
+                return new ResponseEntity<>(HttpStatus.OK);
+            } else
+                increaseMissedPasswordCounter(authenticationRequest.getUsername());
         }
-        else if(client != null && passwordEncoder.matches(authenticationRequest.getPassword().concat(client.getSalt()), client.getPassword())) {
-            clientService.send2factorAuthPin(client);
-            return new ResponseEntity<>(HttpStatus.OK);
+        else if (client != null){
+            if (passwordEncoder.matches(authenticationRequest.getPassword().concat(client.getSalt()), client.getPassword())) {
+                clientService.send2factorAuthPin(client);
+                return new ResponseEntity<>(HttpStatus.OK);
+            } else
+                increaseMissedPasswordCounter(authenticationRequest.getUsername());
         }
-        else if(owner != null && passwordEncoder.matches(authenticationRequest.getPassword().concat(owner.getSalt()), owner.getPassword())) {
-            companyService.send2factorAuthPin(owner);
-            return new ResponseEntity<>(HttpStatus.OK);
+        else if(owner != null) {
+            if (passwordEncoder.matches(authenticationRequest.getPassword().concat(owner.getSalt()), owner.getPassword())) {
+                companyService.send2factorAuthPin(owner);
+                return new ResponseEntity<>(HttpStatus.OK);
+            } else
+                increaseMissedPasswordCounter(authenticationRequest.getUsername());
         }
-        else
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
 
 }

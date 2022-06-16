@@ -22,6 +22,7 @@ type User struct {
 	MissedPasswordCounter int          `json:"missedPasswordCounter"`
 	IsBlocked             bool         `json:"isBlocked"`
 	BlockedDate           time.Time    `json:"blockedDate"`
+	PinCreatedDate        time.Time    `json:"pinCreatedDate"`
 }
 
 type Interest struct {

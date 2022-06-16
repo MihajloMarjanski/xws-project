@@ -40,6 +40,9 @@ type UserServiceClient interface {
 	GetPrivateStatusForUserId(ctx context.Context, in *GetPrivateStatusForUserIdRequest, opts ...grpc.CallOption) (*GetPrivateStatusForUserIdResponse, error)
 	SearchOffers(ctx context.Context, in *SearchOffersRequest, opts ...grpc.CallOption) (*SearchOffersResponse, error)
 	ForgotPassword(ctx context.Context, in *ForgotPasswordRequest, opts ...grpc.CallOption) (*ForgotPasswordResponse, error)
+	SendPasswordlessToken(ctx context.Context, in *SendPasswordlessTokenRequest, opts ...grpc.CallOption) (*SendPasswordlessTokenResponse, error)
+	LoginPasswordless(ctx context.Context, in *LoginPasswordlessRequest, opts ...grpc.CallOption) (*LoginPasswordlessResponse, error)
+	SendPinFor2Auth(ctx context.Context, in *SendPinFor2AuthRequest, opts ...grpc.CallOption) (*SendPinFor2AuthResponse, error)
 }
 
 type userServiceClient struct {
@@ -212,6 +215,33 @@ func (c *userServiceClient) ForgotPassword(ctx context.Context, in *ForgotPasswo
 	return out, nil
 }
 
+func (c *userServiceClient) SendPasswordlessToken(ctx context.Context, in *SendPasswordlessTokenRequest, opts ...grpc.CallOption) (*SendPasswordlessTokenResponse, error) {
+	out := new(SendPasswordlessTokenResponse)
+	err := c.cc.Invoke(ctx, "/user.UserService/SendPasswordlessToken", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *userServiceClient) LoginPasswordless(ctx context.Context, in *LoginPasswordlessRequest, opts ...grpc.CallOption) (*LoginPasswordlessResponse, error) {
+	out := new(LoginPasswordlessResponse)
+	err := c.cc.Invoke(ctx, "/user.UserService/LoginPasswordless", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *userServiceClient) SendPinFor2Auth(ctx context.Context, in *SendPinFor2AuthRequest, opts ...grpc.CallOption) (*SendPinFor2AuthResponse, error) {
+	out := new(SendPinFor2AuthResponse)
+	err := c.cc.Invoke(ctx, "/user.UserService/SendPinFor2Auth", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // UserServiceServer is the server API for UserService service.
 // All implementations must embed UnimplementedUserServiceServer
 // for forward compatibility
@@ -234,6 +264,9 @@ type UserServiceServer interface {
 	GetPrivateStatusForUserId(context.Context, *GetPrivateStatusForUserIdRequest) (*GetPrivateStatusForUserIdResponse, error)
 	SearchOffers(context.Context, *SearchOffersRequest) (*SearchOffersResponse, error)
 	ForgotPassword(context.Context, *ForgotPasswordRequest) (*ForgotPasswordResponse, error)
+	SendPasswordlessToken(context.Context, *SendPasswordlessTokenRequest) (*SendPasswordlessTokenResponse, error)
+	LoginPasswordless(context.Context, *LoginPasswordlessRequest) (*LoginPasswordlessResponse, error)
+	SendPinFor2Auth(context.Context, *SendPinFor2AuthRequest) (*SendPinFor2AuthResponse, error)
 	mustEmbedUnimplementedUserServiceServer()
 }
 
@@ -294,6 +327,15 @@ func (UnimplementedUserServiceServer) SearchOffers(context.Context, *SearchOffer
 }
 func (UnimplementedUserServiceServer) ForgotPassword(context.Context, *ForgotPasswordRequest) (*ForgotPasswordResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ForgotPassword not implemented")
+}
+func (UnimplementedUserServiceServer) SendPasswordlessToken(context.Context, *SendPasswordlessTokenRequest) (*SendPasswordlessTokenResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SendPasswordlessToken not implemented")
+}
+func (UnimplementedUserServiceServer) LoginPasswordless(context.Context, *LoginPasswordlessRequest) (*LoginPasswordlessResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method LoginPasswordless not implemented")
+}
+func (UnimplementedUserServiceServer) SendPinFor2Auth(context.Context, *SendPinFor2AuthRequest) (*SendPinFor2AuthResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SendPinFor2Auth not implemented")
 }
 func (UnimplementedUserServiceServer) mustEmbedUnimplementedUserServiceServer() {}
 
@@ -632,6 +674,60 @@ func _UserService_ForgotPassword_Handler(srv interface{}, ctx context.Context, d
 	return interceptor(ctx, in, info, handler)
 }
 
+func _UserService_SendPasswordlessToken_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SendPasswordlessTokenRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserServiceServer).SendPasswordlessToken(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/user.UserService/SendPasswordlessToken",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserServiceServer).SendPasswordlessToken(ctx, req.(*SendPasswordlessTokenRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _UserService_LoginPasswordless_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(LoginPasswordlessRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserServiceServer).LoginPasswordless(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/user.UserService/LoginPasswordless",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserServiceServer).LoginPasswordless(ctx, req.(*LoginPasswordlessRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _UserService_SendPinFor2Auth_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SendPinFor2AuthRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserServiceServer).SendPinFor2Auth(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/user.UserService/SendPinFor2Auth",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserServiceServer).SendPinFor2Auth(ctx, req.(*SendPinFor2AuthRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // UserService_ServiceDesc is the grpc.ServiceDesc for UserService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -710,6 +806,18 @@ var UserService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "ForgotPassword",
 			Handler:    _UserService_ForgotPassword_Handler,
+		},
+		{
+			MethodName: "SendPasswordlessToken",
+			Handler:    _UserService_SendPasswordlessToken_Handler,
+		},
+		{
+			MethodName: "LoginPasswordless",
+			Handler:    _UserService_LoginPasswordless_Handler,
+		},
+		{
+			MethodName: "SendPinFor2Auth",
+			Handler:    _UserService_SendPinFor2Auth_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

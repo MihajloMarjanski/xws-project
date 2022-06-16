@@ -32,10 +32,28 @@ export class UserService {
   private _searchOffers  = this._baseUrl + 'jobs/search/';
   private _blockUser  = this._baseUrl + 'user/block/';
   private _findAllBlocked  = this._baseUrl + 'user/blocked/';
+  private _sendPasswordless = this._baseUrl + 'auth/sso/';
+  private _send2factor = this._baseUrl + 'user/2factorAuth/pin/send';
+  private _loginPaswordless = this._baseUrl + 'user/login/passwordless?token=';
   
   constructor(private _http: HttpClient) { }
   
 
+  loginPasswordless(token: any): Observable<any> {
+    return this._http.post(this._loginPaswordless + token, {})
+  } 
+
+  sendPasswordless(username: string): Observable<any> {
+    return this._http.get<any>(this._sendPasswordless + username)
+                           .pipe(tap(data =>  console.log('Iz service-a: ', data)),                         
+                                catchError(this.handleError)); 
+  }
+
+  send2factor(credentials: Credentials): Observable<any> {
+    const body=JSON.stringify(credentials);
+    console.log(body)
+    return this._http.post(this._send2factor, body)
+  }
 
   findAllBlocked(id: string | null) {
     return this._http.get<any>(this._findAllBlocked + id)
