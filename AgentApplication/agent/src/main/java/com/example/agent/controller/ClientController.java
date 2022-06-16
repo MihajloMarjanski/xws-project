@@ -17,6 +17,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.WebRequest;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.util.Date;
 
@@ -34,20 +35,23 @@ public class ClientController {
 
 
     @PostMapping(path = "/create")
-    public ResponseEntity<?> create(@Valid @RequestBody UserDto client, BindingResult res) {
-        if(res.hasErrors())
+    public ResponseEntity<?> create(@Valid @RequestBody UserDto client, BindingResult res, HttpServletRequest request) {
+        if(res.hasErrors()){
+            log.warn("Ip: {}, Fields for new client not valid!", request.getRemoteAddr());
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        return clientService.create(client);
+        }
+        return clientService.create(client, request);
     }
 
     @PreAuthorize("hasAuthority('updateClient')")
     @PostMapping(path = "/update")
-    public ResponseEntity<?> updateClient(@RequestBody Client client) {
-        return clientService.updateClient(client);
+    public ResponseEntity<?> updateClient(@RequestBody Client client, HttpServletRequest request) {
+        log.info("Ip: {}, Username: {}, Client is successfully updated!",request.getRemoteAddr(), client.getUsername());
+        return clientService.updateClient(client , request);
     }
 
     @GetMapping(path = "/activate")
-    public ResponseEntity<?> activateClientAccount(WebRequest request, @RequestParam("token") String hashCode) {
+    public ResponseEntity<?> activateClientAccount(HttpServletRequest request, @RequestParam("token") String hashCode) {
         ConfirmationToken token = confirmationTokenRepository.findByConfirmationToken(hashCode);
         Long secs = (token.getCreatedDate().getTime() - new Date().getTime())/1000;
         Client verificationClient = token.getClient();
@@ -56,6 +60,7 @@ public class ClientController {
         }
 
         verificationClient.setActivated(true);
+        log.info("Ip: {}, Username: {}, Client is successfully activated!",request.getRemoteAddr(), verificationClient.getUsername());
         clientService.save(verificationClient);
 
         HttpHeaders headers = new HttpHeaders();
