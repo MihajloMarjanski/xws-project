@@ -24,7 +24,6 @@ func New() (*RequestsRepository, error) {
 	repo := &RequestsRepository{}
 
 	dsn := "host=requestdb user=XML password=ftn dbname=XML_REQUESTS port=5432 sslmode=disable"
-	//dsn := "host=localhost user=XML password=ftn dbname=XML_REQUESTS port=5432 sslmode=disable"
 	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
 	if err != nil {
 		return nil, err
@@ -76,8 +75,7 @@ func (repo *RequestsRepository) DeclineRequest(sid, rid uint) {
 }
 
 func (repo *RequestsRepository) SendRequest(sid, rid uint) {
-	//conn, err := grpc.Dial("user-service:8100", grpc.WithInsecure())
-	conn, err := grpc.Dial("localhost:8100", grpc.WithInsecure())
+	conn, err := grpc.Dial("user-service:8100", grpc.WithInsecure())
 	if err != nil {
 		panic(err)
 	}

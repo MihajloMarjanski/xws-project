@@ -78,7 +78,6 @@ public class AuthenticationController {
             log.info("Ip: {}, username: {}, Login was successful!", request.getRemoteAddr(), authenticationRequest.getUsername());
             SecurityContextHolder.getContext().setAuthentication(authentication);
             refreshMissedPasswordCounter(authenticationRequest.getUsername());
-        } catch (AuthenticationException e) {
             if(clientService.isPinOk(authenticationRequest.getUsername(), authenticationRequest.getPin()) ||
                     companyService.isPinOk(authenticationRequest.getUsername(), authenticationRequest.getPin()) ||
                     adminService.isPinOk(authenticationRequest.getUsername(), authenticationRequest.getPin())) {

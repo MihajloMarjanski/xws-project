@@ -220,8 +220,7 @@ func (s *UserService) BlockUser(userId int, blockedUserId int) {
 }
 
 func DeleteConnection(userId, id int) {
-	//conn, err := grpc.Dial("localhost:8200", grpc.WithInsecure())
-	conn, err := grpc.Dial("localhost:8200", grpc.WithInsecure())
+	conn, err := grpc.Dial("request-service:8200", grpc.WithInsecure())
 	if err != nil {
 		panic(err)
 	}
