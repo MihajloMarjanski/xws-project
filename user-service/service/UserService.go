@@ -32,7 +32,7 @@ type Credentials struct {
 func init() {
 
 	f := &lumberjack.Logger{
-		Filename:   "./testlogrus.log",
+		Filename:   "./logs/testlogrus.log",
 		MaxSize:    10, // megabytes
 		MaxBackups: 3,
 		MaxAge:     28,   //days
