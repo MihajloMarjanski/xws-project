@@ -2,23 +2,43 @@ package service
 
 import (
 	"fmt"
-	pbReq "github.com/MihajloMarjanski/xws-project/common/proto/requests_service"
-	"golang.org/x/net/context"
-	"google.golang.org/grpc"
+	"io"
 	"os"
 	"post-service/model"
 	"post-service/repo"
 	"time"
+
+	pbReq "github.com/MihajloMarjanski/xws-project/common/proto/requests_service"
+	"github.com/natefinch/lumberjack"
+	log "github.com/sirupsen/logrus"
+	"golang.org/x/net/context"
+	"google.golang.org/grpc"
 )
 
 type PostService struct {
 	postRepo *repo.PostRepository
 }
 
+func init() {
+
+	f := &lumberjack.Logger{
+		Filename:   "./testlogrus.log",
+		MaxSize:    10, // megabytes
+		MaxBackups: 3,
+		MaxAge:     28,   //days
+		Compress:   true, // disabled by default
+	}
+
+	mw := io.MultiWriter(os.Stdout, f)
+	log.SetOutput(mw)
+	log.SetLevel(log.InfoLevel)
+}
+
 func New() (*PostService, error) {
 
 	postRepo, err := repo.New()
 	if err != nil {
+		log.Error("Error creating Post Repository.")
 		return nil, err
 	}
 
@@ -31,6 +51,7 @@ func (service *PostService) CreatePost(title string, text string, img string, li
 
 	name, err := os.Hostname()
 	if err != nil {
+		log.WithFields(log.Fields{}).Error("Error creating post.")
 		panic(err)
 	}
 
@@ -60,12 +81,14 @@ func (service *PostService) SendNotification(id uint, message string) []model.Us
 
 	conn, err := grpc.Dial("request-service:8200", grpc.WithInsecure())
 	if err != nil {
+		log.WithFields(log.Fields{}).Error("Error sending notification.")
 		panic(err)
 	}
 	defer conn.Close()
 	client := pbReq.NewRequestsServiceClient(conn)
 	users, err := client.FindConnections(context.Background(), &pbReq.FindConnectionsRequest{Id: int64(id)})
 	if err != nil {
+		log.WithFields(log.Fields{}).Error("Error establishing connection.")
 		panic(err)
 	}
 	for _, user := range users.Users {

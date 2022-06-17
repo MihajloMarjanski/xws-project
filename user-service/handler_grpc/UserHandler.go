@@ -46,7 +46,7 @@ func Verify(accessToken string) (*service.Claims, error) {
 		func(token *jwt.Token) (interface{}, error) {
 			_, ok := token.Method.(*jwt.SigningMethodHMAC)
 			if !ok {
-				log.Error("Unexpected token signing method.")
+				log.WithFields(log.Fields{"method_name": "Verify"}).Error("Unexpected token signing method.")
 				return nil, fmt.Errorf("unexpected token signing method")
 			}
 
