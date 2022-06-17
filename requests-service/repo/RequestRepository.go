@@ -3,6 +3,8 @@ package repo
 import (
 	"golang.org/x/net/context"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials"
+	"log"
 	"requests-service/model"
 	"time"
 
@@ -77,7 +79,11 @@ func (repo *RequestsRepository) DeclineRequest(sid, rid uint) {
 
 func (repo *RequestsRepository) SendRequest(sid, rid uint) {
 	//conn, err := grpc.Dial("user-service:8100", grpc.WithInsecure())
-	conn, err := grpc.Dial("localhost:8100", grpc.WithInsecure())
+	creds, err := credentials.NewClientTLSFromFile("startup/certTLS/service.pem", "")
+	if err != nil {
+		log.Fatalf("Failed to setup TLS: %v", err)
+	}
+	conn, err := grpc.Dial("DESKTOP-NJH4ABT:8100", grpc.WithTransportCredentials(creds))
 	if err != nil {
 		panic(err)
 	}

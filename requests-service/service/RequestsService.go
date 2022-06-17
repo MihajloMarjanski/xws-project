@@ -5,6 +5,8 @@ import (
 	pbUser "github.com/MihajloMarjanski/xws-project/common/proto/user_service"
 	"golang.org/x/net/context"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials"
+	"log"
 	"requests-service/model"
 	"requests-service/repo"
 )
@@ -73,7 +75,11 @@ func (s *RequestsService) SendMessage(senderID, receiverID uint, message string)
 
 func (s *RequestsService) SendNotification(senderID, receiverID uint, message string) {
 	//conn, err := grpc.Dial("localhost:8100", grpc.WithInsecure())
-	conn, err := grpc.Dial("localhost:8100", grpc.WithInsecure())
+	creds, err := credentials.NewClientTLSFromFile("startup/certTLS/service.pem", "")
+	if err != nil {
+		log.Fatalf("Failed to setup TLS: %v", err)
+	}
+	conn, err := grpc.Dial("DESKTOP-NJH4ABT:8100", grpc.WithTransportCredentials(creds))
 	if err != nil {
 		panic(err)
 	}

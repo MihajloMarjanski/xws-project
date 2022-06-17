@@ -10,7 +10,7 @@ import (
 	"github.com/gorilla/handlers"
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 	"google.golang.org/grpc"
-	"google.golang.org/grpc/credentials/insecure"
+	"google.golang.org/grpc/credentials"
 	"log"
 	"net/http"
 )
@@ -30,12 +30,19 @@ func NewServer(config *cfg.Config) *Server {
 }
 
 func (server *Server) initHandlers() {
-	opts := []grpc.DialOption{grpc.WithTransportCredentials(insecure.NewCredentials())}
+	//opts := []grpc.DialOption{grpc.WithTransportCredentials(insecure.NewCredentials())}
+
+	creds, err := credentials.NewClientTLSFromFile("startup/certTLS/service.pem", "")
+	if err != nil {
+		log.Fatalf("could not process the credentials: %v", err)
+	}
+
+	opts := []grpc.DialOption{grpc.WithTransportCredentials(creds)}
 
 	userEndpoint := fmt.Sprintf("%s:%s", server.config.UserHost, server.config.UserPort)
-	err := userGw.RegisterUserServiceHandlerFromEndpoint(context.TODO(), server.mux, userEndpoint, opts)
-	if err != nil {
-		panic(err)
+	err6 := userGw.RegisterUserServiceHandlerFromEndpoint(context.TODO(), server.mux, userEndpoint, opts)
+	if err6 != nil {
+		panic(err6)
 	}
 	requestEndpoint := fmt.Sprintf("%s:%s", server.config.RequestHost, server.config.RequestPort)
 	err1 := requestGw.RegisterRequestsServiceHandlerFromEndpoint(context.TODO(), server.mux, requestEndpoint, opts)

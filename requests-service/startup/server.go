@@ -2,6 +2,7 @@ package startup
 
 import (
 	"fmt"
+	"google.golang.org/grpc/credentials"
 	"log"
 	"net"
 	"os"
@@ -54,9 +55,16 @@ func (server *Server) startGrpcServer(reqHandler *handler_grpc.RequestsHandler) 
 	}
 
 	interceptor := NewAuthInterceptor(accessibleRoles())
+
+	creds, err := credentials.NewServerTLSFromFile("startup/certTLS/service.pem", "startup/certTLS/service.key")
+	if err != nil {
+		log.Fatalf("Failed to setup TLS: %v", err)
+	}
+
 	grpcServer := grpc.NewServer(
 		grpc.UnaryInterceptor(interceptor.Unary()),
 		grpc.StreamInterceptor(interceptor.Stream()),
+		grpc.Creds(creds),
 	)
 	requestProto.RegisterRequestsServiceServer(grpcServer, reqHandler)
 	if err := grpcServer.Serve(listener); err != nil {
