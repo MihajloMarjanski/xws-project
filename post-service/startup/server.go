@@ -2,6 +2,7 @@ package startup
 
 import (
 	"fmt"
+	"google.golang.org/grpc/credentials"
 	"log"
 	"net"
 	"post-service/handler_grpc"
@@ -46,9 +47,16 @@ func (server *Server) startGrpcServer(postHandler *handler_grpc.PostHandler) {
 		log.Fatalf("failed to listen: %v", err)
 	}
 	interceptor := NewAuthInterceptor(accessibleRoles())
+
+	creds, err := credentials.NewServerTLSFromFile("startup/certTLS/service.pem", "startup/certTLS/service.key")
+	if err != nil {
+		log.Fatalf("Failed to setup TLS: %v", err)
+	}
+
 	grpcServer := grpc.NewServer(
 		grpc.UnaryInterceptor(interceptor.Unary()),
 		grpc.StreamInterceptor(interceptor.Stream()),
+		grpc.Creds(creds),
 	)
 	post.RegisterPostServiceServer(grpcServer, postHandler)
 	if err := grpcServer.Serve(listener); err != nil {
