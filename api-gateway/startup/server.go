@@ -13,6 +13,7 @@ import (
 	"google.golang.org/grpc/credentials/insecure"
 	"log"
 	"net/http"
+	"path/filepath"
 )
 
 type Server struct {
@@ -50,11 +51,13 @@ func (server *Server) initHandlers() {
 }
 
 func (server *Server) Start() {
+	crtPath, _ := filepath.Abs("./server.crt")
+	keyPath, _ := filepath.Abs("./server.key")
 	origins := handlers.AllowedOrigins([]string{"https://localhost:4300", "https://localhost:4300/**", "https://localhost:4300", "https://localhost:4300/**"})
 	methods := handlers.AllowedMethods([]string{"GET", "POST", "PUT", "DELETE"})
 	headers := handlers.AllowedHeaders([]string{"Accept", "Accept-Language", "Content-Type", "Content-Language", "Origin", "Authorization", "Access-Control-Allow-Origin", "*"})
 
 	log.Println("gateway started")
 	//log.Fatal(http.ListenAndServe(fmt.Sprintf(":%s", server.config.Port), handlers.CORS(headers, methods, origins)(server.mux)))
-	log.Fatal(http.ListenAndServeTLS(fmt.Sprintf(":%s", server.config.Port), "startup/cert/server.crt", "startup/cert/server.key", handlers.CORS(headers, methods, origins)(server.mux)))
+	log.Fatal(http.ListenAndServeTLS(fmt.Sprintf(":%s", server.config.Port), crtPath, keyPath, handlers.CORS(headers, methods, origins)(server.mux)))
 }
