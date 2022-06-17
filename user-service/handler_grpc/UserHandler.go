@@ -302,7 +302,7 @@ func (handler *UserHandler) GetPrivateStatusForUserId(ctx context.Context, reque
 	response := &pb.GetPrivateStatusForUserIdResponse{
 		IsPrivate: status,
 	}
-	log.WithFields(log.Fields{"service_name": "user-service", "method_name": "GetPrivateStatusForUserId", "user_id": request.id}).Info("Api key successfully retrieved.")
+	log.WithFields(log.Fields{"service_name": "user-service", "method_name": "GetPrivateStatusForUserId", "user_id": request.Id}).Info("Api key successfully retrieved.")
 	return response, nil
 }
 
@@ -322,11 +322,11 @@ func (handler *UserHandler) SendPinFor2Auth(ctx context.Context, request *pb.Sen
 	message := handler.userService.SendPinFor2Auth(request.Credentials.Username, request.Credentials.Password)
 	if message != "" {
 		err := status.Error(codes.InvalidArgument, message)
-		log.WithFields(log.Fields{"service_name": "user-service", "method_name": "SendPinFor2Auth", "username": request.Username}).Warn("Invalid pin for 2FA.")
+		log.WithFields(log.Fields{"service_name": "user-service", "method_name": "SendPinFor2Auth", "username": request.Credentials.Username}).Warn("Invalid pin for 2FA.")
 		return nil, err
 	}
 	response := &pb.SendPinFor2AuthResponse{}
-	log.WithFields(log.Fields{"service_name": "user-service", "method_name": "SendPinFor2Auth", "username": request.Username}).Info("Pin for 2FA successfully generated.")
+	log.WithFields(log.Fields{"service_name": "user-service", "method_name": "SendPinFor2Auth", "username": request.Credentials.Username}).Info("Pin for 2FA successfully generated.")
 	return response, nil
 }
 

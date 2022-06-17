@@ -16,7 +16,7 @@ type UserRepository struct {
 func New() (*UserRepository, error) {
 	repo := &UserRepository{}
 
-	dsn := "host=userdb user=XML password=ftn dbname=XML_TEST port=5432 sslmode=disable"
+	dsn := "host=localhost user=XML password=ftn dbname=XML_TEST port=5432 sslmode=disable"
 	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
 	if err != nil {
 		return nil, err
