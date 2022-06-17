@@ -8,6 +8,8 @@ services:
       context: ./
       dockerfile: ./user-service/Dockerfile
     restart: always
+    volumes:
+      - ~/Desktop/logs/user_service_logs:/root/logs
     ports:
       - 8001:8100
     networks:
@@ -20,6 +22,8 @@ services:
       context: ./
       dockerfile: ./requests-service/Dockerfile
     restart: always
+    volumes:
+      - ~/Desktop/logs/request_service_logs:/root/logs
     ports:
       - 8002:8200
     networks:
@@ -32,6 +36,8 @@ services:
       context: ./
       dockerfile: ./post-service/Dockerfile
     restart: always
+    volumes:
+      - ~/Desktop/logs/post_service_logs:/root/logs
     ports:
       - 8003:8300
     networks:
@@ -44,6 +50,8 @@ services:
       context: ./
       dockerfile: ./api-gateway/Dockerfile
     restart: always
+    volumes:
+      - ~/Desktop/logs/api_gateway_logs:/root/logs
     ports:
       - 8000:8000
     networks:
