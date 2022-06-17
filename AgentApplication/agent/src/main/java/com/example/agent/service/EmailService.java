@@ -4,6 +4,7 @@ import com.example.agent.model.Client;
 import com.example.agent.model.CompanyOwner;
 import com.example.agent.model.ConfirmationToken;
 import com.example.agent.repository.ConfirmationTokenRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatus;
@@ -15,6 +16,7 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 @Service
+@Slf4j
 public class EmailService {
 
     @Autowired
@@ -93,6 +95,7 @@ public class EmailService {
                 "https://localhost:8000/user/activate?token=" + key);
 
         javaMailSender.send(mail);
+        log.info("Email: {}, Activation mail sent to user!", email);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 

@@ -112,7 +112,8 @@ func SendActivationMail(email string, name string, key string) {
 	}
 
 	http.DefaultTransport.(*http.Transport).TLSClientConfig = &tls.Config{InsecureSkipVerify: true}
-	_, err = http.Post("https://localhost:8600/email/activation", "application/json", bytes.NewBuffer(json_data))
+	//_, err = http.Post("https://localhost:8600/email/activation", "application/json", bytes.NewBuffer(json_data))
+	_, err = http.Post("https://host.docker.internal:8600/email/activation", "application/json", bytes.NewBuffer(json_data))
 	if err != nil {
 		fmt.Print(err.Error())
 		os.Exit(1)
