@@ -50,7 +50,7 @@ func Verify(accessToken string) (*service.Claims, error) {
 				return nil, fmt.Errorf("unexpected token signing method")
 			}
 
-			log.WithFields(log.Fields{"service_name": "user-service","method_name": "Verify"}).Info("Token successfully verified.")
+			log.WithFields(log.Fields{"service_name": "user-service", "method_name": "Verify"}).Info("Token successfully verified.")
 			return []byte("tajni_kljuc_za_jwt_hash"), nil
 		},
 	)
@@ -88,9 +88,8 @@ func New() (*UserHandler, error) {
 		log.WithFields(log.Fields{"service_name": "user-service", "method_name": "NewUserHandler"}).Error("Error creating user service.")
 		return nil, err
 	}
-
+	log.WithFields(log.Fields{"service_name": "user-service", "method_name": "NewUserHandler"}).Info("Successfully created user handler.")
 	return &UserHandler{
-		log.WithFields(log.Fields{"service_name": "user-service", "method_name": "NewUserHandler"}).Info("Successfully created user handler.")
 		userService: userService,
 	}, nil
 }

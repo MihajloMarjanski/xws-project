@@ -48,7 +48,7 @@ func Verify(accessToken string) (*model.Claims, error) {
 				return nil, fmt.Errorf("unexpected token signing method")
 			}
 
-			log.WithFields(log.Fields{"service_name": "request-service","method_name": "Verify"}).Info("Token successfully verified.")
+			log.WithFields(log.Fields{"service_name": "request-service", "method_name": "Verify"}).Info("Token successfully verified.")
 			return []byte("tajni_kljuc_za_jwt_hash"), nil
 		},
 	)
@@ -85,9 +85,8 @@ func New() (*RequestsHandler, error) {
 		log.WithFields(log.Fields{"service_name": "request-service", "method_name": "NewRequestsHandler"}).Error("Error creating request service.")
 		return nil, err
 	}
-
+	log.WithFields(log.Fields{"service_name": "request-service", "method_name": "NewRequestsHandler"}).Info("Successfully created request handler.")
 	return &RequestsHandler{
-		log.WithFields(log.Fields{"service_name": "request-service", "method_name": "NewRequestsHandler"}).Info("Successfully created request handler.")
 		requestsService: requestsService,
 	}, nil
 }
@@ -99,7 +98,7 @@ func (requestsHandler *RequestsHandler) CloseDB() error {
 
 func (handler *RequestsHandler) GetAllByRecieverId(ctx context.Context, request *pb.GetAllByRecieverIdRequest) (*pb.GetAllByRecieverIdResponse, error) {
 	idReceived := request.ReceiverId
-	id = int64(GetUserID(ctx))
+	id := int64(GetUserID(ctx))
 	if idReceived != id {
 		log.WithFields(log.Fields{"service_name": "request-service", "method_name": "NewRequestsHandler"}).Warn("Someone tried to pose as different user.")
 	}
