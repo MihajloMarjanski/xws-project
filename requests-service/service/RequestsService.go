@@ -1,24 +1,46 @@
 package service
 
 import (
-	pb "github.com/MihajloMarjanski/xws-project/common/proto/requests_service"
-	pbUser "github.com/MihajloMarjanski/xws-project/common/proto/user_service"
-	"golang.org/x/net/context"
-	"google.golang.org/grpc"
+	"io"
+	"os"
 	"requests-service/model"
 	"requests-service/repo"
+
+	pb "github.com/MihajloMarjanski/xws-project/common/proto/requests_service"
+	pbUser "github.com/MihajloMarjanski/xws-project/common/proto/user_service"
+	"github.com/natefinch/lumberjack"
+	log "github.com/sirupsen/logrus"
+	"golang.org/x/net/context"
+	"google.golang.org/grpc"
 )
 
 type RequestsService struct {
 	reqRepo *repo.RequestsRepository
 }
 
+func init() {
+
+	f := &lumberjack.Logger{
+		Filename:   "./testlogrus.log",
+		MaxSize:    10, // megabytes
+		MaxBackups: 3,
+		MaxAge:     28,   //days
+		Compress:   true, // disabled by default
+	}
+
+	mw := io.MultiWriter(os.Stdout, f)
+	log.SetOutput(mw)
+	log.SetLevel(log.InfoLevel)
+}
+
 func New() (*RequestsService, error) {
 	reqRepo, err := repo.New()
 	if err != nil {
+		log.WithFields(log.Fields{"service_name": "request-service", "method_name": "NewRequestService"}).Error("Error creating Request Repository.")
 		return nil, err
 	}
 
+	log.WithFields(log.Fields{"service_name": "request-service", "method_name": "NewRequestService"}).Info("Successfully created Request Service.")
 	return &RequestsService{
 		reqRepo: reqRepo,
 	}, nil
@@ -33,6 +55,7 @@ func (s *RequestsService) GetAllByRecieverId(rid uint) []*pb.UsernameWithRequest
 
 	conn, err := grpc.Dial("user-service:8100", grpc.WithInsecure())
 	if err != nil {
+		log.WithFields(log.Fields{"service_name": "request-service", "method_name": "GetAllByRecieverId"}).Error("Error establishing connection with user-service via grpc.")
 		panic(err)
 	}
 	defer conn.Close()
@@ -41,6 +64,7 @@ func (s *RequestsService) GetAllByRecieverId(rid uint) []*pb.UsernameWithRequest
 	for _, request := range s.reqRepo.GetAllByRecieverId(rid) {
 		response, err := client.GetUser(context.Background(), &pbUser.GetUserRequest{Id: int64(request.SenderID)})
 		if err != nil {
+			log.WithFields(log.Fields{"service_name": "request-service", "method_name": "GetAllByRecieverId"}).Warn("Error getting user.")
 			panic(err)
 		}
 		users = append(users, mapUserToUsernameReq(response.User, request.ReceiverID, request.SenderID))
@@ -73,12 +97,14 @@ func (s *RequestsService) SendMessage(senderID, receiverID uint, message string)
 func (s *RequestsService) SendNotification(senderID, receiverID uint, message string) {
 	conn, err := grpc.Dial("user-service:8100", grpc.WithInsecure())
 	if err != nil {
+		log.WithFields(log.Fields{"service_name": "request-service", "method_name": "SendNotification"}).Error("Error establishing connection with user-service via grpc.")
 		panic(err)
 	}
 	defer conn.Close()
 	client := pbUser.NewUserServiceClient(conn)
 	response, err := client.GetUser(context.Background(), &pbUser.GetUserRequest{Id: int64(senderID)})
 	if err != nil {
+		log.WithFields(log.Fields{"service_name": "request-service", "method_name": "SendNotification"}).Warn("Error getting user")
 		panic(err)
 	}
 
@@ -95,6 +121,7 @@ func (s *RequestsService) FindConnections(id int64) []model.User {
 
 	conn, err := grpc.Dial("user-service:8100", grpc.WithInsecure())
 	if err != nil {
+		log.WithFields(log.Fields{"service_name": "request-service", "method_name": "FindConnections"}).Error("Error establishing connection with user-service via grpc.")
 		panic(err)
 	}
 	defer conn.Close()
@@ -103,6 +130,7 @@ func (s *RequestsService) FindConnections(id int64) []model.User {
 	for _, connection := range ids1 {
 		response, err := client.GetUser(context.Background(), &pbUser.GetUserRequest{Id: int64(connection.UserOne)})
 		if err != nil {
+			log.WithFields(log.Fields{"service_name": "request-service", "method_name": "SendNotification"}).Warn("Error getting user")
 			panic(err)
 		}
 		res = append(res, mapUser(response.User))
@@ -110,6 +138,7 @@ func (s *RequestsService) FindConnections(id int64) []model.User {
 	for _, connection := range ids2 {
 		response, err := client.GetUser(context.Background(), &pbUser.GetUserRequest{Id: int64(connection.UserTwo)})
 		if err != nil {
+			log.WithFields(log.Fields{"service_name": "request-service", "method_name": "SendNotification"}).Warn("Error getting user")
 			panic(err)
 		}
 		res = append(res, mapUser(response.User))
