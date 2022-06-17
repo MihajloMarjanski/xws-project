@@ -14,6 +14,8 @@ require (
 	gorm.io/gorm v1.23.5
 )
 
+require github.com/natefinch/lumberjack v2.0.0+incompatible // indirect
+
 require (
 	github.com/golang/protobuf v1.5.2 // indirect
 	github.com/grpc-ecosystem/grpc-gateway/v2 v2.9.0 // indirect

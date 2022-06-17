@@ -15,6 +15,7 @@ import (
 
 	pb "github.com/MihajloMarjanski/xws-project/common/proto/user_service"
 	"github.com/dgrijalva/jwt-go"
+	"github.com/natefinch/lumberjack"
 	log "github.com/sirupsen/logrus"
 )
 
@@ -25,18 +26,17 @@ type UserHandler struct {
 
 func init() {
 
-	// open a file
-	f, err := os.OpenFile("testlogrus.log", os.O_APPEND|os.O_CREATE|os.O_RDWR, 0666)
-	if err != nil {
-		fmt.Printf("error opening file: %v", err)
+	f := &lumberjack.Logger{
+		Filename:   "./testlogrus.log",
+		MaxSize:    10, // megabytes
+		MaxBackups: 3,
+		MaxAge:     28,   //days
+		Compress:   true, // disabled by default
 	}
 
-	// don't forget to close it
-	//defer f.Close()
-
-	// Output to stderr instead of stdout, could also be a file.
 	mw := io.MultiWriter(os.Stdout, f)
 	log.SetOutput(mw)
+	log.SetLevel(log.InfoLevel)
 }
 
 func Verify(accessToken string) (*service.Claims, error) {
@@ -103,7 +103,7 @@ func (handler *UserHandler) GetUser(ctx context.Context, request *pb.GetUserRequ
 	user := handler.userService.GetByID(int(id))
 	if user.ID == 0 {
 		err := status.Error(codes.NotFound, "User with that id does not exist.")
-		log.Warn("User with that id does not exist.")
+		log.WithFields(log.Fields{"method_name": "GetUser", "method_type": "GET"}).Warn("User with that id does not exist.")
 		return nil, err
 	}
 	userPb := mapUserDtoToProto(user)
