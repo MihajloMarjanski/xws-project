@@ -100,7 +100,7 @@ func (handler *RequestsHandler) GetAllByRecieverId(ctx context.Context, request 
 	idReceived := request.ReceiverId
 	id := int64(GetUserID(ctx))
 	if idReceived != id {
-		log.WithFields(log.Fields{"service_name": "request-service", "method_name": "NewRequestsHandler"}).Warn("Someone tried to pose as different user.")
+		log.WithFields(log.Fields{"service_name": "request-service", "method_name": "NewRequestsHandler", "user_id": id}).Warn("Someone tried to pose as different user.")
 	}
 	users := handler.requestsService.GetAllByRecieverId(uint(id))
 
@@ -116,7 +116,7 @@ func (handler *RequestsHandler) AcceptRequest(ctx context.Context, request *pb.A
 	recieverID = int64(GetUserID(ctx))
 	handler.requestsService.AcceptRequest(uint(senderID), uint(recieverID))
 	response := &pb.AcceptRequestResponse{}
-	log.WithFields(log.Fields{"service_name": "request-service", "method_name": "AcceptRequest"}).Info("Successfully accepted request.")
+	log.WithFields(log.Fields{"service_name": "request-service", "method_name": "AcceptRequest", "sender_id": senderID, "receiver_id": recieverID}).Info("Successfully accepted request.")
 	return response, nil
 }
 
@@ -126,7 +126,7 @@ func (handler *RequestsHandler) DeclineRequest(ctx context.Context, request *pb.
 	recieverID = int64(GetUserID(ctx))
 	handler.requestsService.DeclineRequest(uint(senderID), uint(recieverID))
 	response := &pb.DeclineRequestResponse{}
-	log.WithFields(log.Fields{"service_name": "request-service", "method_name": "DeclineRequest"}).Info("Successfully denied request.")
+	log.WithFields(log.Fields{"service_name": "request-service", "method_name": "DeclineRequest", "sender_id": senderID, "receiver_id": recieverID}).Info("Successfully denied request.")
 	return response, nil
 }
 
@@ -136,7 +136,7 @@ func (handler *RequestsHandler) SendRequest(ctx context.Context, request *pb.Sen
 	senderID = int64(GetUserID(ctx))
 	handler.requestsService.SendRequest(uint(senderID), uint(recieverID))
 	response := &pb.SendRequestResponse{}
-	log.WithFields(log.Fields{"service_name": "request-service", "method_name": "SendRequest"}).Info("Successfully sent request.")
+	log.WithFields(log.Fields{"service_name": "request-service", "method_name": "SendRequest", "sender_id": senderID, "receiver_id": recieverID}).Info("Successfully sent request.")
 	return response, nil
 }
 
@@ -147,7 +147,7 @@ func (handler *RequestsHandler) SendMessage(ctx context.Context, request *pb.Sen
 	message := request.Message.Text
 	handler.requestsService.SendMessage(uint(senderID), uint(receiverID), message)
 	response := &pb.SendMessageResponse{}
-	log.WithFields(log.Fields{"service_name": "request-service", "method_name": "SendMessage"}).Info("Successfully sent message.")
+	log.WithFields(log.Fields{"service_name": "request-service", "method_name": "SendMessage", "sender_id": senderID, "receiver_id": receiverID}).Info("Successfully sent message.")
 	return response, nil
 }
 
@@ -184,7 +184,7 @@ func (handler *RequestsHandler) FindMessages(ctx context.Context, request *pb.Fi
 func (handler *RequestsHandler) DeleteConnection(ctx context.Context, request *pb.DeleteConnectionRequest) (*pb.DeleteConnectionResponse, error) {
 	handler.requestsService.DeleteConnection(request.Id1, request.Id2)
 	response := &pb.DeleteConnectionResponse{}
-	log.WithFields(log.Fields{"service_name": "request-service", "method_name": "DeleteConnection"}).Info("Successfully deleted connection.")
+	log.WithFields(log.Fields{"service_name": "request-service", "method_name": "DeleteConnection", "id1": request.Id1, "id2": request.Id2}).Info("Successfully deleted connection.")
 	return response, nil
 }
 
@@ -196,7 +196,7 @@ func (handler *RequestsHandler) GetNotifications(ctx context.Context, request *p
 	response := &pb.GetNotificationsResponse{
 		Notifications: notifications,
 	}
-	log.WithFields(log.Fields{"service_name": "request-service", "method_name": "GetNotifications"}).Info("Successfully gotten notifications.")
+	log.WithFields(log.Fields{"service_name": "request-service", "method_name": "GetNotifications", "user_id": GetUserID(ctx)}).Info("Successfully gotten notifications.")
 	return response, nil
 }
 
@@ -206,6 +206,6 @@ func (handler *RequestsHandler) SendNotification(ctx context.Context, request *p
 	message := request.Message
 	handler.requestsService.SendNotification(uint(senderID), uint(receiverID), message)
 	response := &pb.SendNotificationResponse{}
-	log.WithFields(log.Fields{"service_name": "request-service", "method_name": "SendNotification"}).Info("Successfully sent notification.")
+	log.WithFields(log.Fields{"service_name": "request-service", "method_name": "SendNotification", "sender_id": senderID, "receiver_id": receiverID}).Info("Successfully sent notification.")
 	return response, nil
 }
