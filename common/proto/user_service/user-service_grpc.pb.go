@@ -37,9 +37,12 @@ type UserServiceClient interface {
 	CreateJobOffer(ctx context.Context, in *CreateJobOfferRequest, opts ...grpc.CallOption) (*CreateJobOfferResponse, error)
 	ActivateAccount(ctx context.Context, in *ActivateAccountRequest, opts ...grpc.CallOption) (*ActivateAccountResponse, error)
 	GetApiKeyForUsername(ctx context.Context, in *GetApiKeyForUsernameRequest, opts ...grpc.CallOption) (*GetApiKeyForUsernameResponse, error)
-	FindAllBlocked(ctx context.Context, in *FindAllBlockedRequest, opts ...grpc.CallOption) (*FindAllBlockedResponse, error)
 	GetPrivateStatusForUserId(ctx context.Context, in *GetPrivateStatusForUserIdRequest, opts ...grpc.CallOption) (*GetPrivateStatusForUserIdResponse, error)
 	SearchOffers(ctx context.Context, in *SearchOffersRequest, opts ...grpc.CallOption) (*SearchOffersResponse, error)
+	ForgotPassword(ctx context.Context, in *ForgotPasswordRequest, opts ...grpc.CallOption) (*ForgotPasswordResponse, error)
+	SendPasswordlessToken(ctx context.Context, in *SendPasswordlessTokenRequest, opts ...grpc.CallOption) (*SendPasswordlessTokenResponse, error)
+	LoginPasswordless(ctx context.Context, in *LoginPasswordlessRequest, opts ...grpc.CallOption) (*LoginPasswordlessResponse, error)
+	SendPinFor2Auth(ctx context.Context, in *SendPinFor2AuthRequest, opts ...grpc.CallOption) (*SendPinFor2AuthResponse, error)
 }
 
 type userServiceClient struct {
@@ -185,15 +188,6 @@ func (c *userServiceClient) GetApiKeyForUsername(ctx context.Context, in *GetApi
 	return out, nil
 }
 
-func (c *userServiceClient) FindAllBlocked(ctx context.Context, in *FindAllBlockedRequest, opts ...grpc.CallOption) (*FindAllBlockedResponse, error) {
-	out := new(FindAllBlockedResponse)
-	err := c.cc.Invoke(ctx, "/user.UserService/FindAllBlocked", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
 func (c *userServiceClient) GetPrivateStatusForUserId(ctx context.Context, in *GetPrivateStatusForUserIdRequest, opts ...grpc.CallOption) (*GetPrivateStatusForUserIdResponse, error) {
 	out := new(GetPrivateStatusForUserIdResponse)
 	err := c.cc.Invoke(ctx, "/user.UserService/GetPrivateStatusForUserId", in, out, opts...)
@@ -206,6 +200,42 @@ func (c *userServiceClient) GetPrivateStatusForUserId(ctx context.Context, in *G
 func (c *userServiceClient) SearchOffers(ctx context.Context, in *SearchOffersRequest, opts ...grpc.CallOption) (*SearchOffersResponse, error) {
 	out := new(SearchOffersResponse)
 	err := c.cc.Invoke(ctx, "/user.UserService/SearchOffers", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *userServiceClient) ForgotPassword(ctx context.Context, in *ForgotPasswordRequest, opts ...grpc.CallOption) (*ForgotPasswordResponse, error) {
+	out := new(ForgotPasswordResponse)
+	err := c.cc.Invoke(ctx, "/user.UserService/ForgotPassword", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *userServiceClient) SendPasswordlessToken(ctx context.Context, in *SendPasswordlessTokenRequest, opts ...grpc.CallOption) (*SendPasswordlessTokenResponse, error) {
+	out := new(SendPasswordlessTokenResponse)
+	err := c.cc.Invoke(ctx, "/user.UserService/SendPasswordlessToken", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *userServiceClient) LoginPasswordless(ctx context.Context, in *LoginPasswordlessRequest, opts ...grpc.CallOption) (*LoginPasswordlessResponse, error) {
+	out := new(LoginPasswordlessResponse)
+	err := c.cc.Invoke(ctx, "/user.UserService/LoginPasswordless", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *userServiceClient) SendPinFor2Auth(ctx context.Context, in *SendPinFor2AuthRequest, opts ...grpc.CallOption) (*SendPinFor2AuthResponse, error) {
+	out := new(SendPinFor2AuthResponse)
+	err := c.cc.Invoke(ctx, "/user.UserService/SendPinFor2Auth", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -231,9 +261,12 @@ type UserServiceServer interface {
 	CreateJobOffer(context.Context, *CreateJobOfferRequest) (*CreateJobOfferResponse, error)
 	ActivateAccount(context.Context, *ActivateAccountRequest) (*ActivateAccountResponse, error)
 	GetApiKeyForUsername(context.Context, *GetApiKeyForUsernameRequest) (*GetApiKeyForUsernameResponse, error)
-	FindAllBlocked(context.Context, *FindAllBlockedRequest) (*FindAllBlockedResponse, error)
 	GetPrivateStatusForUserId(context.Context, *GetPrivateStatusForUserIdRequest) (*GetPrivateStatusForUserIdResponse, error)
 	SearchOffers(context.Context, *SearchOffersRequest) (*SearchOffersResponse, error)
+	ForgotPassword(context.Context, *ForgotPasswordRequest) (*ForgotPasswordResponse, error)
+	SendPasswordlessToken(context.Context, *SendPasswordlessTokenRequest) (*SendPasswordlessTokenResponse, error)
+	LoginPasswordless(context.Context, *LoginPasswordlessRequest) (*LoginPasswordlessResponse, error)
+	SendPinFor2Auth(context.Context, *SendPinFor2AuthRequest) (*SendPinFor2AuthResponse, error)
 	mustEmbedUnimplementedUserServiceServer()
 }
 
@@ -286,14 +319,23 @@ func (UnimplementedUserServiceServer) ActivateAccount(context.Context, *Activate
 func (UnimplementedUserServiceServer) GetApiKeyForUsername(context.Context, *GetApiKeyForUsernameRequest) (*GetApiKeyForUsernameResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetApiKeyForUsername not implemented")
 }
-func (UnimplementedUserServiceServer) FindAllBlocked(context.Context, *FindAllBlockedRequest) (*FindAllBlockedResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method FindAllBlocked not implemented")
-}
 func (UnimplementedUserServiceServer) GetPrivateStatusForUserId(context.Context, *GetPrivateStatusForUserIdRequest) (*GetPrivateStatusForUserIdResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetPrivateStatusForUserId not implemented")
 }
 func (UnimplementedUserServiceServer) SearchOffers(context.Context, *SearchOffersRequest) (*SearchOffersResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method SearchOffers not implemented")
+}
+func (UnimplementedUserServiceServer) ForgotPassword(context.Context, *ForgotPasswordRequest) (*ForgotPasswordResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ForgotPassword not implemented")
+}
+func (UnimplementedUserServiceServer) SendPasswordlessToken(context.Context, *SendPasswordlessTokenRequest) (*SendPasswordlessTokenResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SendPasswordlessToken not implemented")
+}
+func (UnimplementedUserServiceServer) LoginPasswordless(context.Context, *LoginPasswordlessRequest) (*LoginPasswordlessResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method LoginPasswordless not implemented")
+}
+func (UnimplementedUserServiceServer) SendPinFor2Auth(context.Context, *SendPinFor2AuthRequest) (*SendPinFor2AuthResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SendPinFor2Auth not implemented")
 }
 func (UnimplementedUserServiceServer) mustEmbedUnimplementedUserServiceServer() {}
 
@@ -578,24 +620,6 @@ func _UserService_GetApiKeyForUsername_Handler(srv interface{}, ctx context.Cont
 	return interceptor(ctx, in, info, handler)
 }
 
-func _UserService_FindAllBlocked_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(FindAllBlockedRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(UserServiceServer).FindAllBlocked(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/user.UserService/FindAllBlocked",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(UserServiceServer).FindAllBlocked(ctx, req.(*FindAllBlockedRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
 func _UserService_GetPrivateStatusForUserId_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GetPrivateStatusForUserIdRequest)
 	if err := dec(in); err != nil {
@@ -628,6 +652,78 @@ func _UserService_SearchOffers_Handler(srv interface{}, ctx context.Context, dec
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(UserServiceServer).SearchOffers(ctx, req.(*SearchOffersRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _UserService_ForgotPassword_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ForgotPasswordRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserServiceServer).ForgotPassword(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/user.UserService/ForgotPassword",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserServiceServer).ForgotPassword(ctx, req.(*ForgotPasswordRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _UserService_SendPasswordlessToken_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SendPasswordlessTokenRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserServiceServer).SendPasswordlessToken(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/user.UserService/SendPasswordlessToken",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserServiceServer).SendPasswordlessToken(ctx, req.(*SendPasswordlessTokenRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _UserService_LoginPasswordless_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(LoginPasswordlessRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserServiceServer).LoginPasswordless(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/user.UserService/LoginPasswordless",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserServiceServer).LoginPasswordless(ctx, req.(*LoginPasswordlessRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _UserService_SendPinFor2Auth_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SendPinFor2AuthRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserServiceServer).SendPinFor2Auth(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/user.UserService/SendPinFor2Auth",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserServiceServer).SendPinFor2Auth(ctx, req.(*SendPinFor2AuthRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -700,16 +796,28 @@ var UserService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _UserService_GetApiKeyForUsername_Handler,
 		},
 		{
-			MethodName: "FindAllBlocked",
-			Handler:    _UserService_FindAllBlocked_Handler,
-		},
-		{
 			MethodName: "GetPrivateStatusForUserId",
 			Handler:    _UserService_GetPrivateStatusForUserId_Handler,
 		},
 		{
 			MethodName: "SearchOffers",
 			Handler:    _UserService_SearchOffers_Handler,
+		},
+		{
+			MethodName: "ForgotPassword",
+			Handler:    _UserService_ForgotPassword_Handler,
+		},
+		{
+			MethodName: "SendPasswordlessToken",
+			Handler:    _UserService_SendPasswordlessToken_Handler,
+		},
+		{
+			MethodName: "LoginPasswordless",
+			Handler:    _UserService_LoginPasswordless_Handler,
+		},
+		{
+			MethodName: "SendPinFor2Auth",
+			Handler:    _UserService_SendPinFor2Auth_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

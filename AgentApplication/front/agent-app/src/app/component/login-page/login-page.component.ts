@@ -46,7 +46,7 @@ export class LoginPageComponent implements OnInit {
       },
       error => {
         console.log('Error!', error)
-        this._snackBar.open('Invalid username or password', 'Close', {duration: 3000});
+        this._snackBar.open(error.error.message, 'Close', {duration: 5000});
       }
     )
   }
@@ -70,6 +70,33 @@ export class LoginPageComponent implements OnInit {
       }
       )
       this._snackBar.open('Your new password has been sent to your email. You have to change it when you login for the first time!', 'Close', {duration: 7000});
+  }
+
+  sendPasswordless() {
+    if(this.credentials.username == '')
+      this._snackBar.open('You have to insert username first.', 'Close', {duration: 3000});
+    else
+      this._userService.sendPasswordless(this.credentials.username).subscribe(
+        data => {
+          this._snackBar.open('Your login link has been successfully sent to your email.', 'Close', {duration: 3000});
+        },
+        error => {
+          console.log('Error!', error)
+          this._snackBar.open(error.error.message, 'Close', {duration: 3000});
+        }
+        )
+  }
+
+  send2factor() {
+    this._userService.send2factor(this.credentials).subscribe(
+      data => {
+        this._snackBar.open('Your new pin has been sent to your email.', 'Close', {duration: 7000});
+      },
+      error => {
+        console.log('Error!', error)
+        this._snackBar.open('You have to valid insert username and password first.', 'Close', {duration: 3000});
+      }
+      )
   }
 
 }

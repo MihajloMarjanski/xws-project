@@ -16,8 +16,8 @@ type UserRepository struct {
 func New() (*UserRepository, error) {
 	repo := &UserRepository{}
 
-	//dsn := "host=userdb user=XML password=ftn dbname=XML_TEST port=5432 sslmode=disable"
-	dsn := "host=localhost user=XML password=ftn dbname=XML_TEST port=5432 sslmode=disable"
+	dsn := "host=userdb user=XML password=ftn dbname=XML_TEST port=5432 sslmode=disable"
+	//dsn := "host=localhost user=XML password=ftn dbname=XML_TEST port=5432 sslmode=disable"
 	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
 	if err != nil {
 		return nil, err
@@ -93,8 +93,11 @@ func (repo *UserRepository) CreateUser(name string, email string, password strin
 	return int(user.ID)
 }
 
-func (repo *UserRepository) UpdateUser(id uint, name string, email string, password string, username string, gender model.Gender, phonenumber string, dateofbirth time.Time, biography string, isPrivate bool) int {
+func (repo *UserRepository) UpdateUser(id uint, name string, email string, password string, username string, gender model.Gender, phonenumber string, dateofbirth time.Time, biography string, isPrivate, changedPass bool) int {
 	user := repo.GetByID(int(id))
+	if changedPass {
+		user.Forgotten = 0
+	}
 	user.Name = name
 	user.Password = password
 	user.Gender = gender
@@ -204,4 +207,8 @@ func (repo *UserRepository) GetAllOffers() []model.JobOffer {
 	var offers []model.JobOffer
 	repo.db.Find(&offers)
 	return offers
+}
+
+func (repo *UserRepository) Save(user model.User) {
+	repo.db.Save(&user)
 }
