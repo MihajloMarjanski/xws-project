@@ -45,5 +45,4 @@ public class User {
     protected Integer missedPasswordCounter;
     protected boolean isBlocked;
     protected Date blockedDate;
-    protected Date pinCreatedDate;
 }

@@ -1,31 +1,23 @@
 package com.example.agent.controller;
 
-import com.example.agent.model.*;
+import com.example.agent.model.Admin;
+import com.example.agent.model.Client;
+import com.example.agent.model.CompanyOwner;
 import com.example.agent.model.dto.UserCredentials;
-import com.example.agent.repository.ConfirmationTokenRepository;
 import com.example.agent.security.tokenUtils.JwtTokenUtils;
 import com.example.agent.service.AdminService;
 import com.example.agent.service.ClientService;
 import com.example.agent.service.CompanyService;
-import com.example.agent.service.EmailService;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.context.request.WebRequest;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -36,15 +28,10 @@ import java.util.Set;
 
 
 //Kontroler zaduzen za autentifikaciju korisnika
-@Slf4j
 @RestController
 @RequestMapping(value = "/auth", produces = MediaType.APPLICATION_JSON_VALUE)
 public class AuthenticationController {
 
-    @Autowired
-    ConfirmationTokenRepository confirmationTokenRepository;
-    @Autowired
-    EmailService emailService;
     private final JwtTokenUtils tokenUtils;
     private final AuthenticationManager authenticationManager;
     private final AdminService adminService;
@@ -64,10 +51,9 @@ public class AuthenticationController {
     // Prvi endpoint koji pogadja korisnik kada se loguje.
     // Tada zna samo svoje korisnicko ime i lozinku i to prosledjuje na backend.
     @PostMapping("/login")
-    public String createAuthenticationToken(@RequestBody UserCredentials authenticationRequest, HttpServletRequest request) {
-        if(isUserBlocked(authenticationRequest.getUsername())){
-            log.warn("Ip: {}, username: {}, Your account is currently blocked. Try next day again.",request.getRemoteAddr(), authenticationRequest.getUsername());
-            return "Your account is currently blocked. Try next day again.";}
+    public String createAuthenticationToken(@RequestBody UserCredentials authenticationRequest, HttpServletResponse response) {
+        if(isUserBlocked(authenticationRequest.getUsername()))
+            return "Your account is currently blocked. Try next day again.";
         String salt = findSaltForUsername(authenticationRequest.getUsername());
         Authentication authentication = null;
         try {
@@ -75,25 +61,16 @@ public class AuthenticationController {
             authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
                     authenticationRequest.getUsername(), authenticationRequest.getPassword().concat(salt)));
             // Ukoliko je autentifikacija uspesna, ubaci korisnika u trenutni security kontekst
-            log.info("Ip: {}, username: {}, Login was successful!", request.getRemoteAddr(), authenticationRequest.getUsername());
             SecurityContextHolder.getContext().setAuthentication(authentication);
             refreshMissedPasswordCounter(authenticationRequest.getUsername());
         } catch (AuthenticationException e) {
             if(clientService.isPinOk(authenticationRequest.getUsername(), authenticationRequest.getPin()) ||
-                    companyService.isPinOk(authenticationRequest.getUsername(), authenticationRequest.getPin()) ||
-                    adminService.isPinOk(authenticationRequest.getUsername(), authenticationRequest.getPin())) {
-                SecurityContextHolder.getContext().setAuthentication(authentication);
-                refreshMissedPasswordCounter(authenticationRequest.getUsername());
-            }
+                    companyService.isPinOk(authenticationRequest.getUsername(), authenticationRequest.getPin()))
+                SecurityContextHolder.getContext().setAuthentication(null);
             else {
                 increaseMissedPasswordCounter(authenticationRequest.getUsername());
-                log.warn("Ip: {}, username: {}, Invalid pin.",request.getRemoteAddr(), authenticationRequest.getUsername());
-                return "Invalid pin.";
+                return "Invalid username, password or pin.";
             }
-        } catch (AuthenticationException e) {
-            increaseMissedPasswordCounter(authenticationRequest.getUsername());
-            log.warn("Ip: {}, username: {}, Invalid username, password.",request.getRemoteAddr(), authenticationRequest.getUsername());
-            return "Invalid username, password.";
         }
 
         // Kreiraj token za tog korisnika
@@ -108,10 +85,8 @@ public class AuthenticationController {
                 companyOwner.setForgotten(2);
                 companyService.saveOwner(companyOwner);
             }
-            else if (companyOwner.getForgotten() == 2){
-                log.warn("Ip: {}, username: {}, Did not changed password first time. If you want to log in, refresh again your password.", request.getRemoteAddr(), authenticationRequest.getUsername());
+            else if (companyOwner.getForgotten() == 2)
                 return "You did not changed password first time. If you want to log in, refresh again your password.";
-            }
             jwt = tokenUtils.generateToken(companyOwner.getUsername(), companyOwner.getRoles());
         } catch (Exception e) {
             try {
@@ -124,10 +99,8 @@ public class AuthenticationController {
                     client.setForgotten(2);
                     clientService.save(client);
                 }
-                else if (client.getForgotten() == 2){
-                    log.warn("Ip: {}, username: {}, Did not changed password first time. If you want to log in, refresh again your password.", request.getRemoteAddr(), authenticationRequest.getUsername());
+                else if (client.getForgotten() == 2)
                     return "You did not changed password first time. If you want to log in, refresh again your password.";
-                }
                 jwt = tokenUtils.generateToken(client.getUsername(), client.getRoles());
             } catch (Exception e1) {
                 Admin admin;
@@ -140,7 +113,6 @@ public class AuthenticationController {
         }
 
         // Vrati token kao odgovor na uspesnu autentifikaciju
-        log.debug("Ip: {}, username: {}, Token successfully generated, JWT: {}", request.getRemoteAddr(), authenticationRequest.getUsername(), jwt);
         return jwt;
     }
 
@@ -203,12 +175,10 @@ public class AuthenticationController {
         CompanyOwner owner = companyService.findByUsername(username);
         if(client != null) {
             client.setMissedPasswordCounter(0);
-            client.setPin("");
             clientService.save(client);
         }
         else if(owner != null) {
             owner.setMissedPasswordCounter(0);
-            owner.setPin("");
             companyService.saveOwner(owner);
         }
     }
@@ -237,73 +207,6 @@ public class AuthenticationController {
     @GetMapping(path = "/password/blackList/{pass}")
     public ResponseEntity<?> checkPasswordBlackList(@PathVariable String pass) throws URISyntaxException, IOException {
         return clientService.isPasswordInBlackList(pass);
-    }
-
-    @GetMapping(path = "/sso/{username}")
-    public ResponseEntity<?> sendPasswordlessToken(@PathVariable String username) {
-        Set<Role> roles = new HashSet<>();
-        Admin admin = adminService.findByUsername(username);
-        Client client = clientService.findByUsername(username);
-        CompanyOwner owner = companyService.findByUsername(username);
-        if(admin != null)
-            return emailService.sendPasswordless(admin.getEmail(), tokenUtils.generateToken(username, roles));
-        else if(client != null)
-            return emailService.sendPasswordless(client.getEmail(), tokenUtils.generateToken(username, roles));
-        else if(owner != null)
-            return emailService.sendPasswordless(owner.getEmail(), tokenUtils.generateToken(username, roles));
-
-        return new ResponseEntity<>("User with that username does not exist.", HttpStatus.BAD_REQUEST);
-    }
-
-    @PostMapping(path = "/login/passwordless")
-    public String loginPaswordless(@RequestParam("token") String token) {
-        String username = tokenUtils.getUsernameFromToken(token);
-
-        Authentication authentication = new UsernamePasswordAuthenticationToken(username, null);
-        SecurityContextHolder.getContext().setAuthentication(authentication);
-
-        String jwt = "";
-        Admin admin = adminService.findByUsername(username);
-        CompanyOwner owner = companyService.findByUsername(username);
-        Client client = clientService.findByUsername(username);
-        if(admin != null)
-            jwt = tokenUtils.generateToken(admin.getUsername(), admin.getRoles());
-        if(client != null)
-            jwt = tokenUtils.generateToken(client.getUsername(), client.getRoles());
-        if(owner != null)
-            jwt = tokenUtils.generateToken(owner.getUsername(), owner.getRoles());
-
-        return jwt;
-    }
-
-    @PostMapping(path = "/2factorAuth/pin/send")
-    public ResponseEntity<?> sendPinFor2Auth(@RequestBody UserCredentials authenticationRequest) {
-        Admin admin = adminService.findByUsername(authenticationRequest.getUsername());
-        Client client = clientService.findByUsername(authenticationRequest.getUsername());
-        CompanyOwner owner = companyService.findByUsername(authenticationRequest.getUsername());
-        PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
-        if (admin != null) {
-            if (passwordEncoder.matches(authenticationRequest.getPassword().concat(admin.getSalt()), admin.getPassword())) {
-                adminService.send2factorAuthPin(admin);
-                return new ResponseEntity<>(HttpStatus.OK);
-            } else
-                increaseMissedPasswordCounter(authenticationRequest.getUsername());
-        }
-        else if (client != null){
-            if (passwordEncoder.matches(authenticationRequest.getPassword().concat(client.getSalt()), client.getPassword())) {
-                clientService.send2factorAuthPin(client);
-                return new ResponseEntity<>(HttpStatus.OK);
-            } else
-                increaseMissedPasswordCounter(authenticationRequest.getUsername());
-        }
-        else if(owner != null) {
-            if (passwordEncoder.matches(authenticationRequest.getPassword().concat(owner.getSalt()), owner.getPassword())) {
-                companyService.send2factorAuthPin(owner);
-                return new ResponseEntity<>(HttpStatus.OK);
-            } else
-                increaseMissedPasswordCounter(authenticationRequest.getUsername());
-        }
-        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
 
 }

@@ -8,9 +8,8 @@ type Connection struct {
 }
 
 type Claims struct {
-	Username    string   `json:"username"`
-	Id          string   `json:"id"`
-	Role        string   `json:"role"`
-	Permissions []string `json:"permissions"`
+	Username string `json:"username"`
+	Id       string `json:"id"`
+	Role     string `json:"role"`
 	jwt.StandardClaims
 }

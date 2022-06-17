@@ -8,7 +8,6 @@ import { JobOfferComponent } from './component/job-offer/job-offer.component';
 import { LandingPageComponent } from './component/landing-page/landing-page.component';
 import { LoginPageComponent } from './component/login-page/login-page.component';
 import { OffersComponent } from './component/offers/offers.component';
-import { PasswrodlessComponent } from './component/passwrodless/passwrodless.component';
 import { RegistrationPageComponent } from './component/registration-page/registration-page.component';
 import { UserProfileComponent } from './component/user-profile/user-profile.component';
 import { AuthGuard } from './service/auth.guard';
@@ -24,7 +23,6 @@ const routes: Routes = [
   { path: 'forum', component: ForumComponent, canActivate: [AuthGuard], data: { role: ['ROLE_CLIENT']} },
   { path: 'job-offer', component: JobOfferComponent, canActivate: [AuthGuard], data: { role: ['ROLE_COMPANY_OWNER']} },
   { path: 'offers', component: OffersComponent},
-  { path: 'passwordless', component: PasswrodlessComponent},
 ];
 
 @NgModule({

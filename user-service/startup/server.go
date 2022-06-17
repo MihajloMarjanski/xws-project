@@ -34,13 +34,13 @@ func (server *Server) Start() {
 func accessibleRoles() map[string][]string {
 	const servicePath = "/user.UserService/"
 	return map[string][]string{
-		servicePath + "UpdateUser":        {"UpdateUser"},
-		servicePath + "AddExperience":     {"AddExperience"},
-		servicePath + "RemoveExperience":  {"RemoveExperience"},
-		servicePath + "AddInterest":       {"AddInterest"},
-		servicePath + "RemoveInterest":    {"RemoveInterest"},
-		servicePath + "BlockUser":         {"BlockUser"},
-		servicePath + "GetUserByUsername": {"GetUserByUsername"},
+		servicePath + "UpdateUser":        {"ROLE_USER"},
+		servicePath + "AddExperience":     {"ROLE_USER"},
+		servicePath + "RemoveExperience":  {"ROLE_USER"},
+		servicePath + "AddInterest":       {"ROLE_USER"},
+		servicePath + "RemoveInterest":    {"ROLE_USER"},
+		servicePath + "BlockUser":         {"ROLE_USER"},
+		servicePath + "GetUserByUsername": {"ROLE_USER"},
 		//servicePath + "SearchOffers":      {"ROLE_USER"},
 	}
 }

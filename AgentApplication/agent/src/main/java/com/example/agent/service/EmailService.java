@@ -4,7 +4,6 @@ import com.example.agent.model.Client;
 import com.example.agent.model.CompanyOwner;
 import com.example.agent.model.ConfirmationToken;
 import com.example.agent.repository.ConfirmationTokenRepository;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatus;
@@ -16,7 +15,6 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 @Service
-@Slf4j
 public class EmailService {
 
     @Autowired
@@ -95,44 +93,6 @@ public class EmailService {
                 "https://localhost:8000/user/activate?token=" + key);
 
         javaMailSender.send(mail);
-        log.info("Email: {}, Activation mail sent to user!", email);
         return new ResponseEntity<>(HttpStatus.OK);
-    }
-
-    @Async
-    public ResponseEntity<?> sendPasswordless(String email, String salt) {
-        SimpleMailMessage mail = new SimpleMailMessage();
-        mail.setTo(email);
-        mail.setFrom(env.getProperty("spring.mail.username"));
-        mail.setSubject("Passwordless authentication");
-        mail.setText("In order to login click on this link: " +
-                "https://localhost:4200/passwordless?token=" + salt);
-
-        javaMailSender.send(mail);
-        return new ResponseEntity<>(HttpStatus.OK);
-    }
-
-    @Async
-    public ResponseEntity<?> sendPasswordlesstoDislinkt(String email, String salt) {
-        SimpleMailMessage mail = new SimpleMailMessage();
-        mail.setTo(email);
-        mail.setFrom(env.getProperty("spring.mail.username"));
-        mail.setSubject("Passwordless authentication");
-        mail.setText("In order to login click on this link: " +
-                "https://localhost:4300/passwordless?token=" + salt);
-
-        javaMailSender.send(mail);
-        return new ResponseEntity<>(HttpStatus.OK);
-    }
-
-    @Async
-    public void send2factorAuthPin(String email, String pin) {
-        SimpleMailMessage mail = new SimpleMailMessage();
-        mail.setTo(email);
-        mail.setFrom(env.getProperty("spring.mail.username"));
-        mail.setSubject("2 factor authentication PIN");
-        mail.setText("Your PIN is: " + pin);
-
-        javaMailSender.send(mail);
     }
 }

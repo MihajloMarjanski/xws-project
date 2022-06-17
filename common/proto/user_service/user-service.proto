@@ -100,52 +100,8 @@ service UserService{
             get: "/jobs/search/{text}"
           };
         }
-        rpc ForgotPassword(ForgotPasswordRequest) returns(ForgotPasswordResponse) {
-          option (google.api.http) = {
-            put: "/user/newPassword/{username}"
-            body: ""
-          };
-        }
-        rpc SendPasswordlessToken(SendPasswordlessTokenRequest) returns(SendPasswordlessTokenResponse) {
-          option (google.api.http) = {
-            get: "/auth/sso/{username}"
-          };
-        }
-        rpc LoginPasswordless(LoginPasswordlessRequest) returns(LoginPasswordlessResponse) {
-          option (google.api.http) = {
-            post: "/user/login/passwordless"
-            body: ""
-          };
-        }
-        rpc SendPinFor2Auth(SendPinFor2AuthRequest) returns(SendPinFor2AuthResponse) {
-          option (google.api.http) = {
-            post: "/user/2factorAuth/pin/send"
-            body: "credentials"
-          };
-        }
 }
 
-message SendPinFor2AuthRequest {
-  Credentials credentials = 1;
-}
-message SendPinFor2AuthResponse {
-}
-message LoginPasswordlessRequest {
-  google.protobuf.StringValue token = 1;
-}
-message LoginPasswordlessResponse {
-  string jwt = 1;
-}
-message SendPasswordlessTokenRequest {
-  string username = 1;
-}
-message SendPasswordlessTokenResponse {
-}
-message ForgotPasswordRequest {
-  string username = 1;
-}
-message ForgotPasswordResponse {
-}
 message SearchOffersRequest {
   string text = 1;
 }
@@ -296,7 +252,6 @@ message Interest {
 message Credentials {
   string username = 1;
   string password = 2;
-  string pin = 3;
 }
 
 message JobOffer {

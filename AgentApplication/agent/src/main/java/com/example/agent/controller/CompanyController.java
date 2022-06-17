@@ -8,7 +8,6 @@ import com.example.agent.repository.CompanyOwnerRepository;
 import com.example.agent.repository.ConfirmationTokenRepository;
 import com.example.agent.service.ClientService;
 import com.example.agent.service.CompanyService;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -18,12 +17,10 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.WebRequest;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 @RestController
 @RequestMapping(value = "/company")
-@Slf4j
 public class CompanyController {
 
     @Autowired
@@ -37,45 +34,43 @@ public class CompanyController {
 
 
     @PostMapping(path = "/owner/create")
-    public ResponseEntity<?> createCompanyOwner(@Valid @RequestBody UserDto companyOwner, BindingResult res, HttpServletRequest request) {
-        if(res.hasErrors()){
-            log.warn("Ip: {}, Fields for new company owner not valid!", request.getRemoteAddr());
+    public ResponseEntity<?> createCompanyOwner(@Valid @RequestBody UserDto companyOwner, BindingResult res) {
+        if(res.hasErrors())
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        }
-        return companyService.createCompanyOwner(companyOwner, request);
+        return companyService.createCompanyOwner(companyOwner);
     }
 
-    @PreAuthorize("hasAnyRole('POTENTIAL_COMPANY_OWNER', 'COMPANY_OWNER')")
+    @PreAuthorize("hasAuthority('updateCompanyOwner')")
     @PostMapping(path = "/owner/update")
-    public ResponseEntity<?> updateCompanyOwner(@RequestBody OwnerWithCompany companyOwner , HttpServletRequest request) {
-        return companyService.updateCompanyOwner(companyOwner, request);
+    public ResponseEntity<?> updateCompanyOwner(@RequestBody OwnerWithCompany companyOwner) {
+        return companyService.updateCompanyOwner(companyOwner);
     }
 
-    @PreAuthorize("hasRole('POTENTIAL_COMPANY_OWNER')")
+    @PreAuthorize("hasAuthority('createCompany')")
     @PostMapping(path = "/create/{ownerUsername}")
     public ResponseEntity<?> createCompany(@RequestBody Company company, @PathVariable String ownerUsername) {
         return companyService.sendCompanyRegistrationRequest(company, ownerUsername);
     }
 
-    @PreAuthorize("hasRole('COMPANY_OWNER')")
+    @PreAuthorize("hasAuthority('getOwner')")
     @GetMapping(path = "/owner/{id}")
     public ResponseEntity<?> getOwner(@PathVariable Integer id) {
         return companyService.getOwner(id);
     }
 
-    @PreAuthorize("hasRole('CLIENT')")
+    @PreAuthorize("hasAuthority('createComment')")
     @PostMapping(path = "/comments/create/{companyId}")
     public ResponseEntity<?> createComment(@RequestBody Comment comment, @PathVariable Integer companyId) {
         return clientService.createComment(comment, companyId);
     }
 
-    @PreAuthorize("hasRole('CLIENT')")
+    @PreAuthorize("hasAuthority('updateSalary')")
     @PostMapping(path = "/jobs/salary/update")
     public ResponseEntity<?> updateSalary(@RequestBody JobPosition jobSalary) {
         return clientService.updateSalary(jobSalary);
     }
 
-    @PreAuthorize("hasRole('CLIENT')")
+    @PreAuthorize("hasAuthority('addInformation')")
     @PostMapping(path = "/jobs/interview/{jobId}")
     public ResponseEntity<?> addInformation(@RequestBody InterviewInformation interviewInformation, @PathVariable Integer jobId) {
         return clientService.addInterviewInformation(interviewInformation, jobId);
@@ -86,14 +81,14 @@ public class CompanyController {
         return companyService.getAllJobs(companyId);
     }
 
-    @PreAuthorize("hasRole('COMPANY_OWNER')")
+    @PreAuthorize("hasAuthority('createJobOffer')")
     @PostMapping(path = "/jobs/offer")
     public ResponseEntity<?> createJobOffer(@RequestBody JobOffer jobOffer) {
         return companyService.createJobOffer(jobOffer);
     }
 
     @GetMapping(path = "/owner/activate")
-    public ResponseEntity<?> activateOwnerAccount(HttpServletRequest request, @RequestParam("token") String hashCode) {
+    public ResponseEntity<?> activateOwnerAccount(WebRequest request, @RequestParam("token") String hashCode) {
         ConfirmationToken token = confirmationTokenRepository.findByConfirmationToken(hashCode);
         CompanyOwner companyOwner = token.getCompanyOwner();
         if (companyOwner == null || companyOwner.isActivated()) {
@@ -102,8 +97,6 @@ public class CompanyController {
 
         companyOwner.setActivated(true);
         companyOwnerRepository.save(companyOwner);
-        log.info("Ip: {}, Username: {}, Client is successfully activated!",request.getRemoteAddr(), companyOwner.getUsername());
-
 
         HttpHeaders headers = new HttpHeaders();
         headers.add("Location", "https://localhost:4200");
@@ -120,7 +113,7 @@ public class CompanyController {
         return companyService.getAllApproved();
     }
 
-    @PreAuthorize("hasAnyRole('POTENTIAL_COMPANY_OWNER', 'COMPANY_OWNER')")
+    @PreAuthorize("hasAuthority('ownerByUsername')")
     @GetMapping(path = "/owner/username/{username}")
     public ResponseEntity<?> ownerByUsername(@PathVariable String username) {
         return companyService.getOwnerByUsername(username);
@@ -131,7 +124,7 @@ public class CompanyController {
         return companyService.getByOwner(username);
     }
 
-    @PreAuthorize("hasRole('COMPANY_OWNER')")
+    @PreAuthorize("hasAuthority('apiKey')")
     @GetMapping(path = "/owner/apiKey/{username}/{password}")
     public ResponseEntity<?> apiKey(@PathVariable String username, @PathVariable String password) {
         return companyService.getApiKey(username, password);

@@ -30,7 +30,6 @@ insert into role_permissions (role_id, permission_id) values (2, 8);
 insert into role_permissions (role_id, permission_id) values (4, 9);
 insert into role_permissions (role_id, permission_id) values (4, 10);
 insert into role_permissions (role_id, permission_id) values (4, 11);
-insert into role_permissions (role_id, permission_id) values (2, 12);
 insert into role_permissions (role_id, permission_id) values (2, 13);
 insert into role_permissions (role_id, permission_id) values (3, 13);
 insert into role_permissions (role_id, permission_id) values (2, 14);
