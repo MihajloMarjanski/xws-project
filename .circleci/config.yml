@@ -19,7 +19,7 @@ orbs:
 workflows:
   main:
     jobs:
-      - build2:
+      - build:
           filters:
             branches:
               only:
