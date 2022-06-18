@@ -63,7 +63,7 @@ func (s *RequestsService) GetAllByRecieverId(rid uint) []*pb.UsernameWithRequest
 
 	conn, err := grpc.Dial("user-service:8100", grpc.WithTransportCredentials(creds))
 	if err != nil {
-		log.WithFields(log.Fields{"service_name": "request-service", "method_name": "GetAllByRecieverId"}).Error("Error establishing connection with user-service via grpc.")
+		log.WithFields(log.Fields{"service_name": "request-service", "method_name": "GetAllByRecieverId", "reciever_id": rid}).Error("Error establishing connection with user-service via grpc.")
 		panic(err)
 	}
 	defer conn.Close()
@@ -72,7 +72,7 @@ func (s *RequestsService) GetAllByRecieverId(rid uint) []*pb.UsernameWithRequest
 	for _, request := range s.reqRepo.GetAllByRecieverId(rid) {
 		response, err := client.GetUser(context.Background(), &pbUser.GetUserRequest{Id: int64(request.SenderID)})
 		if err != nil {
-			log.WithFields(log.Fields{"service_name": "request-service", "method_name": "GetAllByRecieverId"}).Warn("Error getting user.")
+			log.WithFields(log.Fields{"service_name": "request-service", "method_name": "GetAllByRecieverId", "reciever_id": rid}).Warn("Error getting user.")
 			panic(err)
 		}
 		users = append(users, mapUserToUsernameReq(response.User, request.ReceiverID, request.SenderID))
@@ -112,14 +112,14 @@ func (s *RequestsService) SendNotification(senderID, receiverID uint, message st
 
 	conn, err := grpc.Dial("user-service:8100", grpc.WithTransportCredentials(creds))
 	if err != nil {
-		log.WithFields(log.Fields{"service_name": "request-service", "method_name": "SendNotification"}).Error("Error establishing connection with user-service via grpc.")
+		log.WithFields(log.Fields{"service_name": "request-service", "method_name": "SendNotification", "sender_id": senderID, "receiver_id": receiverID}).Error("Error establishing connection with user-service via grpc.")
 		panic(err)
 	}
 	defer conn.Close()
 	client := pbUser.NewUserServiceClient(conn)
 	response, err := client.GetUser(context.Background(), &pbUser.GetUserRequest{Id: int64(senderID)})
 	if err != nil {
-		log.WithFields(log.Fields{"service_name": "request-service", "method_name": "SendNotification"}).Warn("Error getting user")
+		log.WithFields(log.Fields{"service_name": "request-service", "method_name": "SendNotification", "sender_id": senderID, "receiver_id": receiverID}).Warn("Error getting user")
 		panic(err)
 	}
 
@@ -142,7 +142,7 @@ func (s *RequestsService) FindConnections(id int64) []model.User {
 
 	conn, err := grpc.Dial("user-service:8100", grpc.WithTransportCredentials(creds))
 	if err != nil {
-		log.WithFields(log.Fields{"service_name": "request-service", "method_name": "FindConnections"}).Error("Error establishing connection with user-service via grpc.")
+		log.WithFields(log.Fields{"service_name": "request-service", "method_name": "FindConnections", "user_id": id}).Error("Error establishing connection with user-service via grpc.")
 		panic(err)
 	}
 	defer conn.Close()
@@ -151,7 +151,7 @@ func (s *RequestsService) FindConnections(id int64) []model.User {
 	for _, connection := range ids1 {
 		response, err := client.GetUser(context.Background(), &pbUser.GetUserRequest{Id: int64(connection.UserOne)})
 		if err != nil {
-			log.WithFields(log.Fields{"service_name": "request-service", "method_name": "SendNotification"}).Warn("Error getting user")
+			log.WithFields(log.Fields{"service_name": "request-service", "method_name": "SendNotification", "user_id": id}).Warn("Error getting user")
 			panic(err)
 		}
 		res = append(res, mapUser(response.User))
@@ -159,7 +159,7 @@ func (s *RequestsService) FindConnections(id int64) []model.User {
 	for _, connection := range ids2 {
 		response, err := client.GetUser(context.Background(), &pbUser.GetUserRequest{Id: int64(connection.UserTwo)})
 		if err != nil {
-			log.WithFields(log.Fields{"service_name": "request-service", "method_name": "SendNotification"}).Warn("Error getting user")
+			log.WithFields(log.Fields{"service_name": "request-service", "method_name": "SendNotification", "user_id": id}).Warn("Error getting user")
 			panic(err)
 		}
 		res = append(res, mapUser(response.User))

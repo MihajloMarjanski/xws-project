@@ -164,20 +164,20 @@ func (s *UserService) UpdateUser(id uint, name string, email string, password st
 func (s *UserService) Login(username string, password, pin string) (string, bool) {
 	user := s.GetByUsername(username)
 	if user.ID == 0 {
-		log.WithFields(log.Fields{"service_name": "user-service", "method_name": "Login"}).Warn("Username dosn't exist.")
+		log.WithFields(log.Fields{"service_name": "user-service", "method_name": "Login", "username": username}).Warn("Username dosn't exist.")
 		return "Wrong username", false
 	} else if s.IsBlocked(user) {
-		log.WithFields(log.Fields{"service_name": "user-service", "method_name": "Login"}).Info("Account is currently blocked.")
+		log.WithFields(log.Fields{"service_name": "user-service", "method_name": "Login", "username": username}).Info("Account is currently blocked.")
 		return "Your account is currently blocked. Try next day again.", false
 	} else if !user.IsActivated {
-		log.WithFields(log.Fields{"service_name": "user-service", "method_name": "Login"}).Info("Account is not activated.")
+		log.WithFields(log.Fields{"service_name": "user-service", "method_name": "Login", "username": username}).Info("Account is not activated.")
 		return "Your have to activate your profile first.", false
 	}
 	if user.Forgotten == 1 {
 		user.Forgotten = 2
 		s.userRepo.Save(user)
 	} else if user.Forgotten == 2 {
-		log.WithFields(log.Fields{"service_name": "user-service", "method_name": "Login"}).Info("Password not changed after being forgotten.")
+		log.WithFields(log.Fields{"service_name": "user-service", "method_name": "Login", "username": username}).Info("Password not changed after being forgotten.")
 		return "You did not changed password first time. If you want to log in, refresh again your password.", false
 	}
 
@@ -186,13 +186,13 @@ func (s *UserService) Login(username string, password, pin string) (string, bool
 	err := bcrypt.CompareHashAndPassword([]byte(expectedPassword), []byte(password))
 	if err != nil {
 		s.IncreaseMissedPasswordCounter(user)
-		log.WithFields(log.Fields{"service_name": "user-service", "method_name": "Login"}).Warn("Incorrect password.")
+		log.WithFields(log.Fields{"service_name": "user-service", "method_name": "Login", "username": username}).Warn("Incorrect password.")
 		return "Wrong password", false
 	}
 	err1 := bcrypt.CompareHashAndPassword([]byte(user.Pin), []byte(pin))
 	if err1 != nil {
 		s.IncreaseMissedPasswordCounter(user)
-		log.WithFields(log.Fields{"service_name": "user-service", "method_name": "Login"}).Warn("Incorrect pin.")
+		log.WithFields(log.Fields{"service_name": "user-service", "method_name": "Login", "username": username}).Warn("Incorrect pin.")
 		return "Wrong pin", false
 	}
 
@@ -217,7 +217,7 @@ func (s *UserService) Login(username string, password, pin string) (string, bool
 
 	tokenString, err := token.SignedString(jwtKey)
 	if err != nil {
-		log.WithFields(log.Fields{"service_name": "user-service", "method_name": "Login"}).Warn("Invalid token.")
+		log.WithFields(log.Fields{"service_name": "user-service", "method_name": "Login", "username": username}).Warn("Invalid token.")
 		return "", false
 	}
 	return tokenString, true
@@ -335,13 +335,13 @@ func (s *UserService) RefreshMissedPasswordCounter(user model.User) {
 func (s *UserService) SendPinFor2Auth(username string, password string) string {
 	user := s.GetByUsername(username)
 	if user.ID == 0 {
-		log.WithFields(log.Fields{"service_name": "user-service", "method_name": "SendPinFor2Auth"}).Warn("Username dosn't exist.")
+		log.WithFields(log.Fields{"service_name": "user-service", "method_name": "SendPinFor2Auth", "username": username}).Warn("Username dosn't exist.")
 		return "Wrong username"
 	} else if s.IsBlocked(user) {
-		log.WithFields(log.Fields{"service_name": "user-service", "method_name": "SendPinFor2Auth"}).Info("Account is blocked.")
+		log.WithFields(log.Fields{"service_name": "user-service", "method_name": "SendPinFor2Auth", "username": username}).Info("Account is blocked.")
 		return "Your account is currently blocked. Try next day again."
 	} else if !user.IsActivated {
-		log.WithFields(log.Fields{"service_name": "user-service", "method_name": "SendPinFor2Auth"}).Info("Account isn't activated.")
+		log.WithFields(log.Fields{"service_name": "user-service", "method_name": "SendPinFor2Auth", "username": username}).Info("Account isn't activated.")
 		return "Your have to activate your profile first."
 	}
 
@@ -349,7 +349,7 @@ func (s *UserService) SendPinFor2Auth(username string, password string) string {
 	err := bcrypt.CompareHashAndPassword([]byte(expectedPassword), []byte(password))
 	if err != nil {
 		s.IncreaseMissedPasswordCounter(user)
-		log.WithFields(log.Fields{"service_name": "user-service", "method_name": "SendPinFor2Auth"}).Warn("Incorrect password.")
+		log.WithFields(log.Fields{"service_name": "user-service", "method_name": "SendPinFor2Auth", "username": username}).Warn("Incorrect password.")
 		return "Wrong password"
 	}
 
@@ -365,7 +365,7 @@ func (s *UserService) SendPinFor2Auth(username string, password string) string {
 func (s *UserService) SendPasswordlessToken(username string) string {
 	user := s.GetByUsername(username)
 	if user.ID == 0 {
-		log.WithFields(log.Fields{"service_name": "user-service", "method_name": "SendPasswordlessToken"}).Warn("Username dosn't exist.")
+		log.WithFields(log.Fields{"service_name": "user-service", "method_name": "SendPasswordlessToken", "username": username}).Warn("Username dosn't exist.")
 		return "Wrong username"
 	}
 
@@ -381,7 +381,7 @@ func (s *UserService) SendPasswordlessToken(username string) string {
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 	tokenString, err := token.SignedString(jwtKey)
 	if err != nil {
-		log.WithFields(log.Fields{"service_name": "user-service", "method_name": "SendPasswordlessToken"}).Warn("Token error.")
+		log.WithFields(log.Fields{"service_name": "user-service", "method_name": "SendPasswordlessToken", "username": username}).Warn("Token error.")
 		return "token error"
 	}
 
@@ -393,10 +393,10 @@ func (s *UserService) SendPasswordlessToken(username string) string {
 func (s *UserService) LoginPasswordless(id int) (string, bool) {
 	user := s.GetByID(id)
 	if s.IsBlocked(user) {
-		log.WithFields(log.Fields{"service_name": "user-service", "method_name": "LoginPasswordless"}).Info("Account is blocked.")
+		log.WithFields(log.Fields{"service_name": "user-service", "method_name": "LoginPasswordless", "user_id": id}).Info("Account is blocked.")
 		return "Your account is currently blocked. Try next day again.", false
 	} else if !user.IsActivated {
-		log.WithFields(log.Fields{"service_name": "user-service", "method_name": "LoginPasswordless"}).Info("Account isn't activated.")
+		log.WithFields(log.Fields{"service_name": "user-service", "method_name": "LoginPasswordless", "user_id": id}).Info("Account isn't activated.")
 		return "Your have to activate your profile first.", false
 	}
 
@@ -421,7 +421,7 @@ func (s *UserService) LoginPasswordless(id int) (string, bool) {
 
 	tokenString, err := token.SignedString(jwtKey)
 	if err != nil {
-		log.WithFields(log.Fields{"service_name": "user-service", "method_name": "LoginPasswordless"}).Info("Invald token.")
+		log.WithFields(log.Fields{"service_name": "user-service", "method_name": "LoginPasswordless", "user_id": id}).Info("Invald token.")
 		return "", false
 	}
 	return tokenString, true
