@@ -5,7 +5,9 @@ import (
 	pbReq "github.com/MihajloMarjanski/xws-project/common/proto/requests_service"
 	"golang.org/x/net/context"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials"
 	"os"
+	"path/filepath"
 	"post-service/model"
 	"post-service/repo"
 	"time"
@@ -57,8 +59,14 @@ func (service *PostService) CreatePost(title string, text string, img string, li
 
 func (service *PostService) SendNotification(id uint, message string) []model.User {
 	var res []model.User
+	crtTlsPath, _ := filepath.Abs("./service.pem")
 
-	conn, err := grpc.Dial("request-service:8200", grpc.WithInsecure())
+	creds, err6 := credentials.NewClientTLSFromFile(crtTlsPath, "")
+	if err6 != nil {
+		//log.Fatalf("could not process the credentials: %v", err6)
+	}
+
+	conn, err := grpc.Dial("request-service:8200", grpc.WithTransportCredentials(creds))
 	if err != nil {
 		panic(err)
 	}

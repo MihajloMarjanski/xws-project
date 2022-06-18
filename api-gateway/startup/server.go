@@ -32,8 +32,9 @@ func NewServer(config *cfg.Config) *Server {
 
 func (server *Server) initHandlers() {
 	//opts := []grpc.DialOption{grpc.WithTransportCredentials(insecure.NewCredentials())}
+	crtTlsPath, _ := filepath.Abs("./service.pem")
 
-	creds, err6 := credentials.NewClientTLSFromFile("startup/certTLS/service.pem", "")
+	creds, err6 := credentials.NewClientTLSFromFile(crtTlsPath, "")
 	if err6 != nil {
 		log.Fatalf("could not process the credentials: %v", err6)
 	}

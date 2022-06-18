@@ -6,6 +6,7 @@ import (
 	"log"
 	"net"
 	"os"
+	"path/filepath"
 	"requests-service/handler_grpc"
 	config "requests-service/startup/config"
 
@@ -55,7 +56,9 @@ func (server *Server) startGrpcServer(reqHandler *handler_grpc.RequestsHandler) 
 	}
 	interceptor := NewAuthInterceptor(accessibleRoles())
 
-	creds, err := credentials.NewServerTLSFromFile("startup/certTLS/service.pem", "startup/certTLS/service.key")
+	crtTlsPath, _ := filepath.Abs("./service.pem")
+	keyTlsPath, _ := filepath.Abs("./service.key")
+	creds, err := credentials.NewServerTLSFromFile(crtTlsPath, keyTlsPath)
 	if err != nil {
 		log.Fatalf("Failed to setup TLS: %v", err)
 	}

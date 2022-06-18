@@ -3,6 +3,8 @@ package repo
 import (
 	"golang.org/x/net/context"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials"
+	"path/filepath"
 	"requests-service/model"
 	"time"
 
@@ -75,7 +77,14 @@ func (repo *RequestsRepository) DeclineRequest(sid, rid uint) {
 }
 
 func (repo *RequestsRepository) SendRequest(sid, rid uint) {
-	conn, err := grpc.Dial("user-service:8100", grpc.WithInsecure())
+	crtTlsPath, _ := filepath.Abs("./service.pem")
+
+	creds, err6 := credentials.NewClientTLSFromFile(crtTlsPath, "")
+	if err6 != nil {
+		//log.Fatalf("could not process the credentials: %v", err6)
+	}
+
+	conn, err := grpc.Dial("user-service:8100", grpc.WithTransportCredentials(creds))
 	if err != nil {
 		panic(err)
 	}

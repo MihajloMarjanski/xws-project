@@ -5,10 +5,12 @@ import (
 	"crypto/tls"
 	"encoding/json"
 	"fmt"
+	"google.golang.org/grpc/credentials"
 	"io"
 	"math/rand"
 	"net/http"
 	"os"
+	"path/filepath"
 	"strconv"
 	"time"
 	"user-service/model"
@@ -248,7 +250,13 @@ func (s *UserService) BlockUser(userId int, blockedUserId int) {
 }
 
 func DeleteConnection(userId, id int) {
-	conn, err := grpc.Dial("request-service:8200", grpc.WithInsecure())
+	crtTlsPath, _ := filepath.Abs("./service.pem")
+
+	creds, err6 := credentials.NewClientTLSFromFile(crtTlsPath, "")
+	if err6 != nil {
+		//log.Fatalf("could not process the credentials: %v", err6)
+	}
+	conn, err := grpc.Dial("request-service:8200", grpc.WithTransportCredentials(creds))
 	if err != nil {
 		panic(err)
 	}

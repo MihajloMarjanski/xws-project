@@ -1,8 +1,10 @@
 package service
 
 import (
+	"google.golang.org/grpc/credentials"
 	"io"
 	"os"
+	"path/filepath"
 	"requests-service/model"
 	"requests-service/repo"
 
@@ -52,8 +54,14 @@ func (s *RequestsService) CloseDB() error {
 
 func (s *RequestsService) GetAllByRecieverId(rid uint) []*pb.UsernameWithRequestId {
 	var users []*pb.UsernameWithRequestId
+	crtTlsPath, _ := filepath.Abs("./service.pem")
 
-	conn, err := grpc.Dial("user-service:8100", grpc.WithInsecure())
+	creds, err6 := credentials.NewClientTLSFromFile(crtTlsPath, "")
+	if err6 != nil {
+		//log.Fatalf("could not process the credentials: %v", err6)
+	}
+
+	conn, err := grpc.Dial("user-service:8100", grpc.WithTransportCredentials(creds))
 	if err != nil {
 		log.WithFields(log.Fields{"service_name": "request-service", "method_name": "GetAllByRecieverId"}).Error("Error establishing connection with user-service via grpc.")
 		panic(err)
@@ -95,7 +103,14 @@ func (s *RequestsService) SendMessage(senderID, receiverID uint, message string)
 }
 
 func (s *RequestsService) SendNotification(senderID, receiverID uint, message string) {
-	conn, err := grpc.Dial("user-service:8100", grpc.WithInsecure())
+	crtTlsPath, _ := filepath.Abs("./service.pem")
+
+	creds, err6 := credentials.NewClientTLSFromFile(crtTlsPath, "")
+	if err6 != nil {
+		//log.Fatalf("could not process the credentials: %v", err6)
+	}
+
+	conn, err := grpc.Dial("user-service:8100", grpc.WithTransportCredentials(creds))
 	if err != nil {
 		log.WithFields(log.Fields{"service_name": "request-service", "method_name": "SendNotification"}).Error("Error establishing connection with user-service via grpc.")
 		panic(err)
@@ -118,8 +133,14 @@ func (s *RequestsService) AreConnected(id1 int64, id2 int64) bool {
 func (s *RequestsService) FindConnections(id int64) []model.User {
 	ids1, ids2 := s.reqRepo.GetAllConnections(uint(id))
 	var res []model.User
+	crtTlsPath, _ := filepath.Abs("./service.pem")
 
-	conn, err := grpc.Dial("user-service:8100", grpc.WithInsecure())
+	creds, err6 := credentials.NewClientTLSFromFile(crtTlsPath, "")
+	if err6 != nil {
+		//log.Fatalf("could not process the credentials: %v", err6)
+	}
+
+	conn, err := grpc.Dial("user-service:8100", grpc.WithTransportCredentials(creds))
 	if err != nil {
 		log.WithFields(log.Fields{"service_name": "request-service", "method_name": "FindConnections"}).Error("Error establishing connection with user-service via grpc.")
 		panic(err)

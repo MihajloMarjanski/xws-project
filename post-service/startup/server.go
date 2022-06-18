@@ -5,6 +5,7 @@ import (
 	"google.golang.org/grpc/credentials"
 	"log"
 	"net"
+	"path/filepath"
 	"post-service/handler_grpc"
 	"post-service/startup/config"
 
@@ -48,7 +49,9 @@ func (server *Server) startGrpcServer(postHandler *handler_grpc.PostHandler) {
 	}
 	interceptor := NewAuthInterceptor(accessibleRoles())
 
-	creds, err := credentials.NewServerTLSFromFile("startup/certTLS/service.pem", "startup/certTLS/service.key")
+	crtTlsPath, _ := filepath.Abs("./service.pem")
+	keyTlsPath, _ := filepath.Abs("./service.key")
+	creds, err := credentials.NewServerTLSFromFile(crtTlsPath, keyTlsPath)
 	if err != nil {
 		log.Fatalf("Failed to setup TLS: %v", err)
 	}
