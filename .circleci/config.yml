@@ -23,5 +23,5 @@ workflows:
           filters:
             branches:
               only:
-                - security
+                - sonar
           context: SonarCloud
