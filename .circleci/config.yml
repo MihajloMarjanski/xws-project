@@ -1,91 +1,13 @@
 version: 2.1
 
 jobs:
-  build:
-    docker:
-      - image: cimg/openjdk:11.0
-      - image: circleci/postgres:9.6.5-alpine-ram
-        auth:
-          username: mydockerhub-user
-          password: $DOCKERHUB_PASSWORD  # context / project UI env-var reference
-        environment:
-          POSTGRES_USER: root
-          POSTGRES_DB: agent
-    working_directory: ~/XWS-Projekat-Backend/AgentService
-    steps:
-      - checkout:
-          path: ~/XWS-Projekat-Backend
-      - run:
-          name: install dockerize
-          command: wget https://github.com/jwilder/dockerize/releases/download/$DOCKERIZE_VERSION/dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz && sudo tar -C /usr/local/bin -xzvf dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz && rm dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz
-          environment:
-            DOCKERIZE_VERSION: v0.3.0
-      - run:
-          name: Wait for db
-          command: dockerize -wait tcp://localhost:5432 -timeout 1m
-      - run: sudo apt-get update
-      - run: sudo apt-get upgrade
-      - run: sudo apt-get install postgresql-client
-      - run:
-          name: Analyze on SonarCloud
-          command: mvn verify sonar:sonar -Dsonar.projectKey=dunjagojkovic_XWS-Projekat-Backend
-  build1:
-    docker:
-      - image: cimg/openjdk:11.0
-      - image: circleci/postgres:9.6.5-alpine-ram
-        auth:
-          username: mydockerhub-user
-          password: $DOCKERHUB_PASSWORD  # context / project UI env-var ref
-        environment:
-          POSTGRES_USER: root
-          POSTGRES_DB: agent
-    working_directory: ~/XWS-Projekat-Backend/UserMicroservice
-    steps:
-      - checkout:
-          path: ~/XWS-Projekat-Backend
-      - run:
-          name: install dockerize
-          command: wget https://github.com/jwilder/dockerize/releases/download/$DOCKERIZE_VERSION/dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz && sudo tar -C /usr/local/bin -xzvf dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz && rm dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz
-          environment:
-            DOCKERIZE_VERSION: v0.3.0
-      - run:
-          name: Wait for db
-          command: dockerize -wait tcp://localhost:5432 -timeout 1m
-      - run: sudo apt-get update
-      - run: sudo apt-get upgrade
-      - run: sudo apt-get install postgresql-client
-      - run:
-          name: Analyze on SonarCloud
-          command: mvn verify sonar:sonar -Dsonar.projectKey=dunjagojkovic_XWS-Projekat-Backend_1
   build2:
     docker:
       - image: cimg/go:1.18.3-node
-    working_directory: ~/XWS-Projekat-Backend/PostService
+    working_directory: ~/xws-project/post-service
     steps:
       - checkout:
-          path: ~/XWS-Projekat-Backend
-      - run:
-          name: Install dependencies and build project
-          command: go version
-      - sonarcloud/scan
-  build3:
-    docker:
-      - image: cimg/go:1.18.3-node
-    working_directory: ~/XWS-Projekat-Backend/MicroservicesProject/job_service
-    steps:
-      - checkout:
-          path: ~/XWS-Projekat-Backend
-      - run:
-          name: Install dependencies and build project
-          command: go version
-      - sonarcloud/scan
-  build4:
-    docker:
-      - image: cimg/go:1.18.3-node
-    working_directory: ~/XWS-Projekat-Backend/MicroservicesProject/post_service
-    steps:
-      - checkout:
-          path: ~/XWS-Projekat-Backend
+          path: ~/xws-project
       - run:
           name: Install dependencies and build project
           command: go version
@@ -97,32 +19,9 @@ orbs:
 workflows:
   main:
     jobs:
-      - build:
-          filters:
-            branches:
-              only:
-                - security
-      - build1:
-          filters:
-            branches:
-              only:
-                - security
-          context: SonarCloud1
       - build2:
           filters:
             branches:
               only:
                 - security
           context: SonarCloud2
-      - build3:
-          filters:
-            branches:
-              only:
-                - security
-          context: SonarCloud3
-      - build4:
-          filters:
-            branches:
-              only:
-                - security
-          context: SonarCloud4
