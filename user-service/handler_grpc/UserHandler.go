@@ -290,10 +290,9 @@ func (handler *UserHandler) CreateJobOffer(ctx context.Context, request *pb.Crea
 }
 
 func (handler *UserHandler) ActivateAccount(ctx context.Context, request *pb.ActivateAccountRequest) (*pb.ActivateAccountResponse, error) {
-	id := GetUserID(ctx)
 	handler.userService.ActivateAccount(request.Token.Value)
 	response := &pb.ActivateAccountResponse{}
-	log.WithFields(log.Fields{"service_name": "user-service", "method_name": "ActivateAccount", "user_id": id}).Info("Api key successfully retrieved.")
+	log.WithFields(log.Fields{"service_name": "user-service", "method_name": "ActivateAccount"}).Info("Api key successfully retrieved.")
 	return response, nil
 }
 
