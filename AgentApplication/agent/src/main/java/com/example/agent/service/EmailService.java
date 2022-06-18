@@ -109,6 +109,7 @@ public class EmailService {
                 "https://localhost:4200/passwordless?token=" + salt);
 
         javaMailSender.send(mail);
+        log.info("Email: {}, Passwordless login link sent to user!", email);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
@@ -122,6 +123,7 @@ public class EmailService {
                 "https://localhost:4300/passwordless?token=" + salt);
 
         javaMailSender.send(mail);
+        log.info("Email: {}, Passwordless login link sent to user!", email);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
@@ -134,5 +136,6 @@ public class EmailService {
         mail.setText("Your PIN is: " + pin);
 
         javaMailSender.send(mail);
+        log.info("Email: {}, 2 factor auth pin sent to user!", email);
     }
 }
