@@ -1,7 +1,7 @@
 version: 2.1
 
 jobs:
-  build2:
+  build:
     docker:
       - image: cimg/go:1.18.3-node
     working_directory: ~/xws-project/post-service
@@ -24,4 +24,4 @@ workflows:
             branches:
               only:
                 - security
-          context: SonarCloud2
+          context: SonarCloud
