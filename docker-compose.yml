@@ -43,6 +43,22 @@ services:
     networks:
       - backend
 
+  agent-application:
+    hostname: agent-application
+    build:
+      context: ./
+      dockerfile: ./agent-application/agent/Dockerfile
+    image: agent:0.0.1-SNAPSHOT
+    restart: on-failure
+    volumes:
+      - ~/Desktop/logs/agent-application_logs:/root/logs
+    ports:
+      - 8004:8080
+    depends_on:
+      - agentdb
+    networks:
+      - backend
+
   api-gateway:
     hostname: api-gateway
     image: api-gateway
@@ -54,18 +70,6 @@ services:
       - ~/Desktop/logs/api_gateway_logs:/root/logs
     ports:
       - 8000:8000
-    networks:
-      - backend
-
-  userdb:
-    image: postgres:latest
-    restart: always
-    environment:
-      POSTGRES_USER: XML
-      POSTGRES_PASSWORD: ftn
-      POSTGRES_DB: XML_TEST
-    ports:
-      - 4002:5432
     networks:
       - backend
 
@@ -88,6 +92,28 @@ services:
       - ./mongo-init/:/docker-entrypoint-initdb.d/:ro
     ports:
       - 4001:27017
+    networks:
+      - backend
+
+  userdb:
+    image: postgres:latest
+    restart: always
+    environment:
+      POSTGRES_USER: XML
+      POSTGRES_PASSWORD: ftn
+      POSTGRES_DB: XML_TEST
+    ports:
+      - 4002:5432
+    networks:
+      - backend
+  
+  agentdb:
+    image: mysql:latest
+    restart: always
+    ports:
+      - 4003:3306
+    environment:
+      MYSQL_ROOT_PASSWORD: XML_AGENT
     networks:
       - backend
 
