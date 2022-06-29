@@ -47,13 +47,13 @@ services:
     hostname: agent-application
     build:
       context: ./
-      dockerfile: ./agent-application/agent/Dockerfile
+      dockerfile: ./AgentApplication/agent/Dockerfile
     image: agent:0.0.1-SNAPSHOT
     restart: on-failure
     volumes:
       - ~/Desktop/logs/agent-application_logs:/root/logs
     ports:
-      - 8004:8080
+      - 8600:8600
     depends_on:
       - agentdb
     networks:

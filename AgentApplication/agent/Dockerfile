@@ -2,8 +2,8 @@
 FROM maven:3.5-jdk-8-alpine AS builder
 
 # add pom.xml and source code
-ADD ./agent-application/agent/pom.xml pom.xml
-ADD ./agent-application/agent/src src/
+ADD ./AgentApplication/agent/pom.xml pom.xml
+ADD ./AgentApplication/agent/src src/
 
 # package jar
 RUN mvn clean package
