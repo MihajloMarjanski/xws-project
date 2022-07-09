@@ -1,0 +1,27 @@
+syntax="proto3";
+
+option go_package = "common/user";
+
+package connection;
+
+import "google/api/annotations.proto";
+
+service ConnectionService{
+        rpc Connect(UsersConnectionRequest) returns(UsersConnectionResponse) {
+            option (google.api.http) = {
+              post: "/connection/connect"
+              body: "userPair"
+        };
+        }
+}
+
+message UsersConnectionRequest {
+  UserPair userPair = 1;
+}
+message UsersConnectionResponse {
+}
+
+message UserPair {
+  int64 id1 = 1;
+  int64 id2 = 2;
+}
