@@ -11,14 +11,28 @@ service ConnectionService{
             option (google.api.http) = {
               post: "/connection/connect"
               body: "userPair"
-        };
+          };
         }
+
+        rpc GetRecommendedConnections(GetById) returns(UserIds) {
+            option (google.api.http) = {
+              get: "/connection/users/{id}"
+          };
+      }
 }
 
 message UsersConnectionRequest {
   UserPair userPair = 1;
 }
 message UsersConnectionResponse {
+}
+
+message UserIds {
+  repeated int64 ids = 1;
+}
+
+message GetById {
+  int64 id = 1;
 }
 
 message UserPair {

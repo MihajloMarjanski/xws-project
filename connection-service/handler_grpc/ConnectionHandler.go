@@ -28,3 +28,11 @@ func (handler *ConnectionHandler) Connect(ctx context.Context, request *pb.Users
 	response := &pb.UsersConnectionResponse{}
 	return response, nil
 }
+
+func (handler *ConnectionHandler) GetRecommendedConnections(ctx context.Context, request *pb.GetById) (*pb.UserIds, error) {
+	id := request.Id
+	ids := handler.connectionService.GetRecommendedConnections(id)
+
+	response := &pb.UserIds{Ids: ids}
+	return response, nil
+}

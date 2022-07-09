@@ -16,3 +16,8 @@ func (connectionService *ConnectionService) Connect(id1, id2 int64) {
 	t := fmt.Sprintf("CONNECTIG ID1: %[1]d and ID2: %[2]d\n", id1, id2)
 	fmt.Println(t)
 }
+
+func (connectionService *ConnectionService) GetRecommendedConnections(id int64) []int64 {
+	ids := []int64{1, 2, 3}
+	return ids
+}

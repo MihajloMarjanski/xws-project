@@ -23,6 +23,7 @@ const _ = grpc.SupportPackageIsVersion7
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type ConnectionServiceClient interface {
 	Connect(ctx context.Context, in *UsersConnectionRequest, opts ...grpc.CallOption) (*UsersConnectionResponse, error)
+	GetRecommendedConnections(ctx context.Context, in *GetById, opts ...grpc.CallOption) (*UserIds, error)
 }
 
 type connectionServiceClient struct {
@@ -42,11 +43,21 @@ func (c *connectionServiceClient) Connect(ctx context.Context, in *UsersConnecti
 	return out, nil
 }
 
+func (c *connectionServiceClient) GetRecommendedConnections(ctx context.Context, in *GetById, opts ...grpc.CallOption) (*UserIds, error) {
+	out := new(UserIds)
+	err := c.cc.Invoke(ctx, "/connection.ConnectionService/GetRecommendedConnections", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // ConnectionServiceServer is the server API for ConnectionService service.
 // All implementations must embed UnimplementedConnectionServiceServer
 // for forward compatibility
 type ConnectionServiceServer interface {
 	Connect(context.Context, *UsersConnectionRequest) (*UsersConnectionResponse, error)
+	GetRecommendedConnections(context.Context, *GetById) (*UserIds, error)
 	mustEmbedUnimplementedConnectionServiceServer()
 }
 
@@ -56,6 +67,9 @@ type UnimplementedConnectionServiceServer struct {
 
 func (UnimplementedConnectionServiceServer) Connect(context.Context, *UsersConnectionRequest) (*UsersConnectionResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Connect not implemented")
+}
+func (UnimplementedConnectionServiceServer) GetRecommendedConnections(context.Context, *GetById) (*UserIds, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetRecommendedConnections not implemented")
 }
 func (UnimplementedConnectionServiceServer) mustEmbedUnimplementedConnectionServiceServer() {}
 
@@ -88,6 +102,24 @@ func _ConnectionService_Connect_Handler(srv interface{}, ctx context.Context, de
 	return interceptor(ctx, in, info, handler)
 }
 
+func _ConnectionService_GetRecommendedConnections_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetById)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ConnectionServiceServer).GetRecommendedConnections(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/connection.ConnectionService/GetRecommendedConnections",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ConnectionServiceServer).GetRecommendedConnections(ctx, req.(*GetById))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // ConnectionService_ServiceDesc is the grpc.ServiceDesc for ConnectionService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -98,6 +130,10 @@ var ConnectionService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "Connect",
 			Handler:    _ConnectionService_Connect_Handler,
+		},
+		{
+			MethodName: "GetRecommendedConnections",
+			Handler:    _ConnectionService_GetRecommendedConnections_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
