@@ -18,35 +18,6 @@ func NewConnectionRepository(driver neo4j.Driver) (*connectionRepository, error)
 	return &connectionRepository{driver: driver}, nil
 }
 
-func (repository *connectionRepository) CreateUser( /*ctx context.Context, */ u model.User) (bool, error) {
-	//span := tracer.StartSpanFromContextMetadata(ctx, "CreateFollowersConnection")
-	//defer span.Finish()
-	//ctx = tracer.ContextWithSpan(context.Background(), span)
-
-	session := repository.driver.NewSession(neo4j.SessionConfig{AccessMode: neo4j.AccessModeWrite})
-	defer session.Close()
-
-	result, err := session.WriteTransaction(func(transaction neo4j.Transaction) (interface{}, error) {
-		result, err := transaction.Run(
-			"CREATE (n:User {id : $UserId}) RETURN n",
-			map[string]interface{}{
-				"UserId": u.UserId,
-			})
-
-		if err != nil {
-			return nil, err
-		}
-		if result.Next() {
-			return true, nil
-		}
-		return false, errors.New("error: can not create user ")
-	})
-	if err != nil || result == nil {
-		return false, err
-	}
-	return true, nil
-}
-
 func (repository *connectionRepository) CreateUserConnection( /*ctx context.Context, */ f model.Connection) (bool, error) {
 	//span := tracer.StartSpanFromContextMetadata(ctx, "CreateFollowersConnection")
 	//defer span.Finish()
@@ -57,8 +28,7 @@ func (repository *connectionRepository) CreateUserConnection( /*ctx context.Cont
 
 	result, err := session.WriteTransaction(func(transaction neo4j.Transaction) (interface{}, error) {
 		result, err := transaction.Run(
-			"MATCH (a:User {id : $UserOne}), (b:User {id : $UserTwo}) MERGE"+
-				"(a)-[:CONNECT]-(b)"+
+			"MERGE (a:User {id : $UserOne})-[:CONNECT]-(b:User {id : $UserTwo})"+
 				"RETURN a, b",
 			map[string]interface{}{
 				"UserOne": f.UserOne,
@@ -77,4 +47,37 @@ func (repository *connectionRepository) CreateUserConnection( /*ctx context.Cont
 		return false, err
 	}
 	return true, nil
+}
+
+func (repository *connectionRepository) FindRecommendationsForUser( /*ctx context.Context, */ u model.User) ([]uint, error) {
+	//span := tracer.StartSpanFromContextMetadata(ctx, "CreateFollowersConnection")
+	//defer span.Finish()
+	//ctx = tracer.ContextWithSpan(context.Background(), span)
+
+	session := repository.driver.NewSession(neo4j.SessionConfig{AccessMode: neo4j.AccessModeRead})
+	defer session.Close()
+	result, err := session.WriteTransaction(func(transaction neo4j.Transaction) (interface{}, error) {
+		result, err := transaction.Run(
+			"MATCH (a:User {id: $UserId})-[:CONNECT]-(b:Person)-[:CONNECT]-(c:Person)"+
+				"WHERE a <> c AND NOT (a)-[:CONNECT]-(c)"+
+				"RETURN c.Id, count(c) as frequency"+
+				"ORDER BY frequency DESC"+
+				"LIMIT 5",
+			map[string]interface{}{
+				"UserOne": u.UserId,
+			})
+
+		if err != nil {
+			return nil, err
+		}
+		if result.Next() {
+			return result.Collect(), nil
+		}
+		return nil, errors.New("error: no user recommendations found")
+	})
+	if err != nil || result == nil {
+		return nil, err
+	}
+
+	return result.([]uint), nil
 }
