@@ -67,6 +67,7 @@ export class ChatComponent implements OnInit {
     this._requestService.sendMessage(this.newMessage)
     .subscribe(data => {
             this.newMessage.text = ''
+            this.getMessages()
           },
     error => this.errorMessage = <any>error);
   }

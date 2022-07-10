@@ -17,8 +17,10 @@
             <input type="password"  matInput [(ngModel)]="credentials.pin"  >
         </mat-form-field>
     </div>
-    <div style="width: 300px;">
+    <div style="width: 500px;">
         <button mat-raised-button color="warn" (click)="submit()">Submit</button>
-        <button style="margin-left: 70px;" (click)="sendPassword()" mat-button><u>Forgot password?</u></button>        
+        <button style="margin-left: 30px;" (click)="sendPasswordless()" mat-raised-button color="primary">Passwordless</button>
+        <button style="margin-left: 30px;" (click)="send2factor()" mat-raised-button color="primary">2 factor</button>
+        <div><button style="margin-top: 15px;" (click)="sendPassword()" mat-button><u>Forgot password?</u></button> </div>       
     </div>
 </div>

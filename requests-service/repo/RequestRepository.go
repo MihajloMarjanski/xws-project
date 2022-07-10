@@ -5,6 +5,10 @@ import (
 
 	"golang.org/x/net/context"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials"
+	"path/filepath"
+	"requests-service/model"
+	"time"
 
 	pb "github.com/MihajloMarjanski/xws-project/common/proto/user_service"
 	"gorm.io/driver/postgres"
@@ -25,12 +29,13 @@ func New() (*RequestsRepository, error) {
 
 	dsn := "host=requestdb user=XML password=ftn dbname=XML_REQUESTS port=5432 sslmode=disable"
 	//dsn := "host=localhost user=XML password=ftn dbname=XML_REQUESTS port=5432 sslmode=disable"
+
 	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
 	if err != nil {
 		return nil, err
 	}
 	repo.db = db
-	repo.db.AutoMigrate(&model.Request{}, &model.Connection{}, &model.Message{})
+	repo.db.AutoMigrate(&model.Request{}, &model.Connection{}, &model.Message{}, &model.Notification{})
 
 	return repo, nil
 }
@@ -102,7 +107,15 @@ func (repo *RequestsRepository) DeclineRequest(sid, rid uint) {
 }
 
 func (repo *RequestsRepository) SendRequest(sid, rid uint) {
-	conn, err := grpc.Dial("user-service:8100", grpc.WithInsecure())
+	crtTlsPath, _ := filepath.Abs("./service.pem")
+
+	creds, err6 := credentials.NewClientTLSFromFile(crtTlsPath, "")
+	if err6 != nil {
+		//log.Fatalf("could not process the credentials: %v", err6)
+	}
+
+	conn, err := grpc.Dial("user-service:8100", grpc.WithTransportCredentials(creds))
+  
 	if err != nil {
 		panic(err)
 	}
@@ -128,6 +141,7 @@ func (repo *RequestsRepository) SendRequest(sid, rid uint) {
 		}
 
 		repo.db.Create(&connection)
+
 	}
 }
 
@@ -172,4 +186,25 @@ func (repo *RequestsRepository) FindMessages(id1 int64, id2 int64) []model.Messa
 	repo.db.Model(&messages).Where("sender_id = ? AND receiver_id = ? OR sender_id = ? AND receiver_id = ?", id1, id2, id2, id1).Find(&messages)
 
 	return messages
+}
+
+func (repo *RequestsRepository) DeleteConnection(id1 int64, id2 int64) {
+	repo.db.Where("user_one = ? AND user_two = ? OR user_one = ? AND user_two = ?", id1, id2, id2, id1).Delete(&model.Connection{})
+	return
+}
+
+func (repo *RequestsRepository) SendNotification(id uint, text string) {
+	notification := model.Notification{
+		Text:       text,
+		ReceiverId: id,
+		Date:       time.Now(),
+	}
+	repo.db.Create(&notification)
+}
+
+func (repo *RequestsRepository) GetNotifications(id int64) []model.Notification {
+	var notifications []model.Notification
+	repo.db.Model(&notifications).Where("receiver_id = ?", id).Find(&notifications)
+
+	return notifications
 }

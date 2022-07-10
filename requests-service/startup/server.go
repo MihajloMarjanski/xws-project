@@ -2,9 +2,11 @@ package startup
 
 import (
 	"fmt"
+	"google.golang.org/grpc/credentials"
 	"log"
 	"net"
 	"os"
+	"path/filepath"
 	"requests-service/handler_grpc"
 	"requests-service/service"
 	config "requests-service/startup/config"
@@ -70,13 +72,14 @@ func (server *Server) initSubscriber(subject, queueGroup string) saga.Subscriber
 func accessibleRoles() map[string][]string {
 	const servicePath = "/requests.RequestsService/"
 	return map[string][]string{
-		servicePath + "GetAllByRecieverId": {"ROLE_USER"},
-		servicePath + "AcceptRequest":      {"ROLE_USER"},
-		servicePath + "DeclineRequest":     {"ROLE_USER"},
-		servicePath + "SendRequest":        {"ROLE_USER"},
-		servicePath + "SendMessage":        {"ROLE_USER"},
-		servicePath + "FindMessages":       {"ROLE_USER"},
-		servicePath + "FindConnections":    {"ROLE_USER"},
+		servicePath + "GetAllByRecieverId": {"GetAllByRecieverId"},
+		servicePath + "AcceptRequest":      {"AcceptRequest"},
+		servicePath + "DeclineRequest":     {"DeclineRequest"},
+		servicePath + "SendRequest":        {"SendRequest"},
+		servicePath + "SendMessage":        {"SendMessage"},
+		servicePath + "FindMessages":       {"FindMessages"},
+		//servicePath + "FindConnections":    {"ROLE_USER"},
+		servicePath + "GetNotifications": {"ROLE_USER"},
 	}
 }
 
@@ -86,11 +89,19 @@ func (server *Server) startGrpcServer(reqHandler *handler_grpc.RequestsHandler) 
 	if err != nil {
 		log.Fatalf("Failed to listen: %v", err)
 	}
-
 	interceptor := NewAuthInterceptor(accessibleRoles())
+
+	crtTlsPath, _ := filepath.Abs("./service.pem")
+	keyTlsPath, _ := filepath.Abs("./service.key")
+	creds, err := credentials.NewServerTLSFromFile(crtTlsPath, keyTlsPath)
+	if err != nil {
+		log.Fatalf("Failed to setup TLS: %v", err)
+	}
+
 	grpcServer := grpc.NewServer(
 		grpc.UnaryInterceptor(interceptor.Unary()),
 		grpc.StreamInterceptor(interceptor.Stream()),
+		grpc.Creds(creds),
 	)
 	requestProto.RegisterRequestsServiceServer(grpcServer, reqHandler)
 	if err := grpcServer.Serve(listener); err != nil {

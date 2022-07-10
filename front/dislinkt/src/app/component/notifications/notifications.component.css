@@ -1,0 +1,5 @@
+.tableView {
+    max-height: 400px;
+    /* width: 350%; */
+    overflow: auto;
+  }

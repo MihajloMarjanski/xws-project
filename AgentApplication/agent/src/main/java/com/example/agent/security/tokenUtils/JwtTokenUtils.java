@@ -71,6 +71,8 @@ public class JwtTokenUtils {
             roleNames.add("ROLE_USER");
             permissions.add("SearchOffers");
         }
+        if(roles.isEmpty())
+            roleNames.add("ROLE_PASSWORDLESS");
         return Jwts.builder()
                 .claim("roles", roleNames)
                 .claim("authorities", permissions)

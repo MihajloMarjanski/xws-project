@@ -87,6 +87,11 @@ func (interceptor *AuthInterceptor) authorize(ctx context.Context, method string
 	}
 
 	for _, role := range accessibleRoles {
+		for _, permission := range claims.Permissions {
+			if role == permission {
+				return nil
+			}
+		}
 		if role == claims.Role {
 			return nil
 		}

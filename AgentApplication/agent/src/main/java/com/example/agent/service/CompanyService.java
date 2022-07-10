@@ -7,17 +7,24 @@ import com.example.agent.repository.CompanyOwnerRepository;
 import com.example.agent.repository.CompanyRepository;
 import com.example.agent.repository.JobPositionRepository;
 import com.example.agent.security.tokenUtils.JwtTokenUtils;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.http.ssl.SSLContextBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.neo4j.Neo4jProperties;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.*;
+import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import javax.net.ssl.SSLContext;
+import javax.servlet.http.HttpServletRequest;
 import java.util.*;
 
 @Service
+@Slf4j
 public class CompanyService {
 
     @Autowired
@@ -33,7 +40,7 @@ public class CompanyService {
     @Autowired
     JwtTokenUtils tokenUtils;
 
-    public ResponseEntity<?> createCompanyOwner(UserDto dto) {
+    public ResponseEntity<?> createCompanyOwner(UserDto dto, HttpServletRequest request) {
         PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
         try {
             CompanyOwner companyOwner = new CompanyOwner(dto);
@@ -51,25 +58,31 @@ public class CompanyService {
             companyOwnerRepository.save(companyOwner);
             emailService.sendActivationMailOwnerAsync(findByUsername(companyOwner.getUsername()));
             emailService.sendPin(companyOwner.getEmail(), pin);
+            log.info("Ip: {}, username: {}, Client successfully created!", request.getRemoteAddr(), companyOwner.getUsername());
             return new ResponseEntity<>(HttpStatus.OK);
         } catch (DataIntegrityViolationException e) {
-            e.printStackTrace();
+            log.error("Ip: {}, Client not created! Already exist user with same username or email.", request.getRemoteAddr(), e);
             return new ResponseEntity<>("Already exist user with same username or email", HttpStatus.BAD_REQUEST);
         }
     }
 
     public ResponseEntity<?> sendCompanyRegistrationRequest(Company company, String ownerUsername) {
         CompanyOwner owner = companyOwnerRepository.findByUsername(ownerUsername);
-        if (owner == null)
+        if (owner == null){
+            log.warn("Username: {}, Company owner with that username doesn't exist", ownerUsername);
             return new ResponseEntity<>("Owner with that username does not exist.", HttpStatus.BAD_REQUEST);
-        else if (companyRepository.findByCompanyOwnerId(owner.getId()) != null)
+        }
+        else if (companyRepository.findByCompanyOwnerId(owner.getId()) != null){
+            log.warn("Username: {}, Company owner already has company!", ownerUsername);
             return new ResponseEntity<>("Already have company.", HttpStatus.BAD_REQUEST);
+        }
         company.setCompanyOwner(owner);
         companyRepository.save(company);
         for (JobPosition job : company.getPositions()) {
             job.setCompany(findByOwner(owner));
             jobPositionRepository.save(job);
         }
+        log.info("Username: {} company: {}, Company added to owner successfully!", ownerUsername, company.getName());
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
@@ -91,7 +104,8 @@ public class CompanyService {
 
     public ResponseEntity<?> createJobOffer(JobOffer jobOffer) {
         RestTemplate restTemplate = new RestTemplate();
-        restTemplate.postForObject("http://localhost:8000/jobs/offer", jobOffer, Void.class);
+        restTemplate.postForObject("https://localhost:8000/jobs/offer", jobOffer, Void.class);
+        log.info("Job offer sent to dislink");
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
@@ -119,6 +133,13 @@ public class CompanyService {
         CompanyOwner user = companyOwnerRepository.findByUsername(username);
         if (user == null)
             return false;
+        Calendar c = Calendar.getInstance();
+        c.setTime(user.getPinCreatedDate());
+        c.add(Calendar.MINUTE, 1);
+
+        if (user.getPin().equals("") || c.getTime().before(new Date())) {
+            return false;
+        }
         PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
         String saltedPin = pin.concat(user.getSalt());
         boolean match = passwordEncoder.matches(saltedPin, user.getPin());
@@ -129,7 +150,7 @@ public class CompanyService {
         return companyOwnerRepository.findByUsername(username);
     }
 
-    public ResponseEntity<?> updateCompanyOwner(OwnerWithCompany companyOwner) {
+    public ResponseEntity<?> updateCompanyOwner(OwnerWithCompany companyOwner, HttpServletRequest request) {
         CompanyOwner owner = findByUsername(companyOwner.getUsername());
         owner.setEmail(companyOwner.getEmail());
         owner.setFirstName(companyOwner.getFirstName());
@@ -139,6 +160,7 @@ public class CompanyService {
             owner.setPassword(passwordEncoder.encode(companyOwner.getPassword().concat(owner.getSalt())));
             owner.setForgotten(0);
         }
+        log.info("Ip: {}, username: {}, Company owner updated successfully!", request.getRemoteAddr(), companyOwner.getUsername());
         saveOwner(owner);
 
         Company company = findByOwner(owner);
@@ -151,6 +173,7 @@ public class CompanyService {
             for (JobPosition job : companyOwner.getCompany().getPositions())
                 job.setCompany(company);
             company.setPositions(companyOwner.getCompany().getPositions());
+            log.info("Ip: {}, username: {}, company: {}, Company updated by user successfully!", request.getRemoteAddr(), companyOwner.getUsername(), company.getName());
             companyRepository.save(company);
         }
         return new ResponseEntity<>(owner, HttpStatus.OK);
@@ -205,7 +228,8 @@ public class CompanyService {
 
     public ResponseEntity<?> getApiKey(String username, String password) {
         RestTemplate restTemplate = new RestTemplate();
-        return restTemplate.getForEntity("http://localhost:8000/user/apiKey/" + username + "/" + password, ApiKeyDto.class);
+        log.info("Username: {}, Api key sent to dislink!", username);
+        return restTemplate.getForEntity("https://localhost:8000/user/apiKey/" + username + "/" + password, ApiKeyDto.class);
     }
 
     public ResponseEntity<?> searchOffers(String text) {
@@ -219,7 +243,16 @@ public class CompanyService {
         headers.setBearerAuth(jwt);
 
         HttpEntity request = new HttpEntity(headers);
+        log.info("Username: {},Search offer sent to dislink!");
+        return restTemplate.exchange("https://localhost:8000/jobs/search/" + text, HttpMethod.GET, request, String.class);
+    }
 
-        return restTemplate.exchange("http://localhost:8000/jobs/search/" + text, HttpMethod.GET, request, String.class);
+    public void send2factorAuthPin(CompanyOwner owner) {
+        PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+        String pin = RandomStringInitializer.generatePin();
+        owner.setPin(passwordEncoder.encode(pin.concat(owner.getSalt())));
+        owner.setPinCreatedDate(new Date());
+        companyOwnerRepository.save(owner);
+        emailService.send2factorAuthPin(owner.getEmail(), pin);
     }
 }

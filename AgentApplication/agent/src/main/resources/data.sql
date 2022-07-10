@@ -16,6 +16,7 @@ insert into permission (id, name) values (10, 'updateSalary');
 insert into permission (id, name) values (11, 'addInformation');
 insert into permission (id, name) values (12, 'createJobOffer');
 insert into permission (id, name) values (13, 'ownerByUsername');
+insert into permission (id, name) values (14, 'apiKey');
 
 insert into role_permissions (role_id, permission_id) values (1, 1);
 insert into role_permissions (role_id, permission_id) values (1, 2);
@@ -29,8 +30,10 @@ insert into role_permissions (role_id, permission_id) values (2, 8);
 insert into role_permissions (role_id, permission_id) values (4, 9);
 insert into role_permissions (role_id, permission_id) values (4, 10);
 insert into role_permissions (role_id, permission_id) values (4, 11);
+insert into role_permissions (role_id, permission_id) values (2, 12);
 insert into role_permissions (role_id, permission_id) values (2, 13);
 insert into role_permissions (role_id, permission_id) values (3, 13);
+insert into role_permissions (role_id, permission_id) values (2, 14);
 
 
 INSERT INTO admin (`id`, `email`, `first_name`, `last_name`, `password`, `username`, is_activated, pin, is_blocked, salt)

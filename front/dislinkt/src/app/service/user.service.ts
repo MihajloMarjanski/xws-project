@@ -1,12 +1,12 @@
-import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
+import { Injectable } from '@angular/core';
+import { Observable } from 'rxjs';
+import { catchError, tap } from 'rxjs/operators';
 import { Credentials } from '../model/credentials';
-import { Observable, throwError } from 'rxjs';
-import { map, catchError, tap } from 'rxjs/operators';
-import { User } from '../model/user';
 import { Experience } from '../model/experience';
 import { Interest } from '../model/interest';
 import { JobOffer } from '../model/job-offer';
+import { User } from '../model/user';
 
 @Injectable({
   providedIn: 'root'
@@ -14,7 +14,7 @@ import { JobOffer } from '../model/job-offer';
 export class UserService {
   
   
-  private _baseUrl = 'http://localhost:8000/';
+  private _baseUrl = 'https://localhost:8000/';
   private _login = this._baseUrl + 'user/login';
   private _getAllUsernames = this._baseUrl + 'auth/getAllUsernames';
   private _removeExperience = this._baseUrl + 'user/experience/';
@@ -25,17 +25,35 @@ export class UserService {
   private _addInterest  = this._baseUrl + 'user/interest';
   private _removeInterest  = this._baseUrl + 'user/interest/';
   private _editUser  = this._baseUrl + 'user';
-  private _forgotPassword  = this._baseUrl + 'clients/newPassword/';
+  private _forgotPassword  = this._baseUrl + 'user/newPassword/';
   private _createOffer  = this._baseUrl + 'jobs/offer';
   private _apiKey  = this._baseUrl + 'user/apiKey/';
   private _searchUsers  = this._baseUrl + 'user/search/';
   private _searchOffers  = this._baseUrl + 'jobs/search/';
   private _blockUser  = this._baseUrl + 'user/block/';
   private _findAllBlocked  = this._baseUrl + 'user/blocked/';
+  private _sendPasswordless = this._baseUrl + 'auth/sso/';
+  private _send2factor = this._baseUrl + 'user/2factorAuth/pin/send';
+  private _loginPaswordless = this._baseUrl + 'user/login/passwordless?token=';
   
   constructor(private _http: HttpClient) { }
   
 
+  loginPasswordless(token: any): Observable<any> {
+    return this._http.post(this._loginPaswordless + token, {})
+  } 
+
+  sendPasswordless(username: string): Observable<any> {
+    return this._http.get<any>(this._sendPasswordless + username)
+                           .pipe(tap(data =>  console.log('Iz service-a: ', data)),                         
+                                catchError(this.handleError)); 
+  }
+
+  send2factor(credentials: Credentials): Observable<any> {
+    const body=JSON.stringify(credentials);
+    console.log(body)
+    return this._http.post(this._send2factor, body)
+  }
 
   findAllBlocked(id: string | null) {
     return this._http.get<any>(this._findAllBlocked + id)
@@ -105,9 +123,7 @@ export class UserService {
   }
 
   forgotPassword(username: string) : Observable<any> {
-    return this._http.put<any>(this._forgotPassword + username, {})
-                  .pipe(tap(data =>  console.log('All: ' + JSON.stringify(data))),
-                  catchError(this.handleError)); 
+    return this._http.put<any>(this._forgotPassword + username, {})                  
   }
 
   logIn(credentials: Credentials): Observable<any> {

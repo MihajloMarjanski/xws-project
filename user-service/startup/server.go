@@ -2,9 +2,11 @@ package startup
 
 import (
 	"fmt"
+	"google.golang.org/grpc/credentials"
 	"log"
 	"net"
 	"os"
+	"path/filepath"
 	"user-service/handler_grpc"
 	"user-service/service"
 	"user-service/startup/config"
@@ -70,13 +72,13 @@ func (server *Server) initSubscriber(subject, queueGroup string) saga.Subscriber
 func accessibleRoles() map[string][]string {
 	const servicePath = "/user.UserService/"
 	return map[string][]string{
-		servicePath + "UpdateUser":        {"ROLE_USER"},
-		servicePath + "AddExperience":     {"ROLE_USER"},
-		servicePath + "RemoveExperience":  {"ROLE_USER"},
-		servicePath + "AddInterest":       {"ROLE_USER"},
-		servicePath + "RemoveInterest":    {"ROLE_USER"},
-		servicePath + "BlockUser":         {"ROLE_USER"},
-		servicePath + "GetUserByUsername": {"ROLE_USER"},
+		servicePath + "UpdateUser":        {"UpdateUser"},
+		servicePath + "AddExperience":     {"AddExperience"},
+		servicePath + "RemoveExperience":  {"RemoveExperience"},
+		servicePath + "AddInterest":       {"AddInterest"},
+		servicePath + "RemoveInterest":    {"RemoveInterest"},
+		servicePath + "BlockUser":         {"BlockUser"},
+		servicePath + "GetUserByUsername": {"GetUserByUsername"},
 		//servicePath + "SearchOffers":      {"ROLE_USER"},
 	}
 }
@@ -88,9 +90,18 @@ func (server *Server) startGrpcServer(userHandler *handler_grpc.UserHandler) {
 		log.Fatalf("failed to listen: %v", err)
 	}
 	interceptor := NewAuthInterceptor(accessibleRoles())
+
+	crtTlsPath, _ := filepath.Abs("./service.pem")
+	keyTlsPath, _ := filepath.Abs("./service.key")
+	creds, err := credentials.NewServerTLSFromFile(crtTlsPath, keyTlsPath)
+	if err != nil {
+		log.Fatalf("Failed to setup TLS: %v", err)
+	}
+
 	grpcServer := grpc.NewServer(
 		grpc.UnaryInterceptor(interceptor.Unary()),
 		grpc.StreamInterceptor(interceptor.Stream()),
+		grpc.Creds(creds),
 	)
 	user.RegisterUserServiceServer(grpcServer, userHandler)
 	if err := grpcServer.Serve(listener); err != nil {

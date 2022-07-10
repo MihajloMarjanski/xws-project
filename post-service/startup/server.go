@@ -2,8 +2,10 @@ package startup
 
 import (
 	"fmt"
+	"google.golang.org/grpc/credentials"
 	"log"
 	"net"
+	"path/filepath"
 	"post-service/handler_grpc"
 	"post-service/startup/config"
 
@@ -33,10 +35,10 @@ func (server *Server) Start() {
 func accessibleRoles() map[string][]string {
 	const servicePath = "/post.PostService/"
 	return map[string][]string{
-		servicePath + "CreatePost": {"user"},
-		servicePath + "AddComment": {"user"},
-		servicePath + "AddLike":    {"user"},
-		servicePath + "AddDislike": {"user"},
+		servicePath + "CreatePost": {"ROLE_USER"},
+		servicePath + "AddComment": {"ROLE_USER"},
+		servicePath + "AddLike":    {"ROLE_USER"},
+		servicePath + "AddDislike": {"ROLE_USER"},
 	}
 }
 
@@ -46,9 +48,18 @@ func (server *Server) startGrpcServer(postHandler *handler_grpc.PostHandler) {
 		log.Fatalf("failed to listen: %v", err)
 	}
 	interceptor := NewAuthInterceptor(accessibleRoles())
+
+	crtTlsPath, _ := filepath.Abs("./service.pem")
+	keyTlsPath, _ := filepath.Abs("./service.key")
+	creds, err := credentials.NewServerTLSFromFile(crtTlsPath, keyTlsPath)
+	if err != nil {
+		log.Fatalf("Failed to setup TLS: %v", err)
+	}
+
 	grpcServer := grpc.NewServer(
 		grpc.UnaryInterceptor(interceptor.Unary()),
 		grpc.StreamInterceptor(interceptor.Stream()),
+		grpc.Creds(creds),
 	)
 	post.RegisterPostServiceServer(grpcServer, postHandler)
 	if err := grpcServer.Serve(listener); err != nil {

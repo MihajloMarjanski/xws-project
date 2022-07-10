@@ -10,8 +10,11 @@
         </mat-select>
     </mat-form-field>
 
-    <div>
-        <div *ngFor="let message of messages" [ngClass]="message.senderId == logedUserId ? 'leftChat' : 'rightChat'">{{message.text}}</div>
+    <div style="border: solid; width: 500px; min-height: 200px;">
+        <div *ngFor="let message of messages">
+            <p *ngIf="message.senderId == logedUserId" class="leftChat">- {{message.text}}</p>
+            <p *ngIf="message.senderId != logedUserId" class="rightChat">- {{message.text}}</p>
+        </div>
     </div>
 
     <div>

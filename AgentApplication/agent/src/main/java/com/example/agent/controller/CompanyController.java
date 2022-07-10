@@ -8,6 +8,7 @@ import com.example.agent.repository.CompanyOwnerRepository;
 import com.example.agent.repository.ConfirmationTokenRepository;
 import com.example.agent.service.ClientService;
 import com.example.agent.service.CompanyService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -17,10 +18,12 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.WebRequest;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 @RestController
 @RequestMapping(value = "/company")
+@Slf4j
 public class CompanyController {
 
     @Autowired
@@ -34,19 +37,21 @@ public class CompanyController {
 
 
     @PostMapping(path = "/owner/create")
-    public ResponseEntity<?> createCompanyOwner(@Valid @RequestBody UserDto companyOwner, BindingResult res) {
-        if(res.hasErrors())
+    public ResponseEntity<?> createCompanyOwner(@Valid @RequestBody UserDto companyOwner, BindingResult res, HttpServletRequest request) {
+        if(res.hasErrors()){
+            log.warn("Ip: {}, Fields for new company owner not valid!", request.getRemoteAddr());
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        return companyService.createCompanyOwner(companyOwner);
+        }
+        return companyService.createCompanyOwner(companyOwner, request);
     }
 
-    @PreAuthorize("hasAnyRole('COMPANY_OWNER', 'POTENTIAL_OWNER')")
+    @PreAuthorize("hasAnyRole('POTENTIAL_COMPANY_OWNER', 'COMPANY_OWNER')")
     @PostMapping(path = "/owner/update")
-    public ResponseEntity<?> updateCompanyOwner(@RequestBody OwnerWithCompany companyOwner) {
-        return companyService.updateCompanyOwner(companyOwner);
+    public ResponseEntity<?> updateCompanyOwner(@RequestBody OwnerWithCompany companyOwner , HttpServletRequest request) {
+        return companyService.updateCompanyOwner(companyOwner, request);
     }
 
-    @PreAuthorize("hasRole('POTENTIAL_OWNER')")
+    @PreAuthorize("hasRole('POTENTIAL_COMPANY_OWNER')")
     @PostMapping(path = "/create/{ownerUsername}")
     public ResponseEntity<?> createCompany(@RequestBody Company company, @PathVariable String ownerUsername) {
         return companyService.sendCompanyRegistrationRequest(company, ownerUsername);
@@ -88,7 +93,7 @@ public class CompanyController {
     }
 
     @GetMapping(path = "/owner/activate")
-    public ResponseEntity<?> activateOwnerAccount(WebRequest request, @RequestParam("token") String hashCode) {
+    public ResponseEntity<?> activateOwnerAccount(HttpServletRequest request, @RequestParam("token") String hashCode) {
         ConfirmationToken token = confirmationTokenRepository.findByConfirmationToken(hashCode);
         CompanyOwner companyOwner = token.getCompanyOwner();
         if (companyOwner == null || companyOwner.isActivated()) {
@@ -97,6 +102,8 @@ public class CompanyController {
 
         companyOwner.setActivated(true);
         companyOwnerRepository.save(companyOwner);
+        log.info("Ip: {}, Username: {}, Client is successfully activated!",request.getRemoteAddr(), companyOwner.getUsername());
+
 
         HttpHeaders headers = new HttpHeaders();
         headers.add("Location", "https://localhost:4200");
@@ -113,7 +120,7 @@ public class CompanyController {
         return companyService.getAllApproved();
     }
 
-    @PreAuthorize("hasAnyRole('COMPANY_OWNER', 'POTENTIAL_OWNER')")
+    @PreAuthorize("hasAnyRole('POTENTIAL_COMPANY_OWNER', 'COMPANY_OWNER')")
     @GetMapping(path = "/owner/username/{username}")
     public ResponseEntity<?> ownerByUsername(@PathVariable String username) {
         return companyService.getOwnerByUsername(username);

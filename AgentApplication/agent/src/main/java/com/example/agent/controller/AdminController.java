@@ -11,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 @RestController
@@ -23,19 +24,19 @@ public class AdminController {
 
     @PreAuthorize("hasRole('ADMIN')")
     @PutMapping(path = "/approve/company/{id}")
-    public ResponseEntity<?> approveCompany(@PathVariable Integer id) {
-        return adminService.approveCompany(id);
+    public ResponseEntity<?> approveCompany(@PathVariable Integer id, HttpServletRequest request) {
+        return adminService.approveCompany(id, request);
     }
 
-    @PreAuthorize("hasAuthority('adminByUsername')")
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping(path = "/username/{username}")
-    public ResponseEntity<?> adminByUsername(@PathVariable String username) {
-        return adminService.getByUsername(username);
+    public ResponseEntity<?> adminByUsername(@PathVariable String username , HttpServletRequest request) {
+        return adminService.getByUsername(username, request);
     }
 
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping(path = "/update")
-    public ResponseEntity<?> updateAdmin(@RequestBody Admin client) {
-        return adminService.updateAdmin(client);
+    public ResponseEntity<?> updateAdmin(@RequestBody Admin client, HttpServletRequest request) {
+        return adminService.updateAdmin(client , request);
     }
 }

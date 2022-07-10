@@ -3,6 +3,8 @@ package handler_grpc
 import (
 	"context"
 	"fmt"
+	"io"
+	"os"
 	"strconv"
 	"strings"
 	"user-service/service"
@@ -13,11 +15,28 @@ import (
 
 	pb "github.com/MihajloMarjanski/xws-project/common/proto/user_service"
 	"github.com/dgrijalva/jwt-go"
+	"github.com/natefinch/lumberjack"
+	log "github.com/sirupsen/logrus"
 )
 
 type UserHandler struct {
 	pb.UnimplementedUserServiceServer
 	userService *service.UserService
+}
+
+func init() {
+
+	f := &lumberjack.Logger{
+		Filename:   "./logs/testlogrus.log",
+		MaxSize:    10, // megabytes
+		MaxBackups: 3,
+		MaxAge:     28,   //days
+		Compress:   true, // disabled by default
+	}
+
+	mw := io.MultiWriter(os.Stdout, f)
+	log.SetOutput(mw)
+	log.SetLevel(log.InfoLevel)
 }
 
 func Verify(accessToken string) (*service.Claims, error) {
@@ -27,22 +46,27 @@ func Verify(accessToken string) (*service.Claims, error) {
 		func(token *jwt.Token) (interface{}, error) {
 			_, ok := token.Method.(*jwt.SigningMethodHMAC)
 			if !ok {
+				log.WithFields(log.Fields{"service_name": "user-service", "method_name": "Verify"}).Warn("Unexpected token signing method.")
 				return nil, fmt.Errorf("unexpected token signing method")
 			}
 
+			log.WithFields(log.Fields{"service_name": "user-service", "method_name": "Verify"}).Info("Token successfully verified.")
 			return []byte("tajni_kljuc_za_jwt_hash"), nil
 		},
 	)
 
 	if err != nil {
+		log.WithFields(log.Fields{"service_name": "user-service", "method_name": "Verify"}).Warn("Invalid token.")
 		return nil, fmt.Errorf("invalid token: %w", err)
 	}
 
 	claims, ok := token.Claims.(*service.Claims)
 	if !ok {
+		log.WithFields(log.Fields{"service_name": "user-service", "method_name": "Verify"}).Warn("Invalid token claims.")
 		return nil, fmt.Errorf("invalid token claims")
 	}
 
+	log.WithFields(log.Fields{"service_name": "user-service", "method_name": "Verify"}).Info("Token successfully verified.")
 	return claims, nil
 }
 
@@ -61,9 +85,10 @@ func New() (*UserHandler, error) {
 
 	userService, err := service.New()
 	if err != nil {
+		log.WithFields(log.Fields{"service_name": "user-service", "method_name": "NewUserHandler"}).Error("Error creating user service.")
 		return nil, err
 	}
-
+	log.WithFields(log.Fields{"service_name": "user-service", "method_name": "NewUserHandler"}).Info("Successfully created user handler.")
 	return &UserHandler{
 		userService: userService,
 	}, nil
@@ -79,12 +104,15 @@ func (handler *UserHandler) GetUser(ctx context.Context, request *pb.GetUserRequ
 	user := handler.userService.GetByID(int(id))
 	if user.ID == 0 {
 		err := status.Error(codes.NotFound, "User with that id does not exist.")
+		log.WithFields(log.Fields{"service_name": "user-service", "method_name": "GetUser", "user_id": id}).Warn("User with that id does not exist.")
 		return nil, err
 	}
 	userPb := mapUserDtoToProto(user)
 	response := &pb.GetUserResponse{
 		User: userPb,
 	}
+
+	log.WithFields(log.Fields{"service_name": "user-service", "method_name": "GetUser", "user_id": id}).Info("User successfully retrieved.")
 	return response, nil
 }
 
@@ -93,6 +121,7 @@ func (handler *UserHandler) GetUserByUsername(ctx context.Context, request *pb.G
 	user := handler.userService.GetByUsername(username)
 	if user.ID == 0 {
 		err := status.Error(codes.NotFound, "User with that username does not exist.")
+		log.WithFields(log.Fields{"service_name": "user-service", "method_name": "GetUserByUsername", "username": username}).Warn("User with that username does not exist.")
 		return nil, err
 	}
 	userPb := mapUserToProto(user)
@@ -100,6 +129,7 @@ func (handler *UserHandler) GetUserByUsername(ctx context.Context, request *pb.G
 		User: userPb,
 	}
 
+	log.WithFields(log.Fields{"service_name": "user-service", "method_name": "GetUserByUsername", "username": username}).Info("User successfully retrieved.")
 	return response, nil
 }
 
@@ -108,12 +138,15 @@ func (handler *UserHandler) UpdateUser(ctx context.Context, request *pb.UpdateUs
 	user.ID = GetUserID(ctx)
 	if handler.userService.GetByID(int(user.ID)).ID == 0 {
 		err := status.Error(codes.NotFound, "User with that id does not exist.")
+		log.WithFields(log.Fields{"service_name": "user-service", "method_name": "UpdateUser", "user_id": user.ID}).Warn("User with that id does not exist..")
 		return nil, err
 	}
 	id := handler.userService.UpdateUser(user.ID, user.Name, user.Email, user.Password, user.UserName, user.Gender, user.PhoneNumber, user.DateOfBirth, user.Biography, user.IsPrivate)
 	response := &pb.UpdateUserResponse{
 		Id: int64(id),
 	}
+
+	log.WithFields(log.Fields{"service_name": "user-service", "method_name": "UpdateUser", "user_id": user.ID}).Info("User successfully updated.")
 	return response, nil
 }
 
@@ -146,11 +179,14 @@ func (handler *UserHandler) CreateUser(ctx context.Context, request *pb.CreateUs
 	id := handler.userService.CreateUser(user.Name, user.Email, user.Password, user.UserName, user.Gender, user.PhoneNumber, user.DateOfBirth, user.Biography)
 	if id == 0 {
 		err := status.Error(codes.AlreadyExists, "User with same username or email already exists.")
+		log.WithFields(log.Fields{"service_name": "user-service", "method_name": "CreateUser", "username": user.UserName}).Warn("User with same username or email already exists.")
 		return nil, err
 	}
 	response := &pb.CreateUserResponse{
 		Id: int64(id),
 	}
+
+	log.WithFields(log.Fields{"service_name": "user-service", "method_name": "CreateUser", "username": user.UserName}).Info("User successfully created.")
 	return response, nil
 }
 
@@ -161,6 +197,8 @@ func (handler *UserHandler) AddExperience(ctx context.Context, request *pb.AddEx
 	response := &pb.AddExperienceResponse{
 		Id: int64(id),
 	}
+
+	log.WithFields(log.Fields{"service_name": "user-service", "method_name": "AddExperience", "user_id": id}).Info("Experience successfully added.")
 	return response, nil
 }
 
@@ -171,6 +209,7 @@ func (handler *UserHandler) AddInterest(ctx context.Context, request *pb.AddInte
 	response := &pb.AddInterestResponse{
 		Id: int64(id),
 	}
+	log.WithFields(log.Fields{"service_name": "user-service", "method_name": "AddInterest", "user_id": id}).Info("Interest successfully added.")
 	return response, nil
 }
 
@@ -178,6 +217,7 @@ func (handler *UserHandler) RemoveExperience(ctx context.Context, request *pb.Re
 	id := request.Id
 	handler.userService.RemoveExperience(int(id))
 	response := &pb.RemoveExperienceResponse{}
+	log.WithFields(log.Fields{"service_name": "user-service", "method_name": "RemoveExperience", "user_id": id}).Info("Experience successfully removed.")
 	return response, nil
 }
 
@@ -185,14 +225,22 @@ func (handler *UserHandler) RemoveInterest(ctx context.Context, request *pb.Remo
 	id := request.Id
 	handler.userService.RemoveInterest(int(id))
 	response := &pb.RemoveInterestResponse{}
+	log.WithFields(log.Fields{"service_name": "user-service", "method_name": "RemoveInterest", "user_id": id}).Info("Interest successfully removed.")
 	return response, nil
 }
 func (handler *UserHandler) Login(ctx context.Context, request *pb.LoginRequest) (*pb.LoginResponse, error) {
 	creds := request.Credentials
-	token := handler.userService.Login(creds.Username, creds.Password)
+	token, ok := handler.userService.Login(creds.Username, creds.Password, creds.Pin)
+	if !ok {
+		err := status.Error(codes.NotFound, token)
+		log.WithFields(log.Fields{"service_name": "user-service", "method_name": "Login", "username": creds.Username}).Warn("Failed to login.")
+		return nil, err
+	}
 	response := &pb.LoginResponse{
 		Token: token,
 	}
+
+	log.WithFields(log.Fields{"service_name": "user-service", "method_name": "Login", "username": creds.Username}).Info("Login successful.")
 	return response, nil
 }
 func (handler *UserHandler) BlockUser(ctx context.Context, request *pb.BlockUserRequest) (*pb.BlockUserResponse, error) {
@@ -200,43 +248,51 @@ func (handler *UserHandler) BlockUser(ctx context.Context, request *pb.BlockUser
 	blockedUserId := request.BlockedUserId
 	if handler.userService.GetByID(int(userId)).ID == 0 || handler.userService.GetByID(int(blockedUserId)).ID == 0 {
 		err := status.Error(codes.NotFound, "User with that id does not exist.")
+		log.WithFields(log.Fields{"service_name": "user-service", "method_name": "BlockUser", "user_id": blockedUserId}).Warn("User with that id does not exist.")
 		return nil, err
 	}
 	handler.userService.BlockUser(int(userId), int(blockedUserId))
 	response := &pb.BlockUserResponse{}
+	log.WithFields(log.Fields{"service_name": "user-service", "method_name": "BlockUser", "user_id": blockedUserId}).Info("User successfully blocked.")
 	return response, nil
 }
 func (handler *UserHandler) GetApiKey(ctx context.Context, request *pb.ApiKeyRequest) (*pb.ApiKeyResponse, error) {
 	key := handler.userService.GetApiKeyForUserCredentials(request.Username, request.Password)
 	if key == "" {
 		err := status.Error(codes.NotFound, "User with that username and password does not exist.")
+		log.WithFields(log.Fields{"service_name": "user-service", "method_name": "GetApiKey", "username": request.Username}).Warn("User with that username and password does not exist.")
 		return nil, err
 	}
 	response := &pb.ApiKeyResponse{
 		ApiKey: key,
 	}
+	log.WithFields(log.Fields{"service_name": "user-service", "method_name": "GetApiKey", "username": request.Username}).Info("Api key successfully retrieved.")
 	return response, nil
 }
 func (handler *UserHandler) GetApiKeyForUsername(ctx context.Context, request *pb.GetApiKeyForUsernameRequest) (*pb.GetApiKeyForUsernameResponse, error) {
 	key := handler.userService.GetApiKeyForUsername(request.Username)
 	if key == "" {
 		err := status.Error(codes.NotFound, "User with that username does not exist.")
+		log.WithFields(log.Fields{"service_name": "user-service", "method_name": "GetApiKeyForUsername", "username": request.Username}).Warn("User with that username does not exist.")
 		return nil, err
 	}
 	response := &pb.GetApiKeyForUsernameResponse{
 		ApiKey: key,
 	}
+	log.WithFields(log.Fields{"service_name": "user-service", "method_name": "GetApiKeyForUsername", "username": request.Username}).Info("Api key successfully retrieved.")
 	return response, nil
 }
 func (handler *UserHandler) CreateJobOffer(ctx context.Context, request *pb.CreateJobOfferRequest) (*pb.CreateJobOfferResponse, error) {
 	handler.userService.CreateJobOffer(int(request.Offer.Id), request.Offer.JobInfo, request.Offer.JobPosition, request.Offer.CompanyName, request.Offer.Qualifications, request.Offer.ApiKey)
 	response := &pb.CreateJobOfferResponse{}
+	log.WithFields(log.Fields{"service_name": "user-service", "method_name": "CreateJobOffer"}).Info("Job offer successfully created.")
 	return response, nil
 }
 
 func (handler *UserHandler) ActivateAccount(ctx context.Context, request *pb.ActivateAccountRequest) (*pb.ActivateAccountResponse, error) {
 	handler.userService.ActivateAccount(request.Token.Value)
 	response := &pb.ActivateAccountResponse{}
+	log.WithFields(log.Fields{"service_name": "user-service", "method_name": "ActivateAccount"}).Info("Api key successfully retrieved.")
 	return response, nil
 }
 
@@ -245,5 +301,57 @@ func (handler *UserHandler) GetPrivateStatusForUserId(ctx context.Context, reque
 	response := &pb.GetPrivateStatusForUserIdResponse{
 		IsPrivate: status,
 	}
+	log.WithFields(log.Fields{"service_name": "user-service", "method_name": "GetPrivateStatusForUserId", "user_id": request.Id}).Info("Api key successfully retrieved.")
+	return response, nil
+}
+
+func (handler *UserHandler) ForgotPassword(ctx context.Context, request *pb.ForgotPasswordRequest) (*pb.ForgotPasswordResponse, error) {
+	i := handler.userService.ForgotPassword(request.Username)
+	if i == 0 {
+		err := status.Error(codes.InvalidArgument, "User with that username does not exist.")
+		log.WithFields(log.Fields{"service_name": "user-service", "method_name": "ForgotPassword", "username": request.Username}).Warn("User with that username does not exist.")
+		return nil, err
+	}
+	response := &pb.ForgotPasswordResponse{}
+	log.WithFields(log.Fields{"service_name": "user-service", "method_name": "ForgotPassword", "username": request.Username}).Info("Temporary password successfully created.")
+	return response, nil
+}
+
+func (handler *UserHandler) SendPinFor2Auth(ctx context.Context, request *pb.SendPinFor2AuthRequest) (*pb.SendPinFor2AuthResponse, error) {
+	message := handler.userService.SendPinFor2Auth(request.Credentials.Username, request.Credentials.Password)
+	if message != "" {
+		err := status.Error(codes.InvalidArgument, message)
+		log.WithFields(log.Fields{"service_name": "user-service", "method_name": "SendPinFor2Auth", "username": request.Credentials.Username}).Warn("Invalid pin for 2FA.")
+		return nil, err
+	}
+	response := &pb.SendPinFor2AuthResponse{}
+	log.WithFields(log.Fields{"service_name": "user-service", "method_name": "SendPinFor2Auth", "username": request.Credentials.Username}).Info("Pin for 2FA successfully generated.")
+	return response, nil
+}
+
+func (handler *UserHandler) SendPasswordlessToken(ctx context.Context, request *pb.SendPasswordlessTokenRequest) (*pb.SendPasswordlessTokenResponse, error) {
+	message := handler.userService.SendPasswordlessToken(request.Username)
+	if message != "" {
+		err := status.Error(codes.InvalidArgument, message)
+		log.WithFields(log.Fields{"service_name": "user-service", "method_name": "SendPasswordlessToken", "username": request.Username}).Warn("Invalid passwordless token.")
+		return nil, err
+	}
+	response := &pb.SendPasswordlessTokenResponse{}
+	log.WithFields(log.Fields{"service_name": "user-service", "method_name": "SendPasswordlessToken", "username": request.Username}).Info("Passwordless token successfully generated.")
+	return response, nil
+}
+
+func (handler *UserHandler) LoginPasswordless(ctx context.Context, request *pb.LoginPasswordlessRequest) (*pb.LoginPasswordlessResponse, error) {
+	id := int64(GetUserID(ctx))
+	message, ok := handler.userService.LoginPasswordless(int(id))
+	if !ok {
+		err := status.Error(codes.NotFound, message)
+		log.WithFields(log.Fields{"service_name": "user-service", "method_name": "LoginPasswordless", "user_id": id}).Warn("Failed passwordless login.")
+		return nil, err
+	}
+	response := &pb.LoginPasswordlessResponse{
+		Jwt: message,
+	}
+	log.WithFields(log.Fields{"service_name": "user-service", "method_name": "LoginPasswordless", "user_id": id}).Warn("Passwordless login successfull.")
 	return response, nil
 }

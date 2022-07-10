@@ -1,5 +1,33 @@
 version: "3.7"
+x-logging: &fluent-bit
+  driver: fluentd
+  options:
+    fluentd-address: ${FLUENT_BIT_ADDRESS}:24224
 services:
+
+  agent-app-front:
+    hostname: agent-app-front
+    image: agent-app-front
+    build:
+      context: ./AgentApplication/front/agent-app/
+      dockerfile: Dockerfile
+    restart: always
+    ports:
+      - 4200:4200
+    networks:
+      - backend
+
+  dislinkt-front:
+    hostname:  dislinkt-front
+    image:  dislinkt-front
+    build:
+      context: ./front/dislinkt/
+      dockerfile: Dockerfile
+    restart: always
+    ports:
+      - 4300:4300
+    networks:
+      - backend
 
   user-service:
     hostname: user-service
@@ -8,10 +36,14 @@ services:
       context: ./
       dockerfile: ./user-service/Dockerfile
     restart: always
+    volumes:
+      - ~/Desktop/logs/user_service_logs:/root/logs
     ports:
       - 8001:8100
+    logging: *fluent-bit
     networks:
       - backend
+      - monitoring
 
   request-service:
     hostname: request-service
@@ -20,10 +52,14 @@ services:
       context: ./
       dockerfile: ./requests-service/Dockerfile
     restart: always
+    volumes:
+      - ~/Desktop/logs/request_service_logs:/root/logs
     ports:
       - 8002:8200
+    logging: *fluent-bit
     networks:
       - backend
+      - monitoring
     
   post-service:
     hostname: post-service
@@ -32,10 +68,32 @@ services:
       context: ./
       dockerfile: ./post-service/Dockerfile
     restart: always
+    volumes:
+      - ~/Desktop/logs/post_service_logs:/root/logs
     ports:
       - 8003:8300
+    logging: *fluent-bit
     networks:
       - backend
+      - monitoring
+
+  agent-application:
+    hostname: agent-application
+    build:
+      context: ./
+      dockerfile: ./AgentApplication/agent/Dockerfile
+    image: agent:0.0.1-SNAPSHOT
+    restart: on-failure
+    volumes:
+      - ~/Desktop/logs/agent-application_logs:/root/logs
+    ports:
+      - 8600:8600
+    logging: *fluent-bit
+    depends_on:
+      - agentdb
+    networks:
+      - backend
+      - monitoring
 
   api-gateway:
     hostname: api-gateway
@@ -44,22 +102,14 @@ services:
       context: ./
       dockerfile: ./api-gateway/Dockerfile
     restart: always
+    volumes:
+      - ~/Desktop/logs/api_gateway_logs:/root/logs
     ports:
       - 8000:8000
+    logging: *fluent-bit
     networks:
       - backend
-
-  userdb:
-    image: postgres:latest
-    restart: always
-    environment:
-      POSTGRES_USER: XML
-      POSTGRES_PASSWORD: ftn
-      POSTGRES_DB: XML_TEST
-    ports:
-      - 4002:5432
-    networks:
-      - backend
+      - monitoring
 
   requestdb:
     image: postgres:latest
@@ -70,8 +120,10 @@ services:
       POSTGRES_DB: XML_REQUESTS
     ports:
       - 4000:5432
+    logging: *fluent-bit
     networks:
       - backend
+      - monitoring
 
   postdb:
     image: mongo:3.6
@@ -80,8 +132,36 @@ services:
       - ./mongo-init/:/docker-entrypoint-initdb.d/:ro
     ports:
       - 4001:27017
+    logging: *fluent-bit
     networks:
       - backend
+      - monitoring
+
+  userdb:
+    image: postgres:latest
+    restart: always
+    environment:
+      POSTGRES_USER: XML
+      POSTGRES_PASSWORD: ftn
+      POSTGRES_DB: XML_TEST
+    ports:
+      - 4002:5432
+    logging: *fluent-bit
+    networks:
+      - backend
+      - monitoring
+  
+  agentdb:
+    image: mysql:latest
+    restart: always
+    ports:
+      - 4003:3306
+    logging: *fluent-bit
+    environment:
+      MYSQL_ROOT_PASSWORD: XML_AGENT
+    networks:
+      - backend
+      - monitoring
 
   nats:
     image: nats
@@ -93,4 +173,6 @@ services:
 networks:
   backend:
     name: dislinkt
-    driver: bridge 
+    driver: bridge
+  monitoring:
+    external: true

@@ -75,7 +75,6 @@
                   <mat-hint *ngIf="usernames.includes(user.username)">Username already exists!</mat-hint>        
                   <mat-hint *ngIf="containSpace(user.username) === true" style="color:red;">Username can not contain space.</mat-hint>
                 </mat-form-field>
-                <!-- <div *ngIf="usernames.includes(customer.username)" class="errorText">Username already exists!</div> -->
               </div>   
               <div>
                 <mat-form-field hintLabel="Between 8 and 20 characters, at least 1 letter, 1 number, 1 special character" appearance="fill">

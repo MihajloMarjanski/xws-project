@@ -2,6 +2,7 @@ package com.example.agent.security.auth;
 
 import com.example.agent.security.tokenUtils.JwtTokenUtils;
 import io.jsonwebtoken.ExpiredJwtException;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -20,13 +21,12 @@ import java.io.IOException;
 // Filter proverava da li JWT token postoji u Authorization header-u u zahtevu koji stize od klijenta
 // Ukoliko token postoji, proverava se da li je validan. Ukoliko je sve u redu, postavlja se autentifikacija
 // u SecurityContext holder kako bi podaci o korisniku bili dostupni u ostalim delovima aplikacije gde su neophodni
+@Slf4j
 public class TokenAuthenticationFilter extends OncePerRequestFilter {
 
     private JwtTokenUtils tokenUtils;
 
     private UserDetailsService userDetailsService;
-
-    protected final Log LOGGER = LogFactory.getLog(getClass());
 
     public TokenAuthenticationFilter(JwtTokenUtils tokenHelper, UserDetailsService userDetailsService) {
         this.tokenUtils = tokenHelper;
@@ -38,7 +38,7 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
             throws IOException, ServletException {
 
 
-        String username;
+        String username = "";
 
         // 1. Preuzimanje JWT tokena iz zahteva
         String authToken = tokenUtils.getToken(request);
@@ -67,7 +67,7 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
             }
 
         } catch (ExpiredJwtException ex) {
-            LOGGER.debug("Token expired!");
+            log.warn("Ip: {}, username: , Token expired!", request.getRemoteAddr(), username);
         }
 
         // prosledi request dalje u sledeci filter
