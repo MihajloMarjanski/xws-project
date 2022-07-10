@@ -5,7 +5,6 @@ import (
 	"crypto/tls"
 	"encoding/json"
 	"fmt"
-	"google.golang.org/grpc/credentials"
 	"io"
 	"math/rand"
 	"net/http"
@@ -15,6 +14,8 @@ import (
 	"time"
 	"user-service/model"
 	"user-service/repo"
+
+	"google.golang.org/grpc/credentials"
 
 	pbReq "github.com/MihajloMarjanski/xws-project/common/proto/requests_service"
 	"golang.org/x/net/context"

@@ -1,13 +1,16 @@
 package repo
 
 import (
-	"golang.org/x/net/context"
-	"google.golang.org/grpc"
-	"google.golang.org/grpc/credentials"
+	"fmt"
 	"path/filepath"
 	"requests-service/model"
 	"time"
 
+	"golang.org/x/net/context"
+	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials"
+
+	pbConnection "github.com/MihajloMarjanski/xws-project/common/proto/connection_service"
 	pb "github.com/MihajloMarjanski/xws-project/common/proto/user_service"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
@@ -111,6 +114,17 @@ func (repo *RequestsRepository) SendRequest(sid, rid uint) {
 
 		repo.db.Create(&connection)
 
+		conn, err := grpc.Dial("connection-service:8700", grpc.WithTransportCredentials(creds))
+		if err != nil {
+			panic(err)
+		}
+		defer conn.Close()
+		client := pbConnection.NewConnectionServiceClient(conn)
+		response, err := client.Connect(context.Background(), &pbConnection.UsersConnectionRequest{&pbConnection.UserPair{Id1: uint64(rid), Id2: uint64(sid)}})
+		if err != nil {
+			panic(err)
+		}
+		fmt.Println(response)
 	}
 }
 
