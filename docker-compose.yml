@@ -88,7 +88,7 @@ services:
     container_name: nats
     restart: on-failure
     networks:
-      - network
+      - backend
 
 networks:
   backend:
