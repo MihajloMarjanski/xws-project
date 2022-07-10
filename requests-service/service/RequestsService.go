@@ -1,12 +1,13 @@
 package service
 
 import (
-	"google.golang.org/grpc/credentials"
 	"io"
 	"os"
 	"path/filepath"
 	"requests-service/model"
 	"requests-service/repo"
+
+	"google.golang.org/grpc/credentials"
 
 	pb "github.com/MihajloMarjanski/xws-project/common/proto/requests_service"
 

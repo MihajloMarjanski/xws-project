@@ -20,6 +20,22 @@ services:
       - backend
       - monitoring
 
+  connection-service:
+    hostname: connection-service
+    image: connection-service
+    build:
+      context: ./
+      dockerfile: ./connection-service/Dockerfile
+    restart: always
+    volumes:
+      - ~/Desktop/logs/connection_service_logs:/root/logs
+    ports:
+      - 8007:8700
+    logging: *fluent-bit
+    networks:
+      - backend
+      - monitoring
+
   request-service:
     hostname: request-service
     image: request-service
@@ -144,6 +160,22 @@ services:
     restart: on-failure
     networks:
       - backend
+
+  neo4j:
+    image: neo4j:latest
+    container_name: 'neo4j'
+    volumes:
+      - '$HOME/neo4j/data:/data'
+      - '$HOME/neo4j/conf/:/conf/'
+    ports:
+      - 7474:7474
+      - 7687:7687
+    restart: on-failure
+    logging: *fluent-bit
+    networks:
+      - backend
+      - monitoring
+    command: neo4j
 
 networks:
   backend:
