@@ -3,12 +3,12 @@ package repo
 import (
 	"requests-service/model"
 
+	"path/filepath"
+	"time"
+
 	"golang.org/x/net/context"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials"
-	"path/filepath"
-	"requests-service/model"
-	"time"
 
 	pb "github.com/MihajloMarjanski/xws-project/common/proto/user_service"
 	"gorm.io/driver/postgres"
@@ -115,7 +115,7 @@ func (repo *RequestsRepository) SendRequest(sid, rid uint) {
 	}
 
 	conn, err := grpc.Dial("user-service:8100", grpc.WithTransportCredentials(creds))
-  
+
 	if err != nil {
 		panic(err)
 	}

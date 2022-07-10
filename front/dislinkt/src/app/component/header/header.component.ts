@@ -13,6 +13,7 @@ export class HeaderComponent implements OnInit {
   constructor(private router: Router) { }
 
   ngOnInit(): void {
+    this.logOut()
     this.roles = localStorage.getItem('roles')
   }
 

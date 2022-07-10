@@ -4,31 +4,6 @@ x-logging: &fluent-bit
   options:
     fluentd-address: ${FLUENT_BIT_ADDRESS}:24224
 services:
-
-  agent-app-front:
-    hostname: agent-app-front
-    image: agent-app-front
-    build:
-      context: ./AgentApplication/front/agent-app/
-      dockerfile: Dockerfile
-    restart: always
-    ports:
-      - 4200:4200
-    networks:
-      - backend
-
-  dislinkt-front:
-    hostname:  dislinkt-front
-    image:  dislinkt-front
-    build:
-      context: ./front/dislinkt/
-      dockerfile: Dockerfile
-    restart: always
-    ports:
-      - 4300:4300
-    networks:
-      - backend
-
   user-service:
     hostname: user-service
     image: user-service
