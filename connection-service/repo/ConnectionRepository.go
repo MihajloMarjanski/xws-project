@@ -50,7 +50,7 @@ func (repository *ConnectionRepository) CreateUserConnection( /*ctx context.Cont
 	return true, nil
 }
 
-func (repository *ConnectionRepository) FindRecommendationsForUser( /*ctx context.Context, */ u model.User) ([]uint, error) {
+func (repository *ConnectionRepository) FindRecommendationsForUser( /*ctx context.Context, */ u model.User) ([]uint64, error) {
 	//span := tracer.StartSpanFromContextMetadata(ctx, "CreateFollowersConnection")
 	//defer span.Finish()
 	//ctx = tracer.ContextWithSpan(context.Background(), span)
@@ -80,5 +80,5 @@ func (repository *ConnectionRepository) FindRecommendationsForUser( /*ctx contex
 		return nil, err
 	}
 
-	return result.([]uint), nil
+	return result.([]uint64), nil
 }
