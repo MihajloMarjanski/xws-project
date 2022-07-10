@@ -176,6 +176,9 @@ services:
       - backend
       - monitoring
     command: neo4j
+    environment:
+      NEO4J_AUTH: neo4j/password
+      NEO4J_dbms_memory_pagecache_size: 512M
 
 networks:
   backend:

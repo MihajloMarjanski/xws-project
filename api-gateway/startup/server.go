@@ -42,6 +42,7 @@ func (server *Server) initHandlers() {
 	}
 
 	opts := []grpc.DialOption{grpc.WithTransportCredentials(creds)}
+	//opts := []grpc.DialOption{grpc.WithInsecure()}
 
 	userEndpoint := fmt.Sprintf("%s:%s", server.config.UserHost, server.config.UserPort)
 	err := userGw.RegisterUserServiceHandlerFromEndpoint(context.TODO(), server.mux, userEndpoint, opts)

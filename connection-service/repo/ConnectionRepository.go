@@ -12,8 +12,8 @@ type ConnectionRepository struct {
 }
 
 func NewConnectionRepository() *ConnectionRepository {
-	driver, err := neo4j.NewDriver("neo4j://neo4j:7474", neo4j.BasicAuth("neo4j", "neo4j", ""))
-	if err == nil {
+	driver, err := neo4j.NewDriver("neo4j://neo4j:7687", neo4j.BasicAuth("neo4j", "password", ""))
+	if err != nil {
 		panic("Connection repository not created, driver is nil")
 	}
 	return &ConnectionRepository{driver: driver}
@@ -50,7 +50,7 @@ func (repository *ConnectionRepository) CreateUserConnection( /*ctx context.Cont
 	return true, nil
 }
 
-func (repository *ConnectionRepository) FindRecommendationsForUser( /*ctx context.Context, */ u model.User) ([]uint64, error) {
+func (repository *ConnectionRepository) FindRecommendationsForUser( /*ctx context.Context, */ u model.User) ([]uint, error) {
 	//span := tracer.StartSpanFromContextMetadata(ctx, "CreateFollowersConnection")
 	//defer span.Finish()
 	//ctx = tracer.ContextWithSpan(context.Background(), span)
@@ -80,5 +80,5 @@ func (repository *ConnectionRepository) FindRecommendationsForUser( /*ctx contex
 		return nil, err
 	}
 
-	return result.([]uint64), nil
+	return result.([]uint), nil
 }

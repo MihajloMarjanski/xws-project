@@ -1,14 +1,10 @@
 package repo
 
 import (
-	"requests-service/model"
-	"path/filepath"
-	"time"
-	"golang.org/x/net/context"
-	"google.golang.org/grpc"
-	"google.golang.org/grpc/credentials"
 	"fmt"
-
+	"path/filepath"
+	"requests-service/model"
+	"time"
 
 	"golang.org/x/net/context"
 	"google.golang.org/grpc"
@@ -63,12 +59,6 @@ func (repo *RequestsRepository) GetAllByRecieverId(rid uint) []model.Request {
 }
 
 func (repo *RequestsRepository) AcceptRequest(sid, rid uint) {
-	crtTlsPath, _ := filepath.Abs("./service.pem")
-
-	creds, err6 := credentials.NewClientTLSFromFile(crtTlsPath, "")
-	if err6 != nil {
-		//log.Fatalf("could not process the credentials: %v", err6)
-	}
 
 	request := model.Request{
 		SenderID:   sid,
@@ -82,13 +72,14 @@ func (repo *RequestsRepository) AcceptRequest(sid, rid uint) {
 	}
 
 	repo.db.Create(&connection)
-	conn, err := grpc.Dial("connection-service:8700", grpc.WithTransportCredentials(creds))
+	conn, err := grpc.Dial("connection-service:8700", grpc.WithInsecure())
 	if err != nil {
 		panic(err)
 	}
 	defer conn.Close()
 	client := pbConnection.NewConnectionServiceClient(conn)
-	response, err := client.Connect(context.Background(), &pbConnection.UsersConnectionRequest{&pbConnection.UserPair{Id1: uint64(rid), Id2: uint64(sid)}})
+	pair := pbConnection.UserPair{Id1: uint64(rid), Id2: uint64(sid)}
+	response, err := client.Connect(context.Background(), &pbConnection.UsersConnectionRequest{UserPair: &pair})
 	if err != nil {
 		panic(err)
 	}
@@ -165,13 +156,14 @@ func (repo *RequestsRepository) SendRequest(sid, rid uint) {
 
 		repo.db.Create(&connection)
 
-		conn, err := grpc.Dial("connection-service:8700", grpc.WithTransportCredentials(creds))
+		conn, err := grpc.Dial("connection-service:8700", grpc.WithInsecure())
 		if err != nil {
 			panic(err)
 		}
 		defer conn.Close()
 		client := pbConnection.NewConnectionServiceClient(conn)
-		response, err := client.Connect(context.Background(), &pbConnection.UsersConnectionRequest{&pbConnection.UserPair{Id1: uint64(rid), Id2: uint64(sid)}})
+		pair := pbConnection.UserPair{Id1: uint64(rid), Id2: uint64(sid)}
+		response, err := client.Connect(context.Background(), &pbConnection.UsersConnectionRequest{UserPair: &pair})
 		if err != nil {
 			panic(err)
 		}
