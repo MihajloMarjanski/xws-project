@@ -9,6 +9,7 @@ import (
 	"requests-service/repo"
 
 	pb "github.com/MihajloMarjanski/xws-project/common/proto/requests_service"
+
 	pbUser "github.com/MihajloMarjanski/xws-project/common/proto/user_service"
 	"github.com/natefinch/lumberjack"
 	log "github.com/sirupsen/logrus"
@@ -94,6 +95,11 @@ func (s *RequestsService) SendRequest(sid, rid uint) {
 	s.SendNotification(sid, rid, "You have received a new connection request from user '")
 }
 
+func (s *RequestsService) RemoveConnection(sid, rid uint) bool {
+	s.reqRepo.RemoveConnection(sid, rid)
+	return true
+}
+
 func (s *RequestsService) SendMessage(senderID, receiverID uint, message string) {
 	if s.reqRepo.AreConnected(senderID, receiverID) == true {
 		s.reqRepo.SendMessage(senderID, receiverID, message)
@@ -141,6 +147,7 @@ func (s *RequestsService) FindConnections(id int64) []model.User {
 	}
 
 	conn, err := grpc.Dial("user-service:8100", grpc.WithTransportCredentials(creds))
+
 	if err != nil {
 		log.WithFields(log.Fields{"service_name": "request-service", "method_name": "FindConnections", "user_id": id}).Error("Error establishing connection with user-service via grpc.")
 		panic(err)

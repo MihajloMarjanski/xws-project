@@ -1,6 +1,8 @@
 package repo
 
 import (
+	"requests-service/model"
+
 	"golang.org/x/net/context"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials"
@@ -26,6 +28,8 @@ func New() (*RequestsRepository, error) {
 	repo := &RequestsRepository{}
 
 	dsn := "host=requestdb user=XML password=ftn dbname=XML_REQUESTS port=5432 sslmode=disable"
+	//dsn := "host=localhost user=XML password=ftn dbname=XML_REQUESTS port=5432 sslmode=disable"
+
 	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
 	if err != nil {
 		return nil, err
@@ -68,6 +72,32 @@ func (repo *RequestsRepository) AcceptRequest(sid, rid uint) {
 	repo.db.Create(&connection)
 }
 
+func (repo *RequestsRepository) RemoveConnection(sid, rid uint) {
+	request := model.Request{
+		SenderID:   sid,
+		ReceiverID: rid,
+	}
+	repo.db.Delete(&request)
+
+	request2 := model.Request{
+		ReceiverID: sid,
+		SenderID:   rid,
+	}
+	repo.db.Delete(&request2)
+
+	connection := model.Connection{
+		UserOne: sid,
+		UserTwo: rid,
+	}
+	repo.db.Delete(&connection)
+
+	connection2 := model.Connection{
+		UserTwo: sid,
+		UserOne: rid,
+	}
+	repo.db.Delete(&connection2)
+}
+
 func (repo *RequestsRepository) DeclineRequest(sid, rid uint) {
 	request := model.Request{
 		SenderID:   sid,
@@ -85,6 +115,7 @@ func (repo *RequestsRepository) SendRequest(sid, rid uint) {
 	}
 
 	conn, err := grpc.Dial("user-service:8100", grpc.WithTransportCredentials(creds))
+  
 	if err != nil {
 		panic(err)
 	}

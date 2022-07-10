@@ -163,6 +163,13 @@ services:
       - backend
       - monitoring
 
+  nats:
+    image: nats
+    container_name: nats
+    restart: on-failure
+    networks:
+      - backend
+
 networks:
   backend:
     name: dislinkt
