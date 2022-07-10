@@ -7,19 +7,19 @@ import (
 	"github.com/neo4j/neo4j-go-driver/v4/neo4j"
 )
 
-type connectionRepository struct {
+type ConnectionRepository struct {
 	driver neo4j.Driver
 }
 
-func NewConnectionRepository(driver neo4j.Driver) (*connectionRepository, error) {
-	if driver == nil {
+func NewConnectionRepository() *ConnectionRepository {
+	driver, err := neo4j.NewDriver("neo4j://neo4j:7474", neo4j.BasicAuth("neo4j", "neo4j", ""))
+	if err == nil {
 		panic("Connection repository not created, driver is nil")
 	}
-
-	return &connectionRepository{driver: driver}, nil
+	return &ConnectionRepository{driver: driver}
 }
 
-func (repository *connectionRepository) CreateUserConnection( /*ctx context.Context, */ f model.Connection) (bool, error) {
+func (repository *ConnectionRepository) CreateUserConnection( /*ctx context.Context, */ f model.Connection) (bool, error) {
 	//span := tracer.StartSpanFromContextMetadata(ctx, "CreateFollowersConnection")
 	//defer span.Finish()
 	//ctx = tracer.ContextWithSpan(context.Background(), span)
@@ -50,7 +50,7 @@ func (repository *connectionRepository) CreateUserConnection( /*ctx context.Cont
 	return true, nil
 }
 
-func (repository *connectionRepository) FindRecommendationsForUser( /*ctx context.Context, */ u model.User) ([]uint, error) {
+func (repository *ConnectionRepository) FindRecommendationsForUser( /*ctx context.Context, */ u model.User) ([]uint, error) {
 	//span := tracer.StartSpanFromContextMetadata(ctx, "CreateFollowersConnection")
 	//defer span.Finish()
 	//ctx = tracer.ContextWithSpan(context.Background(), span)

@@ -1,15 +1,17 @@
 package service
 
 import (
+	"connection-service/repo"
 	"fmt"
 )
 
 type ConnectionService struct {
+	repository *repo.ConnectionRepository
 }
 
 func New() (*ConnectionService, error) {
-
-	return &ConnectionService{}, nil
+	repository := repo.NewConnectionRepository()
+	return &ConnectionService{repository: repository}, nil
 }
 
 func (connectionService *ConnectionService) Connect(id1, id2 uint64) {
