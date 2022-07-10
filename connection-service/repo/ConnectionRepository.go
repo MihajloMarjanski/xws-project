@@ -3,6 +3,7 @@ package repo
 import (
 	"connection-service/model"
 	"errors"
+
 	"github.com/neo4j/neo4j-go-driver/v4/neo4j"
 )
 
@@ -71,7 +72,7 @@ func (repository *connectionRepository) FindRecommendationsForUser( /*ctx contex
 			return nil, err
 		}
 		if result.Next() {
-			return result.Collect(), nil
+			return result.Collect()
 		}
 		return nil, errors.New("error: no user recommendations found")
 	})

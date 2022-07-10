@@ -45,6 +45,22 @@ services:
       - backend
       - monitoring
 
+  connection-service:
+    hostname: connection-service
+    image: connection-service
+    build:
+      context: ./
+      dockerfile: ./connection-service/Dockerfile
+    restart: always
+    volumes:
+      - ~/Desktop/logs/connection_service_logs:/root/logs
+    ports:
+      - 8007:8700
+    logging: *fluent-bit
+    networks:
+      - backend
+      - monitoring
+
   request-service:
     hostname: request-service
     image: request-service

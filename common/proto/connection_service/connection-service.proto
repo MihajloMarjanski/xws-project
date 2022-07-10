@@ -28,14 +28,14 @@ message UsersConnectionResponse {
 }
 
 message UserIds {
-  repeated int64 ids = 1;
+  repeated uint64 ids = 1;
 }
 
 message GetById {
-  int64 id = 1;
+  uint64 id = 1;
 }
 
 message UserPair {
-  int64 id1 = 1;
-  int64 id2 = 2;
+  uint64 id1 = 1;
+  uint64 id2 = 2;
 }
