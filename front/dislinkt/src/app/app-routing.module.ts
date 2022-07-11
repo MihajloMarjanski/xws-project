@@ -10,6 +10,7 @@ import { OffersComponent } from './component/offers/offers.component';
 import { PasswordlessComponent } from './component/passwordless/passwordless.component';
 import { PostsComponent } from './component/posts/posts.component';
 import { PotentialConnectionsComponent } from './component/potential-connections/potential-connections.component';
+import { PotentialJobsComponent } from './component/potential-jobs/potential-jobs.component';
 import { RegistrationPageComponent } from './component/registration-page/registration-page.component';
 import { UserProfileComponent } from './component/user-profile/user-profile.component';
 import { UsersComponent } from './component/users/users.component';
@@ -31,6 +32,7 @@ const routes: Routes = [
   { path: 'create-post', component: CreatePostComponent, canActivate: [AuthGuard], data: { role: ['ROLE_USER']} },
   { path: 'passwordless', component: PasswordlessComponent},
   { path: 'recommended-connections', component: PotentialConnectionsComponent, canActivate: [AuthGuard], data: { role: ['ROLE_USER']}},
+  { path: 'recommended-jobs', component: PotentialJobsComponent, canActivate: [AuthGuard], data: { role: ['ROLE_USER']}},
 
 ];
 

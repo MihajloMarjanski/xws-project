@@ -5,6 +5,13 @@ import (
 	"crypto/tls"
 	"encoding/json"
 	"fmt"
+	pbConn "github.com/MihajloMarjanski/xws-project/common/proto/connection_service"
+	pbReq "github.com/MihajloMarjanski/xws-project/common/proto/requests_service"
+	saga "github.com/MihajloMarjanski/xws-project/common/saga/messaging"
+	"github.com/MihajloMarjanski/xws-project/common/saga/messaging/nats"
+	"golang.org/x/net/context"
+	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials"
 	"io"
 	"math/rand"
 	"net/http"
@@ -14,12 +21,6 @@ import (
 	"time"
 	"user-service/model"
 	"user-service/repo"
-	saga "github.com/MihajloMarjanski/xws-project/common/saga/messaging"
-	"github.com/MihajloMarjanski/xws-project/common/saga/messaging/nats"
-	"google.golang.org/grpc/credentials"
-	pbReq "github.com/MihajloMarjanski/xws-project/common/proto/requests_service"
-	"golang.org/x/net/context"
-	"google.golang.org/grpc"
 
 	"github.com/dgrijalva/jwt-go"
 	"github.com/natefinch/lumberjack"
@@ -466,6 +467,27 @@ func (s *UserService) LoginPasswordless(id int) (string, bool) {
 		return "", false
 	}
 	return tokenString, true
+}
+
+func (s *UserService) GetRecommendedConnections(id int64) []model.User {
+	var users []model.User
+
+	conn, err := grpc.Dial("user-service:8700", grpc.WithInsecure())
+	if err != nil {
+		panic(err)
+	}
+	defer conn.Close()
+	client := pbConn.NewConnectionServiceClient(conn)
+	response, err := client.GetRecommendedConnections(context.Background(), &pbConn.GetById{Id: uint64(id)})
+	if err != nil {
+		panic(err)
+	}
+
+	for _, id := range response.GetIds() {
+		users = append(users, s.GetByID(int(id)))
+	}
+
+	return users
 }
 
 const letterBytes = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"

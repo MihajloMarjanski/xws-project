@@ -12,6 +12,7 @@ import { User } from '../model/user';
   providedIn: 'root'
 })
 export class UserService {
+ 
   
   
   private _baseUrl = 'https://localhost:8000/';
@@ -36,9 +37,16 @@ export class UserService {
   private _send2factor = this._baseUrl + 'user/2factorAuth/pin/send';
   private _loginPaswordless = this._baseUrl + 'user/login/passwordless?token=';
   private _getRecommendedConnections = this._baseUrl + 'connection/users/';
+  private _getUsersForIds = this._baseUrl + 'user/recommendedConnections/';
   
   constructor(private _http: HttpClient) { }
   
+
+  getUsersForIds(id: any) {
+    return this._http.get<any>(this._getUsersForIds + id)
+                           .pipe(tap(data =>  console.log('Iz service-a: ', data)),                         
+                                catchError(this.handleError)); 
+  }
 
   getRecommendedConnections(id: string | null) {
     return this._http.get<any>(this._getRecommendedConnections + id)

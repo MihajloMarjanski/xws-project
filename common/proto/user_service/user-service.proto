@@ -123,8 +123,19 @@ service UserService{
             body: "credentials"
           };
         }
+        rpc GetRecommendedConnections(GetRecommendedConnectionsRequest) returns(GetRecommendedConnectionsResponse) {
+          option (google.api.http) = {
+            get: "/user/recommendedConnections/{id}"
+          };
+        }
 }
 
+message GetRecommendedConnectionsRequest {
+  int64 id = 1;
+}
+message GetRecommendedConnectionsResponse {
+  repeated User users = 1;
+}
 message SendPinFor2AuthRequest {
   Credentials credentials = 1;
 }
@@ -306,4 +317,8 @@ message JobOffer {
   string jobInfo = 4;
   string qualifications = 5;
   string apiKey = 6;
+}
+
+message UserIds {
+  repeated int64 id = 1;
 }
