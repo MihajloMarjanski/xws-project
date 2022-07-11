@@ -111,6 +111,7 @@ func (repository *ConnectionRepository) FindRecommendationsForUser( /*ctx contex
 	//span := tracer.StartSpanFromContextMetadata(ctx, "CreateFollowersConnection")
 	//defer span.Finish()
 	//ctx = tracer.ContextWithSpan(context.Background(), span)
+	var list []uint
 
 	session := repository.driver.NewSession(neo4j.SessionConfig{AccessMode: neo4j.AccessModeRead})
 	defer session.Close()
@@ -129,7 +130,13 @@ func (repository *ConnectionRepository) FindRecommendationsForUser( /*ctx contex
 			return nil, err
 		}
 		if result.Next() {
-			return result.Collect()
+			ids, _ := result.Collect()
+			for _, userId := range ids {
+				fmt.Println(userId)
+				list = append(list, userId.Values[0].(uint))
+			}
+			fmt.Println(list)
+			return list, nil
 		}
 		return nil, errors.New("error: no user recommendations found")
 	})
@@ -137,5 +144,5 @@ func (repository *ConnectionRepository) FindRecommendationsForUser( /*ctx contex
 		return nil, err
 	}
 
-	return result.([]uint), nil
+	return list, nil
 }
