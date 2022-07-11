@@ -6,7 +6,6 @@ import (
 	"path/filepath"
 	"post-service/model"
 	"post-service/repo"
-	"strconv"
 	"time"
 
 	pbReq "github.com/MihajloMarjanski/xws-project/common/proto/requests_service"
@@ -112,17 +111,17 @@ func mapUser(user *pbReq.User) model.User {
 }
 
 func (service *PostService) AddComment(comment *model.CommentDTO) error {
-	service.SendNotificationForUsersPost(service.postRepo.GetById(comment.PostID).UserID, uint(comment.UserID), "User with id: "+strconv.FormatUint(uint64(comment.UserID), 10)+" has commented on your post.")
+	service.SendNotificationForUsersPost(service.postRepo.GetById(comment.PostID).UserID, uint(comment.UserID), "Your post has been commented by user '")
 	return service.postRepo.AddComment(comment)
 }
 
 func (service *PostService) AddLike(like *model.LikeDTO) error {
-	service.SendNotificationForUsersPost(service.postRepo.GetById(like.PostID).UserID, uint(like.UserID), "User with id: "+strconv.FormatUint(uint64(like.UserID), 10)+" has liked your post.")
+	service.SendNotificationForUsersPost(service.postRepo.GetById(like.PostID).UserID, uint(like.UserID), "Your post has been liked by user '")
 	return service.postRepo.AddLike(like)
 }
 
 func (service *PostService) AddDislike(like *model.LikeDTO) error {
-	service.SendNotificationForUsersPost(service.postRepo.GetById(like.PostID).UserID, uint(like.UserID), "User with id: "+strconv.FormatUint(uint64(like.UserID), 10)+" has disliked your post.")
+	service.SendNotificationForUsersPost(service.postRepo.GetById(like.PostID).UserID, uint(like.UserID), "Your post has been disliked by user '")
 	return service.postRepo.AddDislike(like)
 }
 

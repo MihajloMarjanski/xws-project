@@ -4,6 +4,7 @@
     <button *ngIf="roles.includes('ROLE_USER')" style="margin-left : 25px" mat-button [routerLink]="['chat']">Chat</button>
     <button *ngIf="roles.includes('ROLE_USER')" style="margin-left : 25px" mat-button [routerLink]="['offers']">Job offers</button>
     <button *ngIf="!roles.includes('ROLE_ADMIN')" style="margin-left : 25px" mat-button [routerLink]="['users']">Users</button>
+    <button *ngIf="roles.includes('ROLE_USER')" style="margin-left : 25px" mat-button [routerLink]="['recommended-connections']">Potential connections</button>
     <button *ngIf="roles.includes('ROLE_ADMIN') || roles.includes('ROLE_USER')" style="margin-left : 25px" mat-button [routerLink]="['create-job-offer']">Create job offer</button>
     <button *ngIf="roles.includes('ROLE_USER')" style="margin-left : 25px" mat-button [routerLink]="['create-post']">Create post</button>
 

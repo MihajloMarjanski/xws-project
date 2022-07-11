@@ -42,7 +42,7 @@ func (server *Server) initHandlers() {
 	}
 
 	opts := []grpc.DialOption{grpc.WithTransportCredentials(creds)}
-	//opts := []grpc.DialOption{grpc.WithInsecure()}
+	opts1 := []grpc.DialOption{grpc.WithInsecure()}
 
 	userEndpoint := fmt.Sprintf("%s:%s", server.config.UserHost, server.config.UserPort)
 	err := userGw.RegisterUserServiceHandlerFromEndpoint(context.TODO(), server.mux, userEndpoint, opts)
@@ -60,7 +60,7 @@ func (server *Server) initHandlers() {
 		panic(err2)
 	}
 	connectionEndpoint := fmt.Sprintf("%s:%s", server.config.ConnectionHost, server.config.ConnectionPort)
-	err3 := connectionGw.RegisterConnectionServiceHandlerFromEndpoint(context.TODO(), server.mux, connectionEndpoint, opts)
+	err3 := connectionGw.RegisterConnectionServiceHandlerFromEndpoint(context.TODO(), server.mux, connectionEndpoint, opts1)
 	if err3 != nil {
 		panic(err3)
 	}

@@ -3,6 +3,7 @@ package repo
 import (
 	"connection-service/model"
 	"errors"
+	"fmt"
 
 	"github.com/neo4j/neo4j-go-driver/v4/neo4j"
 )
@@ -19,6 +20,54 @@ func NewConnectionRepository() *ConnectionRepository {
 	return &ConnectionRepository{driver: driver}
 }
 
+func (repository *ConnectionRepository) CreateUser( /*ctx context.Context, */ id uint) (bool, error) {
+	//span := tracer.StartSpanFromContextMetadata(ctx, "CreateFollowersConnection")
+	//defer span.Finish()
+	//ctx = tracer.ContextWithSpan(context.Background(), span)
+
+	session := repository.driver.NewSession(neo4j.SessionConfig{AccessMode: neo4j.AccessModeWrite})
+	defer session.Close()
+
+	result, err := session.WriteTransaction(func(transaction neo4j.Transaction) (interface{}, error) {
+		t := fmt.Sprintf("u create: %d", id)
+		fmt.Println(t)
+
+		result, err := transaction.Run(
+			"CREATE (n:User {id : $UserId}) RETURN n",
+			map[string]interface{}{
+				"UserId": id,
+			})
+
+		if err != nil {
+			return nil, err
+		}
+		if result.Next() {
+			return true, nil
+		}
+		return false, errors.New("error: can not create user ")
+	})
+	if err != nil || result == nil {
+		return false, err
+	}
+	return true, nil
+}
+
+func checkIfUserExist(id uint, transaction neo4j.Transaction) bool {
+	t := fmt.Sprintf("dobio za chechUserExist: %d", id)
+	fmt.Println(t)
+
+	result, _ := transaction.Run(
+		"MATCH (a:User { id: $UserId }) RETURN a",
+		map[string]interface{}{"UserId": id})
+
+	if result != nil && result.Next() {
+		//t := fmt.Sprintf(result)
+		//fmt.Println(t)
+		return true
+	}
+	return false
+}
+
 func (repository *ConnectionRepository) CreateUserConnection( /*ctx context.Context, */ f model.Connection) (bool, error) {
 	//span := tracer.StartSpanFromContextMetadata(ctx, "CreateFollowersConnection")
 	//defer span.Finish()
@@ -28,8 +77,16 @@ func (repository *ConnectionRepository) CreateUserConnection( /*ctx context.Cont
 	defer session.Close()
 
 	result, err := session.WriteTransaction(func(transaction neo4j.Transaction) (interface{}, error) {
+		if !checkIfUserExist(f.UserOne, transaction) {
+			repository.CreateUser(f.UserOne)
+		}
+
+		if !checkIfUserExist(f.UserTwo, transaction) {
+			repository.CreateUser(f.UserTwo)
+		}
+
 		result, err := transaction.Run(
-			"MERGE (a:User {id : $UserOne})-[:CONNECT]-(b:User {id : $UserTwo})"+
+			"MATCH (a:User {id : $UserOne}), (b:User {id : $UserTwo}) MERGE (a)-[:CONNECT]-(b)"+
 				"RETURN a, b",
 			map[string]interface{}{
 				"UserOne": f.UserOne,
@@ -59,9 +116,9 @@ func (repository *ConnectionRepository) FindRecommendationsForUser( /*ctx contex
 	defer session.Close()
 	result, err := session.WriteTransaction(func(transaction neo4j.Transaction) (interface{}, error) {
 		result, err := transaction.Run(
-			"MATCH (a:User {id: $UserId})-[:CONNECT]-(b:Person)-[:CONNECT]-(c:Person)"+
+			"MATCH (a:User {id: $UserId})-[:CONNECT]-(b:User)-[:CONNECT]-(c:User)"+
 				"WHERE a <> c AND NOT (a)-[:CONNECT]-(c)"+
-				"RETURN c.Id, count(c) as frequency"+
+				"RETURN c.id, count(c) as frequency"+
 				"ORDER BY frequency DESC"+
 				"LIMIT 5",
 			map[string]interface{}{

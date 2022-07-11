@@ -1,0 +1,48 @@
+
+  <div style="margin-left: 15%; margin-right: 15%; margin-top: 2%;">
+    <h2>Potential connections</h2>    
+    <div  class="tableView">
+    <table id="myTable" mat-table [dataSource]="users" class="mat-elevation-z8"  >
+          <ng-container matColumnDef="name">
+              <mat-header-cell *matHeaderCellDef > Name </mat-header-cell>
+              <mat-cell *matCellDef="let element"> {{element.name}} </mat-cell>
+            </ng-container>
+          
+          <ng-container matColumnDef="gender">
+              <mat-header-cell *matHeaderCellDef > Gender </mat-header-cell>
+                  <mat-cell *matCellDef="let element" >
+                    <ng-container >{{element.gender}}</ng-container>
+                      </mat-cell>
+            </ng-container>
+      
+            <ng-container matColumnDef="email">
+              <mat-header-cell *matHeaderCellDef> Email </mat-header-cell>
+                  <mat-cell *matCellDef="let element" >
+                    <ng-container >{{element.email}}</ng-container>
+                      </mat-cell>
+            </ng-container>
+      
+            <ng-container matColumnDef="username">
+              <mat-header-cell *matHeaderCellDef>Username </mat-header-cell>
+              <mat-cell *matCellDef="let element"> 
+                <ng-container >{{element.username}}</ng-container>
+              </mat-cell>
+            </ng-container>
+
+            <ng-container matColumnDef="connect">
+                <mat-header-cell *matHeaderCellDef> </mat-header-cell>
+                <mat-cell *matCellDef="let element"> 
+                  <button mat-button (click)="sendRequest(element)">Connect</button>
+                </mat-cell>
+              </ng-container>
+  
+      
+            <mat-header-row *matHeaderRowDef="displayedColumns; sticky: true" ></mat-header-row>
+            <mat-row *matRowDef="let row; columns: displayedColumns;" [class.selected]="row.selected"></mat-row>
+      </table>
+    </div>
+    </div>
+
+
+
+

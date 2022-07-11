@@ -35,9 +35,16 @@ export class UserService {
   private _sendPasswordless = this._baseUrl + 'auth/sso/';
   private _send2factor = this._baseUrl + 'user/2factorAuth/pin/send';
   private _loginPaswordless = this._baseUrl + 'user/login/passwordless?token=';
+  private _getRecommendedConnections = this._baseUrl + 'connection/users/';
   
   constructor(private _http: HttpClient) { }
   
+
+  getRecommendedConnections(id: string | null) {
+    return this._http.get<any>(this._getRecommendedConnections + id)
+                           .pipe(tap(data =>  console.log('Iz service-a: ', data)),                         
+                                catchError(this.handleError)); 
+  }
 
   loginPasswordless(token: any): Observable<any> {
     return this._http.post(this._loginPaswordless + token, {})

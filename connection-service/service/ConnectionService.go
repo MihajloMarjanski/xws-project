@@ -25,9 +25,16 @@ func (connectionService *ConnectionService) Connect(id1, id2 uint64) {
 }
 
 func (connectionService *ConnectionService) GetRecommendedConnections(id uint64) []uint64 {
-	ids := []uint64{1, 2, 3}
+	//ids := []uint64{1, 2, 3}
+
 	user := model.User{UserId: strconv.FormatUint(uint64(id), 10)}
 	ids2, _ := connectionService.repository.FindRecommendationsForUser(user)
+	var ids []uint64
 	fmt.Println(ids2)
+
+	for _, userId := range ids2 {
+		ids = append(ids, uint64(userId))
+	}
+	fmt.Println(ids)
 	return ids
 }
