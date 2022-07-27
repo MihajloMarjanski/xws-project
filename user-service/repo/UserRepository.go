@@ -17,6 +17,7 @@ func New() (*UserRepository, error) {
 	repo := &UserRepository{}
 
 	dsn := "host=userdb user=XML password=ftn dbname=XML_TEST port=5432 sslmode=disable"
+	//dsn := "host=localhost user=XML password=ftn dbname=XML_TEST port=5432 sslmode=disable"
 	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
 	if err != nil {
 		return nil, err
@@ -142,6 +143,15 @@ func (repo *UserRepository) BlockUser(userId int, blockedUserId int) {
 		BlockedUser: uint(blockedUserId)}
 
 	repo.db.Save(&block)
+	return
+}
+
+func (repo *UserRepository) UnblockUser(userId int, blockedUserId int) {
+	block := model.Block{
+		UserId:      uint(userId),
+		BlockedUser: uint(blockedUserId)}
+
+	repo.db.Delete(&block)
 	return
 }
 

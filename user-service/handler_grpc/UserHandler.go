@@ -355,3 +355,15 @@ func (handler *UserHandler) LoginPasswordless(ctx context.Context, request *pb.L
 	log.WithFields(log.Fields{"service_name": "user-service", "method_name": "LoginPasswordless", "user_id": id}).Warn("Passwordless login successfull.")
 	return response, nil
 }
+
+func (handler *UserHandler) GetRecommendedConnections(ctx context.Context, request *pb.GetRecommendedConnectionsRequest) (*pb.GetRecommendedConnectionsResponse, error) {
+	var connections []*pb.User
+	for _, user := range handler.userService.GetRecommendedConnections(request.Id) {
+		connections = append(connections, mapUserDtoToProto(user))
+	}
+
+	response := &pb.GetRecommendedConnectionsResponse{
+		Users: connections,
+	}
+	return response, nil
+}

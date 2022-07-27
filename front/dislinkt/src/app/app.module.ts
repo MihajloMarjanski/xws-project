@@ -48,6 +48,8 @@ import { UsersComponent } from './component/users/users.component';
 import { ViewPostComponent } from './component/view-post/view-post.component';
 import { InterceptorService } from './service/interceptor.service';
 import { PasswordlessComponent } from './component/passwordless/passwordless.component';
+import { PotentialConnectionsComponent } from './component/potential-connections/potential-connections.component';
+import { PotentialJobsComponent } from './component/potential-jobs/potential-jobs.component';
 
 
 
@@ -97,6 +99,8 @@ const MaterialComponents = [
     NotificationsComponent,
     CreatePostComponent,
     PasswordlessComponent,
+    PotentialConnectionsComponent,
+    PotentialJobsComponent,
 
   ],
   imports: [

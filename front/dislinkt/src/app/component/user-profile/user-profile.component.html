@@ -63,16 +63,16 @@
 
      <!--  INTERESTS -->
       <div style="margin-left: 0%; margin-top: 8%; margin-right: 0%;">
-        <h2>List of your interests</h2> 
+        <h2>List of your skills</h2> 
         <div *ngFor="let s of interests" style="width: 1000px;">
           <p>{{s.interest}}   
             <button mat-icon-button color="accent" (click)="removeInterest(s)"  ><mat-icon>clear</mat-icon></button> 
           </p>   
         </div>
         <div >
-            <h3 style="margin-top: 40px;">Add new interest</h3>
+            <h3 style="margin-top: 40px;">Add new skill</h3>
             <mat-form-field appearance="fill">
-                <mat-label>Enter interest</mat-label>
+                <mat-label>Enter skill</mat-label>
                 <input matInput type="text" name="interest" [(ngModel)]="newInterest.interest" >
             </mat-form-field>
             <button style="margin-left: 2%;" mat-raised-button color="accent"  (click)="addInterest()"  >Add</button>

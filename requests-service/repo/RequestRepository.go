@@ -1,13 +1,16 @@
 package repo
 
 import (
-	"golang.org/x/net/context"
-	"google.golang.org/grpc"
-	"google.golang.org/grpc/credentials"
+	"fmt"
 	"path/filepath"
 	"requests-service/model"
 	"time"
 
+	"golang.org/x/net/context"
+	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials"
+
+	pbConnection "github.com/MihajloMarjanski/xws-project/common/proto/connection_service"
 	pb "github.com/MihajloMarjanski/xws-project/common/proto/user_service"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
@@ -26,6 +29,8 @@ func New() (*RequestsRepository, error) {
 	repo := &RequestsRepository{}
 
 	dsn := "host=requestdb user=XML password=ftn dbname=XML_REQUESTS port=5432 sslmode=disable"
+	//dsn := "host=localhost user=XML password=ftn dbname=XML_REQUESTS port=5432 sslmode=disable"
+
 	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
 	if err != nil {
 		return nil, err
@@ -54,6 +59,7 @@ func (repo *RequestsRepository) GetAllByRecieverId(rid uint) []model.Request {
 }
 
 func (repo *RequestsRepository) AcceptRequest(sid, rid uint) {
+
 	request := model.Request{
 		SenderID:   sid,
 		ReceiverID: rid,
@@ -66,6 +72,44 @@ func (repo *RequestsRepository) AcceptRequest(sid, rid uint) {
 	}
 
 	repo.db.Create(&connection)
+	conn, err := grpc.Dial("connection-service:8700", grpc.WithInsecure())
+	if err != nil {
+		panic(err)
+	}
+	defer conn.Close()
+	client := pbConnection.NewConnectionServiceClient(conn)
+	pair := pbConnection.UserPair{Id1: uint64(rid), Id2: uint64(sid)}
+	response, err := client.Connect(context.Background(), &pbConnection.UsersConnectionRequest{UserPair: &pair})
+	if err != nil {
+		panic(err)
+	}
+	fmt.Println(response)
+}
+
+func (repo *RequestsRepository) RemoveConnection(sid, rid uint) {
+	request := model.Request{
+		SenderID:   sid,
+		ReceiverID: rid,
+	}
+	repo.db.Delete(&request)
+
+	request2 := model.Request{
+		ReceiverID: sid,
+		SenderID:   rid,
+	}
+	repo.db.Delete(&request2)
+
+	connection := model.Connection{
+		UserOne: sid,
+		UserTwo: rid,
+	}
+	repo.db.Delete(&connection)
+
+	connection2 := model.Connection{
+		UserTwo: sid,
+		UserOne: rid,
+	}
+	repo.db.Delete(&connection2)
 }
 
 func (repo *RequestsRepository) DeclineRequest(sid, rid uint) {
@@ -85,6 +129,7 @@ func (repo *RequestsRepository) SendRequest(sid, rid uint) {
 	}
 
 	conn, err := grpc.Dial("user-service:8100", grpc.WithTransportCredentials(creds))
+
 	if err != nil {
 		panic(err)
 	}
@@ -111,6 +156,18 @@ func (repo *RequestsRepository) SendRequest(sid, rid uint) {
 
 		repo.db.Create(&connection)
 
+		conn, err := grpc.Dial("connection-service:8700", grpc.WithInsecure())
+		if err != nil {
+			panic(err)
+		}
+		defer conn.Close()
+		client := pbConnection.NewConnectionServiceClient(conn)
+		pair := pbConnection.UserPair{Id1: uint64(rid), Id2: uint64(sid)}
+		response, err := client.Connect(context.Background(), &pbConnection.UsersConnectionRequest{UserPair: &pair})
+		if err != nil {
+			panic(err)
+		}
+		fmt.Println(response)
 	}
 }
 

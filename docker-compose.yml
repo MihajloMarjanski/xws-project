@@ -4,31 +4,6 @@ x-logging: &fluent-bit
   options:
     fluentd-address: ${FLUENT_BIT_ADDRESS}:24224
 services:
-
-  agent-app-front:
-    hostname: agent-app-front
-    image: agent-app-front
-    build:
-      context: ./AgentApplication/front/agent-app/
-      dockerfile: Dockerfile
-    restart: always
-    ports:
-      - 4200:4200
-    networks:
-      - backend
-
-  dislinkt-front:
-    hostname:  dislinkt-front
-    image:  dislinkt-front
-    build:
-      context: ./front/dislinkt/
-      dockerfile: Dockerfile
-    restart: always
-    ports:
-      - 4300:4300
-    networks:
-      - backend
-
   user-service:
     hostname: user-service
     image: user-service
@@ -40,6 +15,22 @@ services:
       - ~/Desktop/logs/user_service_logs:/root/logs
     ports:
       - 8001:8100
+    logging: *fluent-bit
+    networks:
+      - backend
+      - monitoring
+
+  connection-service:
+    hostname: connection-service
+    image: connection-service
+    build:
+      context: ./
+      dockerfile: ./connection-service/Dockerfile
+    restart: always
+    volumes:
+      - ~/Desktop/logs/connection_service_logs:/root/logs
+    ports:
+      - 8007:8700
     logging: *fluent-bit
     networks:
       - backend
@@ -162,6 +153,32 @@ services:
     networks:
       - backend
       - monitoring
+
+  nats:
+    image: nats
+    container_name: nats
+    restart: on-failure
+    networks:
+      - backend
+
+  neo4j:
+    image: neo4j:latest
+    container_name: 'neo4j'
+    volumes:
+      - '$HOME/neo4j/data:/data'
+      - '$HOME/neo4j/conf/:/conf/'
+    ports:
+      - 7474:7474
+      - 7687:7687
+    restart: on-failure
+    logging: *fluent-bit
+    networks:
+      - backend
+      - monitoring
+    command: neo4j
+    environment:
+      NEO4J_AUTH: neo4j/password
+      NEO4J_dbms_memory_pagecache_size: 512M
 
 networks:
   backend:

@@ -43,6 +43,7 @@ type UserServiceClient interface {
 	SendPasswordlessToken(ctx context.Context, in *SendPasswordlessTokenRequest, opts ...grpc.CallOption) (*SendPasswordlessTokenResponse, error)
 	LoginPasswordless(ctx context.Context, in *LoginPasswordlessRequest, opts ...grpc.CallOption) (*LoginPasswordlessResponse, error)
 	SendPinFor2Auth(ctx context.Context, in *SendPinFor2AuthRequest, opts ...grpc.CallOption) (*SendPinFor2AuthResponse, error)
+	GetRecommendedConnections(ctx context.Context, in *GetRecommendedConnectionsRequest, opts ...grpc.CallOption) (*GetRecommendedConnectionsResponse, error)
 }
 
 type userServiceClient struct {
@@ -242,6 +243,15 @@ func (c *userServiceClient) SendPinFor2Auth(ctx context.Context, in *SendPinFor2
 	return out, nil
 }
 
+func (c *userServiceClient) GetRecommendedConnections(ctx context.Context, in *GetRecommendedConnectionsRequest, opts ...grpc.CallOption) (*GetRecommendedConnectionsResponse, error) {
+	out := new(GetRecommendedConnectionsResponse)
+	err := c.cc.Invoke(ctx, "/user.UserService/GetRecommendedConnections", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // UserServiceServer is the server API for UserService service.
 // All implementations must embed UnimplementedUserServiceServer
 // for forward compatibility
@@ -267,6 +277,7 @@ type UserServiceServer interface {
 	SendPasswordlessToken(context.Context, *SendPasswordlessTokenRequest) (*SendPasswordlessTokenResponse, error)
 	LoginPasswordless(context.Context, *LoginPasswordlessRequest) (*LoginPasswordlessResponse, error)
 	SendPinFor2Auth(context.Context, *SendPinFor2AuthRequest) (*SendPinFor2AuthResponse, error)
+	GetRecommendedConnections(context.Context, *GetRecommendedConnectionsRequest) (*GetRecommendedConnectionsResponse, error)
 	mustEmbedUnimplementedUserServiceServer()
 }
 
@@ -336,6 +347,9 @@ func (UnimplementedUserServiceServer) LoginPasswordless(context.Context, *LoginP
 }
 func (UnimplementedUserServiceServer) SendPinFor2Auth(context.Context, *SendPinFor2AuthRequest) (*SendPinFor2AuthResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method SendPinFor2Auth not implemented")
+}
+func (UnimplementedUserServiceServer) GetRecommendedConnections(context.Context, *GetRecommendedConnectionsRequest) (*GetRecommendedConnectionsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetRecommendedConnections not implemented")
 }
 func (UnimplementedUserServiceServer) mustEmbedUnimplementedUserServiceServer() {}
 
@@ -728,6 +742,24 @@ func _UserService_SendPinFor2Auth_Handler(srv interface{}, ctx context.Context, 
 	return interceptor(ctx, in, info, handler)
 }
 
+func _UserService_GetRecommendedConnections_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetRecommendedConnectionsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserServiceServer).GetRecommendedConnections(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/user.UserService/GetRecommendedConnections",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserServiceServer).GetRecommendedConnections(ctx, req.(*GetRecommendedConnectionsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // UserService_ServiceDesc is the grpc.ServiceDesc for UserService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -818,6 +850,10 @@ var UserService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "SendPinFor2Auth",
 			Handler:    _UserService_SendPinFor2Auth_Handler,
+		},
+		{
+			MethodName: "GetRecommendedConnections",
+			Handler:    _UserService_GetRecommendedConnections_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

@@ -4,6 +4,11 @@ import (
 	cfg "api-gateway/startup/config"
 	"context"
 	"fmt"
+	"log"
+	"net/http"
+	"path/filepath"
+
+	connectionGw "github.com/MihajloMarjanski/xws-project/common/proto/connection_service"
 	postGw "github.com/MihajloMarjanski/xws-project/common/proto/post_service"
 	requestGw "github.com/MihajloMarjanski/xws-project/common/proto/requests_service"
 	userGw "github.com/MihajloMarjanski/xws-project/common/proto/user_service"
@@ -11,9 +16,6 @@ import (
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials"
-	"log"
-	"net/http"
-	"path/filepath"
 )
 
 type Server struct {
@@ -40,6 +42,7 @@ func (server *Server) initHandlers() {
 	}
 
 	opts := []grpc.DialOption{grpc.WithTransportCredentials(creds)}
+	opts1 := []grpc.DialOption{grpc.WithInsecure()}
 
 	userEndpoint := fmt.Sprintf("%s:%s", server.config.UserHost, server.config.UserPort)
 	err := userGw.RegisterUserServiceHandlerFromEndpoint(context.TODO(), server.mux, userEndpoint, opts)
@@ -55,6 +58,11 @@ func (server *Server) initHandlers() {
 	err2 := postGw.RegisterPostServiceHandlerFromEndpoint(context.TODO(), server.mux, postEndpoint, opts)
 	if err2 != nil {
 		panic(err2)
+	}
+	connectionEndpoint := fmt.Sprintf("%s:%s", server.config.ConnectionHost, server.config.ConnectionPort)
+	err3 := connectionGw.RegisterConnectionServiceHandlerFromEndpoint(context.TODO(), server.mux, connectionEndpoint, opts1)
+	if err3 != nil {
+		panic(err3)
 	}
 }
 

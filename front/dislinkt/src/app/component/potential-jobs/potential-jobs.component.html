@@ -1,0 +1,37 @@
+
+  <div style="margin-left: 15%; margin-right: 15%; margin-top: 2%;">
+    <h2>Recommended job offers</h2>    
+    <div  class="tableView">
+    <table id="myTable" mat-table [dataSource]="offers" class="mat-elevation-z8"  >
+        <ng-container matColumnDef="companyName">
+            <mat-header-cell *matHeaderCellDef > Company name </mat-header-cell>
+            <mat-cell *matCellDef="let element"> {{element.companyName}} </mat-cell>
+          </ng-container>
+        
+        <ng-container matColumnDef="jobPosition">
+            <mat-header-cell *matHeaderCellDef > Job position </mat-header-cell>
+                <mat-cell *matCellDef="let element" >
+                  <ng-container >{{element.jobPosition}}</ng-container>
+                    </mat-cell>
+          </ng-container>
+    
+          <ng-container matColumnDef="jobInfo">
+            <mat-header-cell *matHeaderCellDef> Job info </mat-header-cell>
+                <mat-cell *matCellDef="let element" >
+                  <ng-container >{{element.jobInfo}}</ng-container>
+                    </mat-cell>
+          </ng-container>
+
+          <ng-container matColumnDef="qualifications">
+            <mat-header-cell *matHeaderCellDef> Skills </mat-header-cell>
+                <mat-cell *matCellDef="let element" >
+                  <ng-container >{{element.qualifications}}</ng-container>
+                    </mat-cell>
+          </ng-container>
+
+    
+          <mat-header-row *matHeaderRowDef="displayedColumns; sticky: true" ></mat-header-row>
+          <mat-row *matRowDef="let row; columns: displayedColumns;" [class.selected]="row.selected"></mat-row>
+      </table>
+    </div>
+    </div>

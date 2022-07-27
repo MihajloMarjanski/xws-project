@@ -5,6 +5,12 @@ import (
 	"crypto/tls"
 	"encoding/json"
 	"fmt"
+	pbConn "github.com/MihajloMarjanski/xws-project/common/proto/connection_service"
+	pbReq "github.com/MihajloMarjanski/xws-project/common/proto/requests_service"
+	saga "github.com/MihajloMarjanski/xws-project/common/saga/messaging"
+	"github.com/MihajloMarjanski/xws-project/common/saga/messaging/nats"
+	"golang.org/x/net/context"
+	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials"
 	"io"
 	"math/rand"
@@ -16,14 +22,14 @@ import (
 	"user-service/model"
 	"user-service/repo"
 
-	pbReq "github.com/MihajloMarjanski/xws-project/common/proto/requests_service"
-	"golang.org/x/net/context"
-	"google.golang.org/grpc"
-
 	"github.com/dgrijalva/jwt-go"
 	"github.com/natefinch/lumberjack"
 	log "github.com/sirupsen/logrus"
 	"golang.org/x/crypto/bcrypt"
+)
+
+const (
+	QueueGroup = "user_service"
 )
 
 type Credentials struct {
@@ -57,7 +63,31 @@ type Claims struct {
 var jwtKey = []byte("tajni_kljuc_za_jwt_hash")
 
 type UserService struct {
-	userRepo *repo.UserRepository
+	userRepo     *repo.UserRepository
+	orchestrator *BlockUserOrchestrator
+}
+
+func initPublisher(subject string) saga.Publisher {
+	publisher, err := nats.NewNATSPublisher(subject)
+	if err != nil {
+		log.Fatal(err)
+	}
+	return publisher
+}
+
+func initSubscriber(subject, queueGroup string) saga.Subscriber {
+	subscriber, err := nats.NewNATSSubscriber(subject, queueGroup)
+	if err != nil {
+		log.Fatal(err)
+	}
+	return subscriber
+}
+func initCreateOrderOrchestrator(publisher saga.Publisher, subscriber saga.Subscriber) *BlockUserOrchestrator {
+	orchestrator, err := NewBlockUserOrchestrator(publisher, subscriber)
+	if err != nil {
+		log.Fatal(err)
+	}
+	return orchestrator
 }
 
 func New() (*UserService, error) {
@@ -68,9 +98,13 @@ func New() (*UserService, error) {
 		return nil, err
 	}
 
+	commandPublisher := initPublisher("block.user.command")
+	replySubscriber := initSubscriber("block.user.reply", QueueGroup)
+	blockUserOrchestrator := initCreateOrderOrchestrator(commandPublisher, replySubscriber)
 	log.WithFields(log.Fields{"service_name": "user-service", "method_name": "NewUserService"}).Info("Successfully created User Service.")
 	return &UserService{
-		userRepo: userRepo,
+		userRepo:     userRepo,
+		orchestrator: blockUserOrchestrator,
 	}, nil
 }
 
@@ -246,8 +280,15 @@ func (s *UserService) BlockUser(userId int, blockedUserId int) {
 		return
 	}
 	s.userRepo.BlockUser(userId, blockedUserId)
-	DeleteConnection(userId, blockedUserId)
+
+	err := s.orchestrator.Start(uint(userId), uint(blockedUserId))
+	if err != nil {
+		s.userRepo.UnblockUser(userId, blockedUserId)
+		return
+	}
+	//DeleteConnection(userId, blockedUserId)
 	return
+
 }
 
 func DeleteConnection(userId, id int) {
@@ -426,6 +467,27 @@ func (s *UserService) LoginPasswordless(id int) (string, bool) {
 		return "", false
 	}
 	return tokenString, true
+}
+
+func (s *UserService) GetRecommendedConnections(id int64) []model.User {
+	var users []model.User
+
+	conn, err := grpc.Dial("user-service:8700", grpc.WithInsecure())
+	if err != nil {
+		panic(err)
+	}
+	defer conn.Close()
+	client := pbConn.NewConnectionServiceClient(conn)
+	response, err := client.GetRecommendedConnections(context.Background(), &pbConn.GetById{Id: uint64(id)})
+	if err != nil {
+		panic(err)
+	}
+
+	for _, id := range response.GetIds() {
+		users = append(users, s.GetByID(int(id)))
+	}
+
+	return users
 }
 
 const letterBytes = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"

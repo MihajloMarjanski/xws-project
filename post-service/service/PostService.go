@@ -2,15 +2,16 @@ package service
 
 import (
 	"fmt"
-	pbReq "github.com/MihajloMarjanski/xws-project/common/proto/requests_service"
-	"golang.org/x/net/context"
-	"google.golang.org/grpc"
-	"google.golang.org/grpc/credentials"
 	"os"
 	"path/filepath"
 	"post-service/model"
 	"post-service/repo"
 	"time"
+
+	pbReq "github.com/MihajloMarjanski/xws-project/common/proto/requests_service"
+	"golang.org/x/net/context"
+	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials"
 )
 
 type PostService struct {
@@ -110,17 +111,43 @@ func mapUser(user *pbReq.User) model.User {
 }
 
 func (service *PostService) AddComment(comment *model.CommentDTO) error {
+	service.SendNotificationForUsersPost(service.postRepo.GetById(comment.PostID).UserID, uint(comment.UserID), "Your post has been commented by user '")
 	return service.postRepo.AddComment(comment)
 }
 
 func (service *PostService) AddLike(like *model.LikeDTO) error {
+	service.SendNotificationForUsersPost(service.postRepo.GetById(like.PostID).UserID, uint(like.UserID), "Your post has been liked by user '")
 	return service.postRepo.AddLike(like)
 }
 
 func (service *PostService) AddDislike(like *model.LikeDTO) error {
+	service.SendNotificationForUsersPost(service.postRepo.GetById(like.PostID).UserID, uint(like.UserID), "Your post has been disliked by user '")
 	return service.postRepo.AddDislike(like)
 }
 
 func (service *PostService) GetPostsForUser(userID uint) []model.Post {
 	return service.postRepo.GetPostsForUser(&userID)
+}
+
+func (service *PostService) SendNotificationForUsersPost(idR, idS uint, message string) []model.User {
+	var res []model.User
+	crtTlsPath, _ := filepath.Abs("./service.pem")
+
+	creds, err6 := credentials.NewClientTLSFromFile(crtTlsPath, "")
+	if err6 != nil {
+		//log.Fatalf("could not process the credentials: %v", err6)
+	}
+
+	conn, err := grpc.Dial("request-service:8200", grpc.WithTransportCredentials(creds))
+	if err != nil {
+		panic(err)
+	}
+	defer conn.Close()
+	client := pbReq.NewRequestsServiceClient(conn)
+	_, err = client.SendNotification(context.Background(), &pbReq.SendNotificationRequest{SenderId: int64(idS), ReceiverId: int64(idR), Message: message})
+	if err != nil {
+		panic(err)
+	}
+
+	return res
 }
