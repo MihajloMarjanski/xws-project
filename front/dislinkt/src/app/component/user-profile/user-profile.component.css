@@ -1,0 +1,66 @@
+.stepper {
+    margin: 4%;
+    margin-left: 20%;
+    margin-right: 20%;
+  }
+  
+  form {
+    width: auto;
+  }
+  
+  mat-form-field {
+    width: 400px;
+    padding-top: 10px;
+  }
+  
+  
+  mat-radio-button {
+    margin-left: 16px;
+    display: inline-block;
+  }
+  
+  ul {
+    column-count:2;
+    -moz-column-count:2; /* Firefox */
+    -webkit-column-count:2; /* Safari and Chrome */
+  }
+  
+  ul li {
+    display: block;
+  } 
+
+  
+  .errorText {
+    color: red;
+    font-size: small;
+  }
+
+  .mat-row:hover {
+    background-color: rgb(236, 234, 234);
+    cursor: pointer;
+  }
+
+.searchPosition {
+   /*  margin-left: 20%; */
+  }
+
+
+
+.tableViewNonCustomer {
+    
+}
+
+.tableView {
+    max-height: 400px;
+    width: 100%;
+    overflow: auto;
+}
+
+table {
+  width: 100%;
+}
+
+
+.mat-column-cancel {
+  flex: 0 0 10%;
+}

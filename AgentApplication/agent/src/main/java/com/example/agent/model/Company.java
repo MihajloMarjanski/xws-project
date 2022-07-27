@@ -6,6 +6,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.util.HashSet;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -18,10 +20,18 @@ public class Company {
     private Integer id;
     private String name;
     private String info;
+    private String city;
+    private String country;
 
     @OneToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "company_owner_id")
     private CompanyOwner companyOwner;
 
     private boolean isApproved;
+
+    @OneToMany(mappedBy = "company", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private Set<Comment> comments = new HashSet<>();
+
+    @OneToMany(mappedBy = "company", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private Set<JobPosition> positions = new HashSet<>();
 }

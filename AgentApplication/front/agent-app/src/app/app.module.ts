@@ -42,6 +42,15 @@ import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HeaderComponent } from './component/header/header.component';
 import { FooterComponent } from './component/footer/footer.component';
+import { CompaniesComponent } from './component/companies/companies.component';
+import { UserProfileComponent } from './component/user-profile/user-profile.component';
+import { CreateCompanyComponent } from './component/create-company/create-company.component';
+import { ClientCompaniesComponent } from './component/client-companies/client-companies.component';
+import { ForumComponent } from './component/forum/forum.component';
+import { CompanyService } from './service/company.service';
+import { JobOfferComponent } from './component/job-offer/job-offer.component';
+import { OffersComponent } from './component/offers/offers.component';
+import { PasswrodlessComponent } from './component/passwrodless/passwrodless.component';
 
 const MaterialComponents = [
   MatSliderModule,
@@ -78,7 +87,15 @@ const MaterialComponents = [
     RegistrationPageComponent,
     LandingPageComponent,
     HeaderComponent,
-    FooterComponent
+    FooterComponent,
+    CompaniesComponent,
+    UserProfileComponent,
+    CreateCompanyComponent,
+    ClientCompaniesComponent,
+    ForumComponent,
+    JobOfferComponent,
+    OffersComponent,
+    PasswrodlessComponent
   ],
   imports: [
     MaterialComponents,
@@ -94,7 +111,7 @@ const MaterialComponents = [
     ReactiveFormsModule,
     CommonModule
   ],
-  providers: [UserService, { provide: JWT_OPTIONS, useValue: JWT_OPTIONS }, JwtHelperService,
+  providers: [UserService, CompanyService, { provide: JWT_OPTIONS, useValue: JWT_OPTIONS }, JwtHelperService,
     { provide: HTTP_INTERCEPTORS, useClass: InterceptorService, multi: true }],
   bootstrap: [AppComponent]
 })

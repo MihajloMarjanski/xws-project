@@ -4,13 +4,18 @@ import (
 	cfg "api-gateway/startup/config"
 	"context"
 	"fmt"
-	requestGw "github.com/MihajloMarjanski/xws-project/common/proto/requests_service"
-	userGw "github.com/MihajloMarjanski/xws-project/common/proto/user_service"
-	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
-	"google.golang.org/grpc"
-	"google.golang.org/grpc/credentials/insecure"
 	"log"
 	"net/http"
+	"path/filepath"
+
+	connectionGw "github.com/MihajloMarjanski/xws-project/common/proto/connection_service"
+	postGw "github.com/MihajloMarjanski/xws-project/common/proto/post_service"
+	requestGw "github.com/MihajloMarjanski/xws-project/common/proto/requests_service"
+	userGw "github.com/MihajloMarjanski/xws-project/common/proto/user_service"
+	"github.com/gorilla/handlers"
+	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
+	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials"
 )
 
 type Server struct {
@@ -28,7 +33,17 @@ func NewServer(config *cfg.Config) *Server {
 }
 
 func (server *Server) initHandlers() {
-	opts := []grpc.DialOption{grpc.WithTransportCredentials(insecure.NewCredentials())}
+	//opts := []grpc.DialOption{grpc.WithTransportCredentials(insecure.NewCredentials())}
+	crtTlsPath, _ := filepath.Abs("./service.pem")
+
+	creds, err6 := credentials.NewClientTLSFromFile(crtTlsPath, "")
+	if err6 != nil {
+		log.Fatalf("could not process the credentials: %v", err6)
+	}
+
+	opts := []grpc.DialOption{grpc.WithTransportCredentials(creds)}
+	opts1 := []grpc.DialOption{grpc.WithInsecure()}
+
 	userEndpoint := fmt.Sprintf("%s:%s", server.config.UserHost, server.config.UserPort)
 	err := userGw.RegisterUserServiceHandlerFromEndpoint(context.TODO(), server.mux, userEndpoint, opts)
 	if err != nil {
@@ -37,13 +52,28 @@ func (server *Server) initHandlers() {
 	requestEndpoint := fmt.Sprintf("%s:%s", server.config.RequestHost, server.config.RequestPort)
 	err1 := requestGw.RegisterRequestsServiceHandlerFromEndpoint(context.TODO(), server.mux, requestEndpoint, opts)
 	if err1 != nil {
-		panic(err)
+		panic(err1)
 	}
-
+	postEndpoint := fmt.Sprintf("%s:%s", server.config.PostHost, server.config.PostPort)
+	err2 := postGw.RegisterPostServiceHandlerFromEndpoint(context.TODO(), server.mux, postEndpoint, opts)
+	if err2 != nil {
+		panic(err2)
+	}
+	connectionEndpoint := fmt.Sprintf("%s:%s", server.config.ConnectionHost, server.config.ConnectionPort)
+	err3 := connectionGw.RegisterConnectionServiceHandlerFromEndpoint(context.TODO(), server.mux, connectionEndpoint, opts1)
+	if err3 != nil {
+		panic(err3)
+	}
 }
 
 func (server *Server) Start() {
-	log.Println("gateway started")
-	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%s", server.config.Port), server.mux))
+	crtPath, _ := filepath.Abs("./server.crt")
+	keyPath, _ := filepath.Abs("./server.key")
+	origins := handlers.AllowedOrigins([]string{"https://localhost:4300", "https://localhost:4300/**", "https://localhost:4300", "https://localhost:4300/**"})
+	methods := handlers.AllowedMethods([]string{"GET", "POST", "PUT", "DELETE"})
+	headers := handlers.AllowedHeaders([]string{"Accept", "Accept-Language", "Content-Type", "Content-Language", "Origin", "Authorization", "Access-Control-Allow-Origin", "*"})
 
+	log.Println("gateway started")
+	//log.Fatal(http.ListenAndServe(fmt.Sprintf(":%s", server.config.Port), handlers.CORS(headers, methods, origins)(server.mux)))
+	log.Fatal(http.ListenAndServeTLS(fmt.Sprintf(":%s", server.config.Port), crtPath, keyPath, handlers.CORS(headers, methods, origins)(server.mux)))
 }

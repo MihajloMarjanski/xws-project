@@ -1,0 +1,31 @@
+<div style="margin-left: 15%; margin-right: 15%; margin-top: 2%;">
+    <h2>Notifications</h2>    
+    <div  class="tableView">
+    <table id="myTable" style="width: 100%;" mat-table [dataSource]="notifications" class="mat-elevation-z8"  >
+        <ng-container matColumnDef="messages">
+            <mat-header-cell *matHeaderCellDef > Messages </mat-header-cell>
+            <mat-cell *matCellDef="let element"> {{element.text}} </mat-cell>
+          </ng-container>  
+          
+          <ng-container matColumnDef="date">
+            <mat-header-cell *matHeaderCellDef> Date </mat-header-cell>
+                <mat-cell *matCellDef="let element" >
+                  <ng-container >{{element.date}}</ng-container>
+                    </mat-cell>
+          </ng-container>
+
+          <mat-header-row *matHeaderRowDef="displayedColumns; sticky: true" ></mat-header-row>
+          <mat-row *matRowDef="let row; columns: displayedColumns;" ></mat-row>
+      </table>
+    </div>
+</div>
+
+<div style="margin-left: 15%; margin-right: 15%; margin-top: 2%;">
+  <h2>Requests</h2>    
+  <div *ngFor="let s of requests" style="width: 1000px;">
+    <p>{{s.username}}   
+      <button mat-icon-button  (click)="accept(s)"  ><mat-icon>done</mat-icon></button> 
+      <button mat-icon-button color="accent" (click)="decline(s)"  ><mat-icon>clear</mat-icon></button> 
+    </p>   
+  </div>
+</div>

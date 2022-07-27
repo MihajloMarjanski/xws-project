@@ -1,6 +1,9 @@
 version: "3.7"
+x-logging: &fluent-bit
+  driver: fluentd
+  options:
+    fluentd-address: ${FLUENT_BIT_ADDRESS}:24224
 services:
-
   user-service:
     hostname: user-service
     image: user-service
@@ -8,10 +11,30 @@ services:
       context: ./
       dockerfile: ./user-service/Dockerfile
     restart: always
+    volumes:
+      - ~/Desktop/logs/user_service_logs:/root/logs
     ports:
       - 8001:8100
+    logging: *fluent-bit
     networks:
       - backend
+      - monitoring
+
+  connection-service:
+    hostname: connection-service
+    image: connection-service
+    build:
+      context: ./
+      dockerfile: ./connection-service/Dockerfile
+    restart: always
+    volumes:
+      - ~/Desktop/logs/connection_service_logs:/root/logs
+    ports:
+      - 8007:8700
+    logging: *fluent-bit
+    networks:
+      - backend
+      - monitoring
 
   request-service:
     hostname: request-service
@@ -20,10 +43,14 @@ services:
       context: ./
       dockerfile: ./requests-service/Dockerfile
     restart: always
+    volumes:
+      - ~/Desktop/logs/request_service_logs:/root/logs
     ports:
       - 8002:8200
+    logging: *fluent-bit
     networks:
       - backend
+      - monitoring
     
   post-service:
     hostname: post-service
@@ -32,22 +59,48 @@ services:
       context: ./
       dockerfile: ./post-service/Dockerfile
     restart: always
+    volumes:
+      - ~/Desktop/logs/post_service_logs:/root/logs
     ports:
       - 8003:8300
+    logging: *fluent-bit
     networks:
       - backend
+      - monitoring
 
-  userdb:
-    image: postgres:latest
-    restart: always
-    environment:
-      POSTGRES_USER: XML
-      POSTGRES_PASSWORD: ftn
-      POSTGRES_DB: XML_TEST
+  agent-application:
+    hostname: agent-application
+    build:
+      context: ./
+      dockerfile: ./AgentApplication/agent/Dockerfile
+    image: agent:0.0.1-SNAPSHOT
+    restart: on-failure
+    volumes:
+      - ~/Desktop/logs/agent-application_logs:/root/logs
     ports:
-      - 4002:5432
+      - 8600:8600
+    logging: *fluent-bit
+    depends_on:
+      - agentdb
     networks:
       - backend
+      - monitoring
+
+  api-gateway:
+    hostname: api-gateway
+    image: api-gateway
+    build:
+      context: ./
+      dockerfile: ./api-gateway/Dockerfile
+    restart: always
+    volumes:
+      - ~/Desktop/logs/api_gateway_logs:/root/logs
+    ports:
+      - 8000:8000
+    logging: *fluent-bit
+    networks:
+      - backend
+      - monitoring
 
   requestdb:
     image: postgres:latest
@@ -58,8 +111,10 @@ services:
       POSTGRES_DB: XML_REQUESTS
     ports:
       - 4000:5432
+    logging: *fluent-bit
     networks:
       - backend
+      - monitoring
 
   postdb:
     image: mongo:3.6
@@ -68,10 +123,66 @@ services:
       - ./mongo-init/:/docker-entrypoint-initdb.d/:ro
     ports:
       - 4001:27017
+    logging: *fluent-bit
     networks:
       - backend
+      - monitoring
+
+  userdb:
+    image: postgres:latest
+    restart: always
+    environment:
+      POSTGRES_USER: XML
+      POSTGRES_PASSWORD: ftn
+      POSTGRES_DB: XML_TEST
+    ports:
+      - 4002:5432
+    logging: *fluent-bit
+    networks:
+      - backend
+      - monitoring
+  
+  agentdb:
+    image: mysql:latest
+    restart: always
+    ports:
+      - 4003:3306
+    logging: *fluent-bit
+    environment:
+      MYSQL_ROOT_PASSWORD: XML_AGENT
+    networks:
+      - backend
+      - monitoring
+
+  nats:
+    image: nats
+    container_name: nats
+    restart: on-failure
+    networks:
+      - backend
+
+  neo4j:
+    image: neo4j:latest
+    container_name: 'neo4j'
+    volumes:
+      - '$HOME/neo4j/data:/data'
+      - '$HOME/neo4j/conf/:/conf/'
+    ports:
+      - 7474:7474
+      - 7687:7687
+    restart: on-failure
+    logging: *fluent-bit
+    networks:
+      - backend
+      - monitoring
+    command: neo4j
+    environment:
+      NEO4J_AUTH: neo4j/password
+      NEO4J_dbms_memory_pagecache_size: 512M
 
 networks:
   backend:
     name: dislinkt
-    driver: bridge 
+    driver: bridge
+  monitoring:
+    external: true

@@ -27,6 +27,12 @@ type RequestsServiceClient interface {
 	DeclineRequest(ctx context.Context, in *DeclineRequestRequest, opts ...grpc.CallOption) (*DeclineRequestResponse, error)
 	SendRequest(ctx context.Context, in *SendRequestRequest, opts ...grpc.CallOption) (*SendRequestResponse, error)
 	SendMessage(ctx context.Context, in *SendMessageRequest, opts ...grpc.CallOption) (*SendMessageResponse, error)
+	AreConnected(ctx context.Context, in *AreConnectedRequest, opts ...grpc.CallOption) (*AreConnectedResponse, error)
+	FindConnections(ctx context.Context, in *FindConnectionsRequest, opts ...grpc.CallOption) (*FindConnectionsResponse, error)
+	FindMessages(ctx context.Context, in *FindMessagesRequest, opts ...grpc.CallOption) (*FindMessagesResponse, error)
+	DeleteConnection(ctx context.Context, in *DeleteConnectionRequest, opts ...grpc.CallOption) (*DeleteConnectionResponse, error)
+	GetNotifications(ctx context.Context, in *GetNotificationsRequest, opts ...grpc.CallOption) (*GetNotificationsResponse, error)
+	SendNotification(ctx context.Context, in *SendNotificationRequest, opts ...grpc.CallOption) (*SendNotificationResponse, error)
 }
 
 type requestsServiceClient struct {
@@ -82,6 +88,60 @@ func (c *requestsServiceClient) SendMessage(ctx context.Context, in *SendMessage
 	return out, nil
 }
 
+func (c *requestsServiceClient) AreConnected(ctx context.Context, in *AreConnectedRequest, opts ...grpc.CallOption) (*AreConnectedResponse, error) {
+	out := new(AreConnectedResponse)
+	err := c.cc.Invoke(ctx, "/requests.RequestsService/AreConnected", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *requestsServiceClient) FindConnections(ctx context.Context, in *FindConnectionsRequest, opts ...grpc.CallOption) (*FindConnectionsResponse, error) {
+	out := new(FindConnectionsResponse)
+	err := c.cc.Invoke(ctx, "/requests.RequestsService/FindConnections", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *requestsServiceClient) FindMessages(ctx context.Context, in *FindMessagesRequest, opts ...grpc.CallOption) (*FindMessagesResponse, error) {
+	out := new(FindMessagesResponse)
+	err := c.cc.Invoke(ctx, "/requests.RequestsService/FindMessages", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *requestsServiceClient) DeleteConnection(ctx context.Context, in *DeleteConnectionRequest, opts ...grpc.CallOption) (*DeleteConnectionResponse, error) {
+	out := new(DeleteConnectionResponse)
+	err := c.cc.Invoke(ctx, "/requests.RequestsService/DeleteConnection", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *requestsServiceClient) GetNotifications(ctx context.Context, in *GetNotificationsRequest, opts ...grpc.CallOption) (*GetNotificationsResponse, error) {
+	out := new(GetNotificationsResponse)
+	err := c.cc.Invoke(ctx, "/requests.RequestsService/GetNotifications", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *requestsServiceClient) SendNotification(ctx context.Context, in *SendNotificationRequest, opts ...grpc.CallOption) (*SendNotificationResponse, error) {
+	out := new(SendNotificationResponse)
+	err := c.cc.Invoke(ctx, "/requests.RequestsService/SendNotification", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // RequestsServiceServer is the server API for RequestsService service.
 // All implementations must embed UnimplementedRequestsServiceServer
 // for forward compatibility
@@ -91,6 +151,12 @@ type RequestsServiceServer interface {
 	DeclineRequest(context.Context, *DeclineRequestRequest) (*DeclineRequestResponse, error)
 	SendRequest(context.Context, *SendRequestRequest) (*SendRequestResponse, error)
 	SendMessage(context.Context, *SendMessageRequest) (*SendMessageResponse, error)
+	AreConnected(context.Context, *AreConnectedRequest) (*AreConnectedResponse, error)
+	FindConnections(context.Context, *FindConnectionsRequest) (*FindConnectionsResponse, error)
+	FindMessages(context.Context, *FindMessagesRequest) (*FindMessagesResponse, error)
+	DeleteConnection(context.Context, *DeleteConnectionRequest) (*DeleteConnectionResponse, error)
+	GetNotifications(context.Context, *GetNotificationsRequest) (*GetNotificationsResponse, error)
+	SendNotification(context.Context, *SendNotificationRequest) (*SendNotificationResponse, error)
 	mustEmbedUnimplementedRequestsServiceServer()
 }
 
@@ -112,6 +178,24 @@ func (UnimplementedRequestsServiceServer) SendRequest(context.Context, *SendRequ
 }
 func (UnimplementedRequestsServiceServer) SendMessage(context.Context, *SendMessageRequest) (*SendMessageResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method SendMessage not implemented")
+}
+func (UnimplementedRequestsServiceServer) AreConnected(context.Context, *AreConnectedRequest) (*AreConnectedResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method AreConnected not implemented")
+}
+func (UnimplementedRequestsServiceServer) FindConnections(context.Context, *FindConnectionsRequest) (*FindConnectionsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method FindConnections not implemented")
+}
+func (UnimplementedRequestsServiceServer) FindMessages(context.Context, *FindMessagesRequest) (*FindMessagesResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method FindMessages not implemented")
+}
+func (UnimplementedRequestsServiceServer) DeleteConnection(context.Context, *DeleteConnectionRequest) (*DeleteConnectionResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DeleteConnection not implemented")
+}
+func (UnimplementedRequestsServiceServer) GetNotifications(context.Context, *GetNotificationsRequest) (*GetNotificationsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetNotifications not implemented")
+}
+func (UnimplementedRequestsServiceServer) SendNotification(context.Context, *SendNotificationRequest) (*SendNotificationResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SendNotification not implemented")
 }
 func (UnimplementedRequestsServiceServer) mustEmbedUnimplementedRequestsServiceServer() {}
 
@@ -216,6 +300,114 @@ func _RequestsService_SendMessage_Handler(srv interface{}, ctx context.Context, 
 	return interceptor(ctx, in, info, handler)
 }
 
+func _RequestsService_AreConnected_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(AreConnectedRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RequestsServiceServer).AreConnected(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/requests.RequestsService/AreConnected",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RequestsServiceServer).AreConnected(ctx, req.(*AreConnectedRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _RequestsService_FindConnections_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(FindConnectionsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RequestsServiceServer).FindConnections(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/requests.RequestsService/FindConnections",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RequestsServiceServer).FindConnections(ctx, req.(*FindConnectionsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _RequestsService_FindMessages_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(FindMessagesRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RequestsServiceServer).FindMessages(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/requests.RequestsService/FindMessages",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RequestsServiceServer).FindMessages(ctx, req.(*FindMessagesRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _RequestsService_DeleteConnection_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DeleteConnectionRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RequestsServiceServer).DeleteConnection(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/requests.RequestsService/DeleteConnection",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RequestsServiceServer).DeleteConnection(ctx, req.(*DeleteConnectionRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _RequestsService_GetNotifications_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetNotificationsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RequestsServiceServer).GetNotifications(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/requests.RequestsService/GetNotifications",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RequestsServiceServer).GetNotifications(ctx, req.(*GetNotificationsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _RequestsService_SendNotification_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SendNotificationRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RequestsServiceServer).SendNotification(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/requests.RequestsService/SendNotification",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RequestsServiceServer).SendNotification(ctx, req.(*SendNotificationRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // RequestsService_ServiceDesc is the grpc.ServiceDesc for RequestsService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -242,6 +434,30 @@ var RequestsService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "SendMessage",
 			Handler:    _RequestsService_SendMessage_Handler,
+		},
+		{
+			MethodName: "AreConnected",
+			Handler:    _RequestsService_AreConnected_Handler,
+		},
+		{
+			MethodName: "FindConnections",
+			Handler:    _RequestsService_FindConnections_Handler,
+		},
+		{
+			MethodName: "FindMessages",
+			Handler:    _RequestsService_FindMessages_Handler,
+		},
+		{
+			MethodName: "DeleteConnection",
+			Handler:    _RequestsService_DeleteConnection_Handler,
+		},
+		{
+			MethodName: "GetNotifications",
+			Handler:    _RequestsService_GetNotifications_Handler,
+		},
+		{
+			MethodName: "SendNotification",
+			Handler:    _RequestsService_SendNotification_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

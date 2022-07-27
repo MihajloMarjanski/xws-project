@@ -1,0 +1,82 @@
+<div class="stepper">
+    <h1>{{client.firstName}}'s informations</h1>
+  <form name="rform" #registerForm="ngForm">            
+              
+    <mat-form-field appearance="fill" style="margin-right: 2%;">
+      <mat-label>First name</mat-label>
+      <input matInput type="text" name="firstname" [(ngModel)]="client.firstName" required>
+      <mat-hint *ngIf="client.firstName == ''">Required</mat-hint>
+      
+    </mat-form-field>
+
+    <mat-form-field appearance="fill">
+      <mat-label>Last name</mat-label>
+      <input matInput type="text" name="lastname" [(ngModel)]="client.lastName" required>
+      <mat-hint *ngIf="client.lastName == ''">Required</mat-hint>
+    </mat-form-field>
+
+    <mat-checkbox style="margin-right: 10000px;" (change)="changeWantToChangePassword()">Change password</mat-checkbox>
+
+      <mat-form-field *ngIf="wantToChangePassword" hintLabel="Between 8 and 20 characters" appearance="fill"  style="margin-right: 2%;">
+        <mat-label>Password</mat-label>
+        <input matInput type="password" name="password" id="password" minlength="8" maxlength="20" [(ngModel)]="client.password" required>
+      </mat-form-field>
+      
+      <mat-form-field *ngIf="wantToChangePassword" appearance="fill">
+        <mat-label>Confirm password</mat-label>
+        <input matInput type="password" name="repassword" [(ngModel)]="repassword" required>
+        <mat-hint *ngIf="repassword == ''">Required</mat-hint>
+      </mat-form-field>
+
+      <h1 style="margin-top: 3%;" *ngIf="role ==='ROLE_COMPANY_OWNER'">Company informations</h1>
+        <mat-form-field *ngIf="role ==='ROLE_COMPANY_OWNER'" appearance="fill" style="margin-right: 2%;">
+            <mat-label>Name</mat-label>
+            <input matInput type="text" name="name" [(ngModel)]="owner.company.name" required>
+            <mat-hint *ngIf="owner.company.name == ''">Required</mat-hint>
+            <mat-icon matSuffix></mat-icon>
+          </mat-form-field>
+      
+          <mat-form-field *ngIf="role ==='ROLE_COMPANY_OWNER' " appearance="fill">
+            <mat-label>Info</mat-label>
+            <input matInput type="text" name="info" [(ngModel)]="owner.company.info" required>
+            <mat-hint *ngIf="owner.company.info == ''">Required</mat-hint>
+          </mat-form-field>
+
+          <mat-form-field *ngIf="role ==='ROLE_COMPANY_OWNER'" appearance="fill"  style="margin-right: 2%;">
+            <mat-label>City</mat-label>
+            <input matInput type="text" name="city" [(ngModel)]="owner.company.city" required>
+            <mat-hint *ngIf="owner.company.city == ''">Required</mat-hint>
+            <mat-icon matSuffix></mat-icon>
+          </mat-form-field>
+
+          <mat-form-field *ngIf="role ==='ROLE_COMPANY_OWNER' " appearance="fill">
+            <mat-label>Country</mat-label>
+            <input matInput type="text" name="country" [(ngModel)]="owner.company.country" required>
+            <mat-hint *ngIf="owner.company.country == ''">Required</mat-hint>
+          </mat-form-field>
+
+          <div *ngIf="role ==='ROLE_COMPANY_OWNER' " style="margin-top: 2%; margin-bottom: 2%;">
+            <mat-label style="padding-top: 20px;" for="positions">List of positions: </mat-label>
+            <mat-select style="width: 300px;" name="positions" [(ngModel)]="selectedPositions" multiple>
+                <mat-option checkboxPosition="before" *ngFor="let service of owner.company.positions" [value]="service">
+                    {{ service.name }}
+                </mat-option>
+            </mat-select> 
+        </div> 
+    
+        <mat-form-field *ngIf="role ==='ROLE_COMPANY_OWNER' " appearance="fill" style="margin-right: 2%;">
+            <mat-label>Add new job position: </mat-label>
+            <input matInput placeholder="Name of new job" name="newJobName" id="newJobName" [(ngModel)]="newJob.name" >
+            <button mat-raised-button color="warn" (click)="addNewJob()" [disabled]="newJob.name === ''" >Add</button>
+        </mat-form-field> 
+
+            
+              <div>
+                <button mat-raised-button color="accent" [disabled]="!(registerForm.valid && client.password === repassword)" (click)="edit()"  >Edit</button>
+              </div>
+     </form>
+
+
+      
+      </div>
+  

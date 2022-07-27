@@ -1,3 +1,5 @@
+import { Company } from "./company";
+
 export interface CompanyOwner {
     id: number ;
     firstName: string ;
@@ -5,4 +7,5 @@ export interface CompanyOwner {
     email: string ;
     username: string;
     password: string ;
+    company: Company;
 }

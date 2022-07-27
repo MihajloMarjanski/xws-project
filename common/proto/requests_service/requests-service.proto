@@ -9,51 +9,121 @@ import "google/api/annotations.proto";
 service RequestsService{
     rpc GetAllByRecieverId(GetAllByRecieverIdRequest) returns (GetAllByRecieverIdResponse){
         option (google.api.http) = {
-            get: "/requests/getAll/{RecieverID}"
+            get: "/requests/getAll/{receiverId}"
         };
     }
     rpc AcceptRequest(AcceptRequestRequest) returns (AcceptRequestResponse){
         option (google.api.http) = {
-            put: "/requests/acceptRequest/{SenderID}/{RecieverID}"
+            put: "/requests/acceptRequest/{senderId}/{receiverId}"
             body: "" 
         };
     }
     rpc DeclineRequest(DeclineRequestRequest) returns (DeclineRequestResponse){
         option (google.api.http) = {
-            put: "/requests/declineRequest/{SenderID}/{RecieverID}"
+            put: "/requests/declineRequest/{senderId}/{receiverId}"
             body: ""
         };
     }
     rpc SendRequest(SendRequestRequest) returns (SendRequestResponse){
         option (google.api.http) = {
-            put: "/requests/sendRequest/{SenderID}/{RecieverID}"
+            put: "/requests/sendRequest/{senderId}/{receiverId}"
             body: ""
         };
     }
     rpc SendMessage(SendMessageRequest) returns (SendMessageResponse){
         option (google.api.http) = {
-            post: "/message/send/{SenderID}/{RecieverID}"
+            post: "/message/send/{senderId}/{receiverId}"
             body: "message"
+        };
+    }
+    rpc AreConnected(AreConnectedRequest) returns (AreConnectedResponse){
+        option (google.api.http) = {
+            get: "/connection/{firstId}/{secondId}"
+        };
+    }
+    rpc FindConnections(FindConnectionsRequest) returns (FindConnectionsResponse){
+        option (google.api.http) = {
+            get: "/connections/{id}"
+        };
+    }
+    rpc FindMessages(FindMessagesRequest) returns (FindMessagesResponse){
+        option (google.api.http) = {
+            get: "/messages/{id1}/{id2}"
+        };
+    }
+    rpc DeleteConnection(DeleteConnectionRequest) returns(DeleteConnectionResponse) {
+        option (google.api.http) = {
+            delete: "/connection/{id1}/{id2}"
+        };
+    }
+    rpc GetNotifications(GetNotificationsRequest) returns (GetNotificationsResponse){
+        option (google.api.http) = {
+            get: "/notifications/{id}"
+        };
+    }
+    rpc SendNotification(SendNotificationRequest) returns (SendNotificationResponse){
+        option (google.api.http) = {
+            post: "/notifications/{senderId}/{receiverId}/{message}"
+            body: ""
         };
     }
 }
 
+message SendNotificationRequest{
+    int64 senderId = 1;
+    int64 receiverId = 2;
+    string message = 3;
+}
+message SendNotificationResponse{
+}
+message GetNotificationsRequest{
+    int64 id = 1;
+}
+message GetNotificationsResponse{
+    repeated Notification notifications = 1;
+}
+message DeleteConnectionRequest{
+    int64 id1 = 1;
+    int64 id2 = 2;
+}
+message DeleteConnectionResponse{
+}
+message FindMessagesRequest{
+    int64 id1 = 1;
+    int64 id2 = 2;
+}
+message FindMessagesResponse{
+    repeated Message messages = 1;
+}
+message FindConnectionsRequest{
+    int64 id = 1;
+}
+message FindConnectionsResponse{
+    repeated User users = 1;
+}
+message AreConnectedRequest{
+    int64 firstId = 1;
+    int64 secondId = 2;
+}
+message AreConnectedResponse{
+    bool AreConnected = 1;
+}
 message GetAllByRecieverIdRequest{
-    int64 RecieverID = 1;
+    int64 receiverId = 1;
 }
 
 message GetAllByRecieverIdResponse{
-    repeated Request requests = 1;
+    repeated UsernameWithRequestId users = 1;
 }
 
 message Request {
-    int64 SenderID = 1;
-	int64 RecieverID = 2; 	
+    int64 senderId = 1;
+	int64 receiverId = 2;
 }
 
 message AcceptRequestRequest{
-    int64 SenderID = 1;
-	int64 RecieverID = 2; 	
+    int64 senderId = 1;
+	int64 receiverId = 2;
 }
 
 message AcceptRequestResponse{
@@ -61,8 +131,8 @@ message AcceptRequestResponse{
 }
 
 message DeclineRequestRequest{
-    int64 SenderID = 1;
-	int64 RecieverID = 2; 	
+    int64 senderId = 1;
+	int64 receiverId = 2;
 }
 
 message DeclineRequestResponse{
@@ -70,16 +140,16 @@ message DeclineRequestResponse{
 }
 
 message SendRequestRequest{
-    int64 SenderID = 1;
-	int64 RecieverID = 2; 	
+    int64 senderId = 1;
+	int64 receiverId = 2;
 }
 
 message SendRequestResponse{
 }
 
 message SendMessageRequest{
-    int64 SenderID = 1;
-    int64 RecieverID = 2;
+    int64 senderId = 1;
+    int64 receiverId = 2;
     Message message = 3;
 }
 
@@ -88,4 +158,26 @@ message SendMessageResponse{
 
 message Message{
     string text = 1;
+    int64 senderId = 2;
+    int64 receiverId = 3;
+}
+message User {
+    int64 id = 1;
+    string name = 2;
+    string username = 3;
+    string email = 4;
+    string gender = 5;
+    string phone = 6;
+    string date = 7;
+    string biography = 8;
+}
+message Notification{
+    string text = 1;
+    int64 receiverId = 2;
+    string date = 3;
+}
+message UsernameWithRequestId {
+    int64 receiverId = 1;
+    int64 senderId = 2;
+    string username = 3;
 }

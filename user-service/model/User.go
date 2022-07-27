@@ -3,18 +3,26 @@ package model
 import "time"
 
 type User struct {
-	ID          uint         `json:"id"`
-	Name        string       `json:"name" gorm:"not null"`
-	UserName    string       `json:"username" gorm:"unique;not null"`
-	Email       string       `json:"email" gorm:"unique;not null"`
-	Password    string       `json:"password" gorm:"not null"`
-	Gender      Gender       `json:"gender"`
-	PhoneNumber string       `json:"phone"`
-	DateOfBirth time.Time    `json:"date"`
-	Biography   string       `json:"biography"`
-	Interests   []Interest   `json:"interests"`
-	Experiences []Experience `json:"experiences"`
-	IsPublic    bool         `json:"isPublic"`
+	ID                    uint         `json:"id"`
+	Name                  string       `json:"name" gorm:"not null"`
+	UserName              string       `json:"username" gorm:"unique;not null"`
+	Email                 string       `json:"email" gorm:"unique;not null"`
+	Password              string       `json:"password" gorm:"not null"`
+	Gender                Gender       `json:"gender"`
+	PhoneNumber           string       `json:"phone"`
+	DateOfBirth           time.Time    `json:"date"`
+	Biography             string       `json:"biography"`
+	Interests             []Interest   `json:"interests"`
+	Experiences           []Experience `json:"experiences"`
+	IsPrivate             bool         `json:"isPrivate"`
+	ApiKey                string       `json:"apiKey"`
+	IsActivated           bool         `json:"isActivated"`
+	Pin                   string       `json:"pin"`
+	Forgotten             int          `json:"forgotten"`
+	MissedPasswordCounter int          `json:"missedPasswordCounter"`
+	IsBlocked             bool         `json:"isBlocked"`
+	BlockedDate           time.Time    `json:"blockedDate"`
+	PinCreatedDate        time.Time    `json:"pinCreatedDate"`
 }
 
 type Interest struct {

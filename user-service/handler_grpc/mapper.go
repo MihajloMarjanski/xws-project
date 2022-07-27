@@ -15,9 +15,9 @@ func mapUserDtoToProto(user model.User) *pb.User {
 		Email:     user.Email,
 		Gender:    string(user.Gender),
 		Phone:     user.PhoneNumber,
-		Date:      user.DateOfBirth.String(),
+		Date:      user.DateOfBirth.Format("02-Jan-2006"),
 		Biography: user.Biography,
-		IsPublic:  user.IsPublic,
+		IsPrivate: user.IsPrivate,
 	}
 
 	for _, interest := range user.Interests {
@@ -41,6 +41,18 @@ func mapUserDtoToProto(user model.User) *pb.User {
 	return userPb
 }
 
+func mapUserOfferProto(offer model.JobOffer) *pb.JobOffer {
+	offerPb := &pb.JobOffer{
+		Id:             int64(offer.ID),
+		JobInfo:        offer.JobInfo,
+		ApiKey:         offer.ApiKey,
+		Qualifications: offer.Qualifications,
+		CompanyName:    offer.CompanyName,
+		JobPosition:    offer.JobPosition,
+	}
+	return offerPb
+}
+
 func mapUserToProto(user model.User) *pb.UserWithPass {
 	userPb := &pb.UserWithPass{
 		Id:        int64(user.ID),
@@ -49,10 +61,10 @@ func mapUserToProto(user model.User) *pb.UserWithPass {
 		Email:     user.Email,
 		Gender:    string(user.Gender),
 		Phone:     user.PhoneNumber,
-		Date:      user.DateOfBirth.String(),
+		Date:      user.DateOfBirth.Format("02-Jan-2006"),
 		Biography: user.Biography,
 		Password:  user.Password,
-		IsPublic:  user.IsPublic,
+		IsPrivate: user.IsPrivate,
 	}
 
 	for _, interest := range user.Interests {
@@ -67,8 +79,8 @@ func mapUserToProto(user model.User) *pb.UserWithPass {
 			Id:       int64(experience.ID),
 			Company:  experience.Company,
 			Position: experience.Position,
-			From:     experience.From.String(),
-			Until:    experience.Until.String(),
+			From:     experience.From.Format("02-Jan-2006"),
+			Until:    experience.Until.Format("02-Jan-2006"),
 			UserId:   int64(experience.UserID),
 		})
 	}
@@ -87,7 +99,7 @@ func mapProtoToUser(user *pb.UserWithPass) model.User {
 		DateOfBirth: date,
 		Biography:   user.Biography,
 		Password:    user.Password,
-		IsPublic:    user.IsPublic,
+		IsPrivate:   user.IsPrivate,
 	}
 	return userPb
 }

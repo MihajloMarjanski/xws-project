@@ -1,0 +1,17 @@
+<div>
+    <h1>Create a post</h1>
+
+    <h3>Title</h3> 
+        <input matInput type="text" name="title" [(ngModel)]="post.title" >
+
+    <h3>Text</h3> 
+        <textarea matInput [(ngModel)]="post.text" name="text" rows="15" cols="40" ></textarea>
+
+      <h3>Image</h3>
+        <input type="file" name="image" (change)="handleFileSelect($event)">
+    <h3>Link</h3>
+        <input matInput type="text" name="link" [(ngModel)]="post.link" >
+    <div>
+        <button mat-button color="primary" (click)="createPost()">Submit</button>
+    </div>
+</div>

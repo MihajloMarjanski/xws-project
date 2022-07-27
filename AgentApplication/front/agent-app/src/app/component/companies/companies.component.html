@@ -1,0 +1,39 @@
+<div style="margin-left: 10%; margin-top: 3%; margin-right: 10%;">
+    <h2>Companies</h2>    
+    
+    <!--  <div class="tableViewNonCustomer" *ngIf="role != 'ROLE_CUSTOMER' && role != 'ROLE_ADMIN' && role != 'ROLE_BOAT_OWNER' && role != 'ROLE_WEEKEND_HOUSE_OWNER' && role != 'ROLE_INSTRUCTOR'"> -->
+    <div class="tableView">
+    <table id="myTable" mat-table [dataSource]="companies" class="mat-elevation-z8">
+        <ng-container matColumnDef="name">
+            <mat-header-cell *matHeaderCellDef > Company name </mat-header-cell>
+            <mat-cell *matCellDef="let element"> {{element.name}} </mat-cell>
+          </ng-container>
+
+        <ng-container matColumnDef="info">
+            <mat-header-cell *matHeaderCellDef > Info </mat-header-cell>
+            <mat-cell *matCellDef="let element"> {{element.info}} </mat-cell>
+          </ng-container>
+
+          <ng-container matColumnDef="owner">
+            <mat-header-cell *matHeaderCellDef > Owner </mat-header-cell>
+            <mat-cell *matCellDef="let element"> {{element.companyOwner.firstName}} {{element.companyOwner.lastName}} - {{element.companyOwner.username}} </mat-cell>
+          </ng-container>
+
+        
+
+
+          <ng-container matColumnDef="approve">
+            <mat-header-cell *matHeaderCellDef> </mat-header-cell>
+            <mat-cell *matCellDef="let element"> 
+                <button mat-button *ngIf="!element.approved " (click)="approve(element.id)" >Approve</button>
+                <ng-container *ngIf="element.approved " ><i>approved</i></ng-container>
+            </mat-cell>
+          </ng-container>
+    
+    
+          <mat-header-row *matHeaderRowDef="displayedColumns; sticky: true" ></mat-header-row>
+          <mat-row *matRowDef="let row; columns: displayedColumns;" ></mat-row>
+      </table>
+    </div>
+    </div>
+    

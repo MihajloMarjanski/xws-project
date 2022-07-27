@@ -5,6 +5,7 @@ option go_package = "common/user";
 package user;
 
 import "google/api/annotations.proto";
+import "google/protobuf/wrappers.proto";
 
 service UserService{
         rpc GetUser(GetUserRequest) returns(GetUserResponse) {
@@ -12,9 +13,9 @@ service UserService{
             get: "/user/{id}"
           };
             }
-        rpc GetMe(GetMeRequest) returns(GetMeResponse) {
+        rpc GetUserByUsername(GetUserByUsernameRequest) returns(GetUserByUsernameResponse) {
               option (google.api.http) = {
-          get: "/user/me/{id}"
+          get: "/user/username/{username}"
         };
         }
         rpc UpdateUser(UpdateUserRequest) returns(UpdateUserResponse) {
@@ -25,7 +26,7 @@ service UserService{
         }
         rpc SearchUsers(SearchUsersRequest) returns(SearchUsersResponse) {
           option (google.api.http) = {
-          get: "/user/search/{username}"
+          get: "/user/search/{username}/{loggedUserId}"
         };
         }
         rpc CreateUser(CreateUserRequest) returns(CreateUserResponse) {
@@ -68,19 +69,140 @@ service UserService{
             body: ""
           };
         }
+        rpc GetApiKey(ApiKeyRequest) returns(ApiKeyResponse) {
+          option (google.api.http) = {
+            get: "/user/apiKey/{username}/{password}"
+          };
+        }
+        rpc CreateJobOffer(CreateJobOfferRequest) returns(CreateJobOfferResponse) {
+          option (google.api.http) = {
+            post: "/jobs/offer"
+            body: "offer"
+          };
+        }
+        rpc ActivateAccount(ActivateAccountRequest) returns(ActivateAccountResponse) {
+          option (google.api.http) = {
+            get: "/user/activate"
+          };
+        }
+        rpc GetApiKeyForUsername(GetApiKeyForUsernameRequest) returns(GetApiKeyForUsernameResponse) {
+          option (google.api.http) = {
+            get: "/user/apiKey/{username}"
+          };
+        }
+        rpc GetPrivateStatusForUserId(GetPrivateStatusForUserIdRequest) returns(GetPrivateStatusForUserIdResponse) {
+          option (google.api.http) = {
+            get: "/user/status/{id}"
+          };
+        }
+        rpc SearchOffers(SearchOffersRequest) returns(SearchOffersResponse) {
+          option (google.api.http) = {
+            get: "/jobs/search/{text}"
+          };
+        }
+        rpc ForgotPassword(ForgotPasswordRequest) returns(ForgotPasswordResponse) {
+          option (google.api.http) = {
+            put: "/user/newPassword/{username}"
+            body: ""
+          };
+        }
+        rpc SendPasswordlessToken(SendPasswordlessTokenRequest) returns(SendPasswordlessTokenResponse) {
+          option (google.api.http) = {
+            get: "/auth/sso/{username}"
+          };
+        }
+        rpc LoginPasswordless(LoginPasswordlessRequest) returns(LoginPasswordlessResponse) {
+          option (google.api.http) = {
+            post: "/user/login/passwordless"
+            body: ""
+          };
+        }
+        rpc SendPinFor2Auth(SendPinFor2AuthRequest) returns(SendPinFor2AuthResponse) {
+          option (google.api.http) = {
+            post: "/user/2factorAuth/pin/send"
+            body: "credentials"
+          };
+        }
+        rpc GetRecommendedConnections(GetRecommendedConnectionsRequest) returns(GetRecommendedConnectionsResponse) {
+          option (google.api.http) = {
+            get: "/user/recommendedConnections/{id}"
+          };
+        }
 }
 
+message GetRecommendedConnectionsRequest {
+  int64 id = 1;
+}
+message GetRecommendedConnectionsResponse {
+  repeated User users = 1;
+}
+message SendPinFor2AuthRequest {
+  Credentials credentials = 1;
+}
+message SendPinFor2AuthResponse {
+}
+message LoginPasswordlessRequest {
+  google.protobuf.StringValue token = 1;
+}
+message LoginPasswordlessResponse {
+  string jwt = 1;
+}
+message SendPasswordlessTokenRequest {
+  string username = 1;
+}
+message SendPasswordlessTokenResponse {
+}
+message ForgotPasswordRequest {
+  string username = 1;
+}
+message ForgotPasswordResponse {
+}
+message SearchOffersRequest {
+  string text = 1;
+}
+message SearchOffersResponse {
+  repeated JobOffer offers = 1;
+}
+message GetPrivateStatusForUserIdRequest {
+  int64 id = 1;
+}
+message GetPrivateStatusForUserIdResponse {
+  bool isPrivate = 1;
+}
+message ActivateAccountRequest {
+  google.protobuf.StringValue token = 1;
+}
+message ActivateAccountResponse {
+}
 
+message CreateJobOfferRequest {
+  JobOffer offer = 1;
+}
+message CreateJobOfferResponse {
+}
+message ApiKeyRequest {
+  string username = 1;
+  string password = 2;
+}
+message ApiKeyResponse {
+  string apiKey = 1;
+}
+message GetApiKeyForUsernameRequest {
+  string username = 1;
+}
+message GetApiKeyForUsernameResponse {
+  string apiKey = 1;
+}
 message GetUserRequest {
         int64 id = 1;
 }
 message GetUserResponse {
         User user = 1;
 }
-message GetMeRequest {
-  int64 id = 1;
+message GetUserByUsernameRequest {
+  string username = 1;
 }
-message GetMeResponse {
+message GetUserByUsernameResponse {
   UserWithPass user = 1;
 }
 message UpdateUserRequest {
@@ -91,6 +213,7 @@ message UpdateUserResponse {
 }
 message SearchUsersRequest {
   string username = 1;
+  int64 loggedUserId = 2;
 }
 message SearchUsersResponse {
   repeated User users = 1;
@@ -148,7 +271,7 @@ message User {
   string biography = 8;
   repeated Experience experience = 9;
   repeated Interest interests = 10;
-  bool isPublic = 11;
+  bool isPrivate = 11;
 }
 
 message UserWithPass {
@@ -163,7 +286,7 @@ message UserWithPass {
   string password = 9;
   repeated Experience experience = 10;
   repeated Interest interests = 11;
-  bool isPublic = 12;
+  bool isPrivate = 12;
 }
 
 message Experience {
@@ -184,4 +307,18 @@ message Interest {
 message Credentials {
   string username = 1;
   string password = 2;
+  string pin = 3;
+}
+
+message JobOffer {
+  int64 id = 1;
+  string jobPosition = 2;
+  string companyName = 3;
+  string jobInfo = 4;
+  string qualifications = 5;
+  string apiKey = 6;
+}
+
+message UserIds {
+  repeated int64 id = 1;
 }

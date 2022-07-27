@@ -1,0 +1,63 @@
+
+  <div style="margin-left: 15%; margin-right: 15%; margin-top: 2%;">
+      <h2>Users</h2>    
+      <mat-form-field appearance="fill" > 
+        <mat-label>Search</mat-label>
+        <input matInput type="text" name="searchField" [(ngModel)]="searchField" (keyup)="searchTable()">
+        </mat-form-field>
+      <div  class="tableView">
+      <table id="myTable" mat-table [dataSource]="users" class="mat-elevation-z8"  >
+          <ng-container matColumnDef="name">
+              <mat-header-cell *matHeaderCellDef > Name </mat-header-cell>
+              <mat-cell *matCellDef="let element"> {{element.name}} </mat-cell>
+            </ng-container>
+          
+          <ng-container matColumnDef="gender">
+              <mat-header-cell *matHeaderCellDef > Gender </mat-header-cell>
+                  <mat-cell *matCellDef="let element" >
+                    <ng-container >{{element.gender}}</ng-container>
+                      </mat-cell>
+            </ng-container>
+      
+            <ng-container matColumnDef="email">
+              <mat-header-cell *matHeaderCellDef> Email </mat-header-cell>
+                  <mat-cell *matCellDef="let element" >
+                    <ng-container >{{element.email}}</ng-container>
+                      </mat-cell>
+            </ng-container>
+      
+            <ng-container matColumnDef="username">
+              <mat-header-cell *matHeaderCellDef>Username </mat-header-cell>
+              <mat-cell *matCellDef="let element"> 
+                <ng-container >{{element.username}}</ng-container>
+              </mat-cell>
+            </ng-container>
+  
+      
+            <mat-header-row *matHeaderRowDef="displayedColumns; sticky: true" ></mat-header-row>
+            <mat-row *matRowDef="let row; columns: displayedColumns;" (click)="showUser(row)" [class.selected]="row.selected"></mat-row>
+        </table>
+      </div>
+      </div>
+  
+  
+     <!--  USER -->
+     <div  *ngIf="show && role === 'ROLE_USER'" style="margin-top: 2%; margin-left: 20%; font-size: larger; position: static;">
+        <h2>User informations</h2>
+        <div class="infoDiv"><label><b>Full name:  </b>   {{user.name}}</label></div>
+        <div class="infoDiv"><label><b>Phone:  </b>   {{user.phone}}</label></div>
+        <div class="infoDiv"><label><b>Gender:  </b>   {{user.gender}}</label></div>
+        <div class="infoDiv"><label><b>Date of birth:  </b>   {{user.date | date: 'shortDate' }}</label></div>
+        <div class="infoDiv"><label><b>Biography:  </b>   {{user.biography}}</label></div>
+        <div>
+            <button style="margin-right: 3%;" mat-raised-button color="accent" [disabled]="isConnected" (click)="connect()"  >Connect</button>
+            <button style="margin-right: 3%;" mat-raised-button color="accent" (click)="viewPosts()"  >Posts</button>
+            <button mat-raised-button color="warn"  (click)="block()"  >Block</button>
+          </div>
+        </div>
+
+    
+
+  <!-- MESSAGING -->
+  
+

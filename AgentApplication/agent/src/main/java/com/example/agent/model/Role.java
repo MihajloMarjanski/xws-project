@@ -18,11 +18,17 @@ public class Role implements GrantedAuthority {
     Long id;
     String name;
 
-    @OneToMany(mappedBy = "role", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    private Set<CompanyOwner> companyOwners = new HashSet<>();
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(name = "role_permissions",
+            joinColumns = @JoinColumn(name = "role_id", referencedColumnName = "id"),
+            inverseJoinColumns = @JoinColumn(name = "permission_id", referencedColumnName = "id"))
+    private Set<Permission> permissions = new HashSet<>();
 
-    @OneToMany(mappedBy = "role", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    private Set<Admin> admins = new HashSet<>();
+//    @OneToMany(mappedBy = "role", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+//    private Set<CompanyOwner> companyOwners = new HashSet<>();
+//
+//    @OneToMany(mappedBy = "role", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+//    private Set<Admin> admins = new HashSet<>();
 
     @JsonIgnore
     @Override
@@ -47,4 +53,11 @@ public class Role implements GrantedAuthority {
         this.id = id;
     }
 
+    public Set<Permission> getPermissions() {
+        return permissions;
+    }
+
+    public void setPermissions(Set<Permission> permissions) {
+        this.permissions = permissions;
+    }
 }

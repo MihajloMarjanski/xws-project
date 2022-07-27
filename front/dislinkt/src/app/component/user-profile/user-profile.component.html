@@ -1,0 +1,160 @@
+<div class="stepper">
+    <h1>{{user.name}}'s informations</h1>
+  <form name="rform" #registerForm="ngForm">            
+    <ul>
+        <li> 
+    <mat-form-field appearance="fill" style="margin-right: 2%;">
+      <mat-label>Fullname</mat-label>
+      <input matInput type="text" name="name" [(ngModel)]="user.name" required>
+      <mat-hint *ngIf="user.name == ''">Required</mat-hint>
+    </mat-form-field>
+    </li>
+    <li>
+    <mat-form-field appearance="fill">
+        <mat-label>Phone number</mat-label>
+        <input matInput type="number" name="phone" [(ngModel)]="user.phone" required>
+        <mat-hint *ngIf="user.phone == ''">Required</mat-hint>
+      </mat-form-field>
+    </li>
+    <li>
+      <mat-radio-group [(ngModel)]="user.gender" name="gender" label-position="before" required>
+        <mat-label>Gender:</mat-label>
+        <mat-radio-button value="Male">Male</mat-radio-button>
+        <mat-radio-button value="Female">Female</mat-radio-button>
+      </mat-radio-group>
+    </li>
+    <li>
+      <mat-form-field appearance="fill">
+        <mat-label>Date of birth</mat-label>
+        <input matInput [matDatepicker]="picker" name="date" [value]="user.date" required>
+        <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+        <mat-datepicker #picker></mat-datepicker>
+      </mat-form-field>
+    </li>
+    <li>
+      <mat-checkbox [checked]="user.isPrivate" (change)="changePublic()">Private profil</mat-checkbox>
+    </li>
+    <li>
+      <mat-form-field appearance="fill">
+        <mat-label>Biography</mat-label>
+        <textarea required matInput [(ngModel)]="user.biography" name="biography"  rows="15" cols="40" ></textarea>
+        <mat-hint *ngIf="user.biography == ''">Required</mat-hint>
+      </mat-form-field>
+    </li>
+    <li>
+    <mat-checkbox style="margin-right: 10000px;" (change)="changeWantToChangePassword()">Change password</mat-checkbox>
+
+      <mat-form-field *ngIf="wantToChangePassword" hintLabel="Between 8 and 20 characters" appearance="fill"  style="margin-right: 2%;">
+        <mat-label>Password</mat-label>
+        <input matInput type="password" name="password" id="password" minlength="8" maxlength="20" [(ngModel)]="user.password" required>
+      </mat-form-field>
+      
+      <mat-form-field *ngIf="wantToChangePassword" appearance="fill">
+        <mat-label>Confirm password</mat-label>
+        <input matInput type="password" name="repassword" [(ngModel)]="repassword" required>
+        <mat-hint *ngIf="repassword == ''">Required</mat-hint>
+      </mat-form-field>
+    </li>
+    </ul>
+      <div>
+        <button mat-raised-button color="accent" [disabled]="!(registerForm.valid && user.password === repassword)" (click)="edit()"  >Edit</button>
+      </div>
+     </form> 
+
+     <!--  INTERESTS -->
+      <div style="margin-left: 0%; margin-top: 8%; margin-right: 0%;">
+        <h2>List of your skills</h2> 
+        <div *ngFor="let s of interests" style="width: 1000px;">
+          <p>{{s.interest}}   
+            <button mat-icon-button color="accent" (click)="removeInterest(s)"  ><mat-icon>clear</mat-icon></button> 
+          </p>   
+        </div>
+        <div >
+            <h3 style="margin-top: 40px;">Add new skill</h3>
+            <mat-form-field appearance="fill">
+                <mat-label>Enter skill</mat-label>
+                <input matInput type="text" name="interest" [(ngModel)]="newInterest.interest" >
+            </mat-form-field>
+            <button style="margin-left: 2%;" mat-raised-button color="accent"  (click)="addInterest()"  >Add</button>
+        </div>
+
+        <!--  EXPERIENCES -->
+        <h2 style="margin-top: 60px;">Experience</h2> 
+      <div class="tableView" style="margin-top: 40px;">
+        <table id="myTable" mat-table [dataSource]="experiences" class="mat-elevation-z8" >
+            <ng-container matColumnDef="company">
+                <mat-header-cell *matHeaderCellDef > Company </mat-header-cell>
+                <mat-cell *matCellDef="let element"> {{element.company}} </mat-cell>
+              </ng-container>
+            
+            <ng-container matColumnDef="position">
+                <mat-header-cell *matHeaderCellDef  > Job position </mat-header-cell>
+                    <mat-cell *matCellDef="let element" >
+                      <ng-container >{{element.position}}</ng-container>
+                        </mat-cell>
+              </ng-container>
+        
+              <ng-container matColumnDef="from">
+                <mat-header-cell *matHeaderCellDef> From </mat-header-cell>
+                    <mat-cell *matCellDef="let element" >
+                      <ng-container >{{element.from}}</ng-container>
+                        </mat-cell>
+              </ng-container>
+
+              <ng-container matColumnDef="until">
+                <mat-header-cell *matHeaderCellDef> Until </mat-header-cell>
+                    <mat-cell *matCellDef="let element" >
+                      <ng-container >{{element.until}}</ng-container>
+                        </mat-cell>
+              </ng-container>
+        
+              <ng-container matColumnDef="remove">
+                <mat-header-cell *matHeaderCellDef> </mat-header-cell>
+                <mat-cell *matCellDef="let element"> 
+                  <button mat-button (click)="removeExperience(element)">Remove</button>
+                </mat-cell>
+              </ng-container>
+        
+        
+              <mat-header-row *matHeaderRowDef="displayedColumns; sticky: true" ></mat-header-row>
+              <mat-row *matRowDef="let row; columns: displayedColumns;" [class.selected]="row.selected"></mat-row>
+          </table>
+        </div>
+    <div>
+        <h3 style="margin-top: 40px;">Add new experience</h3>
+        <mat-form-field appearance="fill">
+            <mat-label>Company</mat-label>
+            <input matInput type="text" name="company" [(ngModel)]="newExperience.company" required>
+            <mat-hint *ngIf="newExperience.company == ''">Required</mat-hint>
+          </mat-form-field>
+
+          <mat-form-field appearance="fill" style="margin-left: 2%;">
+            <mat-label>Job position</mat-label>
+            <input matInput type="text" name="position" [(ngModel)]="newExperience.position" required>
+            <mat-hint *ngIf="newExperience.position == ''">Required</mat-hint>
+          </mat-form-field>
+    
+          <mat-form-field appearance="fill">
+            <mat-label>From</mat-label>
+            <input matInput [matDatepicker]="picker1" name="from" [(ngModel)]="newExperience.from" required>
+            <mat-datepicker-toggle matSuffix [for]="picker1"></mat-datepicker-toggle>
+            <mat-datepicker #picker1></mat-datepicker>
+          </mat-form-field>
+
+          <mat-form-field appearance="fill" style="margin-left: 2%;">
+            <mat-label>Until</mat-label>
+            <input matInput [matDatepicker]="picker2" name="until" [(ngModel)]="newExperience.until" required>
+            <mat-datepicker-toggle matSuffix [for]="picker2"></mat-datepicker-toggle>
+            <mat-datepicker #picker2></mat-datepicker>
+          </mat-form-field>
+    
+          <div>
+            <button mat-raised-button color="accent"  (click)="addExperience()"  >Add</button>
+          </div>    
+    </div>
+
+
+            
+           
+      </div>
+  

@@ -1,8 +1,9 @@
 import { Component, OnInit } from '@angular/core';
-import { FormControl, FormGroupDirective, NgForm, Validators } from '@angular/forms';
+import { AbstractControl, FormControl, FormGroup, FormGroupDirective, NgForm, ValidationErrors, Validators } from '@angular/forms';
 import {ErrorStateMatcher} from '@angular/material/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
+import { Client } from 'src/app/model/client';
 import { CompanyOwner } from 'src/app/model/company-owner';
 import { UserService } from 'src/app/service/user.service';
 
@@ -15,6 +16,8 @@ export class MyErrorStateMatcher implements ErrorStateMatcher {
   }
 }
 
+const specialChars = /[`!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~]/;
+
 
 @Component({
   selector: 'app-registration-page',
@@ -24,8 +27,10 @@ export class MyErrorStateMatcher implements ErrorStateMatcher {
 export class RegistrationPageComponent implements OnInit {
 
   emailControl: FormControl = new FormControl('', [Validators.required, Validators.email]);
+  //space: FormControl = new FormControl('', [spaceValidator]);
+
   matcher = new MyErrorStateMatcher();
-  companyOwner: CompanyOwner = {
+  client: Client = {
     id: 0,
     firstName: "",
     lastName: "",
@@ -36,6 +41,28 @@ export class RegistrationPageComponent implements OnInit {
   errorMessage : string  = '';
   repassword: string = '';
   usernames: string[] = [];
+  blackListPassMessage: string = '';
+  isInBlackList: boolean = false;
+  role: string = 'client';
+  owner: CompanyOwner = {
+    id: 0,
+    firstName: "",
+    lastName: "",
+    email: "",
+    username: "",
+    password: "",
+    company: {
+      id: 0,
+      name: "",
+      info: "",
+      isApproved: true,
+      ownerUsername: "",
+      city: "",
+      country: "",
+      comments: [],
+      positions: []
+    }
+  }
 
   constructor(public _userService: UserService, private _snackBar: MatSnackBar, private router: Router) { }
 
@@ -44,22 +71,49 @@ export class RegistrationPageComponent implements OnInit {
   }
 
   submit(): void {
-    this._userService.createCompanyOwner(this.companyOwner)
-      .subscribe(
-        data => {
-          if(data != null)
-            this._snackBar.open(data, 'Close', {duration: 5000});
-          else {
-            this.router.navigateByUrl('/').then(() => {
-              this._snackBar.open('Registration request successfully submited!', 'Close', {duration: 5000});
-              }); 
+    if (this.role == 'owner') 
+    {
+      this.owner.email = this.client.email
+      this.owner.firstName = this.client.firstName
+      this.owner.lastName = this.client.lastName
+      this.owner.username = this.client.username
+      this.owner.password = this.client.password
+      this._userService.createCompanyOwner(this.owner)
+        .subscribe(
+          data => {
+            if(data != null)
+              this._snackBar.open(data, 'Close', {duration: 5000});
+            else {
+              this.router.navigateByUrl('/').then(() => {
+                this._snackBar.open('Registration request successfully submited!', 'Close', {duration: 5000});
+                }); 
+            }
+          },
+          error => {
+            this._snackBar.open('Invalid input!', 'Close', {duration: 5000});
+            console.log('Error!', error)
           }
-        },
-        error => {
-          this._snackBar.open('Invalid input! Email already exists.', 'Close', {duration: 5000});
-          console.log('Error!', error)
-        }
-      )    
+        )
+    }  
+    else
+    {
+      this._userService.createClient(this.client)
+        .subscribe(
+          data => {
+            if(data != null)
+              this._snackBar.open(data, 'Close', {duration: 5000});
+            else {
+              this.router.navigateByUrl('/').then(() => {
+                this._snackBar.open('Registration request successfully submited!', 'Close', {duration: 5000});
+                }); 
+            }
+          },
+          error => {
+            this._snackBar.open('Invalid input!', 'Close', {duration: 5000});
+            console.log('Error!', error)
+          }
+        )
+    }  
   }
 
   getAllUsernames() {
@@ -70,4 +124,27 @@ export class RegistrationPageComponent implements OnInit {
                     error => this.errorMessage = <any>error);
   }
 
+  checkPass() {
+    this._userService.checkBlackListPass(this.client.password)
+        .subscribe(data => {
+          if (data == null)
+            this.isInBlackList = false
+          else {
+            this.isInBlackList = true
+            this.blackListPassMessage = data
+          }
+          console.log(this.blackListPassMessage);},
+                    error => this.errorMessage = <any>error);
+  }
+
+  containAllCharacters(pass: string) {
+    var res = specialChars.test(pass);
+    return res
+  }
+
+  containSpace(username: string) {
+    if(username.split('').includes(' '))
+      return true
+    return false
+  }
 }

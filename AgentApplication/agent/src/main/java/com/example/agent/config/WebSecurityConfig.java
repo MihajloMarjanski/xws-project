@@ -70,6 +70,11 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http
+                .headers()
+                .xssProtection()
+                .and()
+                .contentSecurityPolicy("script-src 'self'");
+        http
                 // komunikacija izmedju klijenta i servera je stateless posto je u pitanju REST aplikacija
                 // ovo znaci da server ne pamti nikakvo stanje, tokeni se ne cuvaju na serveru
                 // ovo nije slucaj kao sa sesijama koje se cuvaju na serverskoj strani - STATEFULL aplikacija
@@ -80,14 +85,16 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
                 // svim korisnicima dopusti da pristupe sledecim putanjama:
                 .authorizeRequests().antMatchers("/auth/**").permitAll()		// /auth/**
+                                    .antMatchers("/auth/login/passwordless").hasRole("PASSWORDLESS")
                                     .antMatchers("/company/owner/create").permitAll()
                                     .antMatchers("/company/create").permitAll()
                                     .antMatchers("/company/owner/{id}").permitAll()
-                                    .antMatchers("/api/instructors/create").permitAll()
-                                    .antMatchers("/api/customers/activate").permitAll()
-                                    .antMatchers("/api/weekendhouseowners/allWeekendHouses").permitAll()
-                                    .antMatchers("/api/boatowners/allBoats").permitAll()
-                                    .antMatchers("/api/instructors/allFishingLessons").permitAll()
+                                    .antMatchers("/company/owner/activate/**").permitAll()
+                                    .antMatchers("/clients/create").permitAll()
+                                    .antMatchers("/clients/newPassword/**").permitAll()
+                                    .antMatchers("/clients/activate/**").permitAll()
+                                    .antMatchers("/email/**").permitAll()
+                                    .antMatchers("/company/jobs/search/**").permitAll()
 
                 // ukoliko ne zelimo da koristimo @PreAuthorize anotacije nad metodama kontrolera, moze se iskoristiti hasRole() metoda da se ogranici
                 // koji tip korisnika moze da pristupi odgovarajucoj ruti. Npr. ukoliko zelimo da definisemo da ruti 'admin' moze da pristupi

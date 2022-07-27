@@ -1,0 +1,42 @@
+<div class="create_weekend_house" style="margin-bottom: 10%; margin-top: 2%; margin-left: 15%; margin-right: 15%;" >
+    
+                     
+    <mat-form-field appearance="fill">
+        <mat-label>Select company</mat-label>
+        <mat-select [(ngModel)]="selectedCompany">
+          <mat-option *ngFor="let company of companies" [value]="company">
+            {{company.name}}, {{company.city}} {{company.country}}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+    <mat-form-field appearance="fill">
+        <mat-label>Select job position</mat-label>
+        <mat-select [(ngModel)]="selectedJob">
+          <mat-option *ngFor="let job of selectedCompany.positions" [value]="job">
+            {{job.name}}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <h3>Make a comment</h3>
+    <mat-form-field appearance="fill" style="margin-right: 2%;">
+        <mat-label>Comment</mat-label>
+        <input matInput type="text" name="comment" [(ngModel)]="comment.text" >
+    </mat-form-field>
+    <div >  <button mat-raised-button color="warn" (click)="createComment()">Create</button> </div>
+
+    <h3>Add a job interview information</h3>
+    <mat-form-field appearance="fill" style="margin-right: 2%;">
+        <mat-label>Interview information</mat-label>
+        <input matInput type="text" name="info" [(ngModel)]="interviewInfo.info" >
+    </mat-form-field>
+    <div >  <button mat-raised-button color="warn" (click)="createInterviewInfo()">Create</button> </div>
+
+    <h3>Add a job salary</h3>
+    <mat-form-field appearance="fill" style="margin-right: 2%;">
+        <mat-label>Salary</mat-label>
+        <input matInput type="text" name="salary" [(ngModel)]="salary" >
+    </mat-form-field>
+    <div >  <button mat-raised-button color="warn" (click)="addSalary()">Add</button> </div>
+
+    

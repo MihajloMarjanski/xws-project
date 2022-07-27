@@ -1,0 +1,24 @@
+services:
+#  agent:
+#    build: .
+#    image: agent:0.0.1-SNAPSHOT
+#    restart: on-failure
+#    ports:
+#      - 8600:8080
+#    depends_on:
+#      - mysql
+#    env_file:
+#      - .env
+#    environment:
+#      DB_HOST: ${DB_HOST}
+  mysql:
+    image: mysql
+    ports:
+      - 3306:3306
+    volumes:
+      - dbdata:/var/lib/mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
+
+volumes:
+  dbdata:

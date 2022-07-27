@@ -3,6 +3,7 @@ package model
 import (
 	"time"
 
+	"github.com/dgrijalva/jwt-go"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
@@ -34,4 +35,11 @@ type CommentDTO struct {
 type LikeDTO struct {
 	PostID primitive.ObjectID `bson:"postId" json:"postId"`
 	UserID uint               `bson:"userId" json:"userId"`
+}
+
+type Claims struct {
+	Username string `json:"username"`
+	Id       string `json:"id"`
+	Role     string `json:"role"`
+	jwt.StandardClaims
 }
